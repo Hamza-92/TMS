@@ -1,0 +1,11 @@
+{
+  "@@locale": "ur_Latn",
+  "appName": "Darzi Management",
+  "welcome": "Khush Aamdeed",
+  "language": "Zabaan",
+  "english": "Angrezi",
+  "urdu": "Urdu",
+  "romanUrdu": "Roman Urdu",
+  "foundationReady": "Flutter foundation chal rahi hai",
+  "databaseReady": "Local database tayyar hai"
+}

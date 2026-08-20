@@ -1,0 +1,44 @@
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+*.iml
+.cocoindex_code/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+key.properties
+*.pem
+*.key
+
+# Flutter / Dart
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/build/
+mobile/coverage/
+mobile/android/.gradle/
+mobile/android/local.properties
+
+# Laravel / PHP
+api/.env
+api/vendor/
+api/node_modules/
+api/database/*.sqlite
+api/public/build/
+api/storage/*.key
+api/storage/framework/cache/data/*
+api/storage/framework/sessions/*
+api/storage/framework/views/*
+api/storage/logs/*
+
+# Test and tool output
+coverage/
+*.log

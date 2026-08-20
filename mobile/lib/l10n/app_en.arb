@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "appName": "Tailor Management",
+  "welcome": "Welcome",
+  "language": "Language",
+  "english": "English",
+  "urdu": "Urdu",
+  "romanUrdu": "Roman Urdu",
+  "foundationReady": "Flutter foundation is running",
+  "databaseReady": "Local database initialized"
+}

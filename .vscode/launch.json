@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Tailor Mobile (development)",
+      "request": "launch",
+      "type": "dart",
+      "program": "mobile/lib/main.dart",
+      "cwd": "mobile",
+      "toolArgs": [
+        "--dart-define=APP_ENV=development"
+      ]
+    }
+  ]
+}
