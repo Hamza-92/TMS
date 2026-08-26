@@ -10,7 +10,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Tailor Management';
+  String get appName => 'Tailor Manager';
 
   @override
   String get welcome => 'Welcome';
@@ -32,4 +32,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get databaseReady => 'Local database initialized';
+
+  @override
+  String get introTagline =>
+      'Manage customers, measurements, orders and payments with ease.';
+
+  @override
+  String get tailorIllustrationLabel =>
+      'Tailor working with a tablet beside a dress form';
+
+  @override
+  String get welcomeBack => 'Welcome back';
+
+  @override
+  String get signInSubtitle => 'Continue where you left off';
+
+  @override
+  String get emailAddress => 'Email address';
+
+  @override
+  String get emailHint => 'name@example.com';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get passwordHint => 'Enter your password';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get signIn => 'Sign in';
+
+  @override
+  String get emailRequired => 'Enter your email address';
+
+  @override
+  String get emailInvalid => 'Enter a valid email address';
+
+  @override
+  String get loginIdentifier => 'Email or phone number';
+
+  @override
+  String get loginIdentifierHint => 'Email or phone number';
+
+  @override
+  String get loginIdentifierRequired => 'Enter your email or phone number';
+
+  @override
+  String get loginIdentifierInvalid => 'Enter a valid email or phone number';
+
+  @override
+  String get passwordRequired => 'Enter your password';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get authNotConnected =>
+      'Login will be connected when the authentication API is ready.';
 }

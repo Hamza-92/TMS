@@ -23,4 +23,16 @@ class AppDatabase extends _$AppDatabase {
   Future<void> initialize() async {
     await customSelect('SELECT 1').getSingle();
   }
+
+  Future<String?> readMetadata(String metadataKey) async {
+    final row = await (select(
+      appMetadata,
+    )..where((entry) => entry.key.equals(metadataKey))).getSingleOrNull();
+    return row?.value;
+  }
+
+  Future<void> writeMetadata(String metadataKey, String metadataValue) =>
+      into(appMetadata).insertOnConflictUpdate(
+        AppMetadataCompanion.insert(key: metadataKey, value: metadataValue),
+      );
 }

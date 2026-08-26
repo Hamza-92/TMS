@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tailor_app/app/router.dart';
 import 'package:tailor_app/core/localization/app_locale.dart';
+import 'package:tailor_app/core/theme/app_theme.dart';
 import 'package:tailor_app/l10n/app_localizations.dart';
 
 class TailorApp extends ConsumerWidget {
@@ -13,7 +14,9 @@ class TailorApp extends ConsumerWidget {
     final selectedLocale = ref.watch(localeProvider);
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
+      theme: AppTheme.light,
       locale: selectedLocale.locale,
       supportedLocales: AppLocale.supportedLocales,
       localizationsDelegates: const [

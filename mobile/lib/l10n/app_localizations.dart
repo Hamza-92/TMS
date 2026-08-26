@@ -102,7 +102,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Tailor Management'**
+  /// **'Tailor Manager'**
   String get appName;
 
   /// No description provided for @welcome.
@@ -146,6 +146,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Local database initialized'**
   String get databaseReady;
+
+  /// No description provided for @introTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage customers, measurements, orders and payments with ease.'**
+  String get introTagline;
+
+  /// No description provided for @tailorIllustrationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tailor working with a tablet beside a dress form'**
+  String get tailorIllustrationLabel;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get welcomeBack;
+
+  /// No description provided for @signInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue where you left off'**
+  String get signInSubtitle;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get emailAddress;
+
+  /// No description provided for @emailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'name@example.com'**
+  String get emailHint;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @passwordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get passwordHint;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @signIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signIn;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address'**
+  String get emailRequired;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get emailInvalid;
+
+  /// No description provided for @loginIdentifier.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or phone number'**
+  String get loginIdentifier;
+
+  /// No description provided for @loginIdentifierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or phone number'**
+  String get loginIdentifierHint;
+
+  /// No description provided for @loginIdentifierRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email or phone number'**
+  String get loginIdentifierRequired;
+
+  /// No description provided for @loginIdentifierInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email or phone number'**
+  String get loginIdentifierInvalid;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get passwordRequired;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @authNotConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Login will be connected when the authentication API is ready.'**
+  String get authNotConnected;
 }
 
 class _AppLocalizationsDelegate
