@@ -87,7 +87,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get passwordRequired => 'اپنا پاس ورڈ درج کریں';
 
   @override
-  String get passwordTooShort => 'پاس ورڈ کم از کم 6 حروف کا ہونا چاہیے';
+  String get passwordTooShort => 'پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے';
 
   @override
   String get showPassword => 'پاس ورڈ دکھائیں';
@@ -98,6 +98,166 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get authNotConnected =>
       'لاگ اِن سروس تصدیقی API تیار ہونے پر منسلک کی جائے گی۔';
+
+  @override
+  String get whatsAppPhone => 'واٹس ایپ فون نمبر';
+
+  @override
+  String get phoneHint => '+92 300 1234567';
+
+  @override
+  String get phoneRequired => 'اپنا فون نمبر درج کریں';
+
+  @override
+  String get phoneInvalid => 'ملکی کوڈ کے ساتھ درست فون نمبر درج کریں';
+
+  @override
+  String get createAccount => 'اکاؤنٹ بنائیں';
+
+  @override
+  String get createAccountSubtitle =>
+      'اپنے درزی کے کاروبار کے لیے محفوظ 14 روزہ ڈیمو شروع کریں۔';
+
+  @override
+  String get noAccountYet => 'ٹیلر مینیجر پر نئے ہیں؟';
+
+  @override
+  String get fullName => 'آپ کا نام';
+
+  @override
+  String get fullNameHint => 'عائشہ خان';
+
+  @override
+  String get fullNameRequired => 'اپنا پورا نام درج کریں';
+
+  @override
+  String get businessName => 'کاروبار کا نام';
+
+  @override
+  String get businessNameHint => 'عائشہ ٹیلرز';
+
+  @override
+  String get businessNameRequired => 'کاروبار کا نام درج کریں';
+
+  @override
+  String get passwordRequirements =>
+      'کم از کم 8 حروف، ایک حرف اور ایک عدد استعمال کریں';
+
+  @override
+  String get confirmPassword => 'پاس ورڈ کی تصدیق';
+
+  @override
+  String get confirmPasswordHint => 'پاس ورڈ دوبارہ درج کریں';
+
+  @override
+  String get passwordsDoNotMatch => 'پاس ورڈ ایک جیسے نہیں ہیں';
+
+  @override
+  String get registrationTermsNotice =>
+      'جاری رکھ کر آپ تصدیق کرتے ہیں کہ یہ واٹس ایپ نمبر آپ کا ہے۔';
+
+  @override
+  String get continueLabel => 'جاری رکھیں';
+
+  @override
+  String get alreadyHaveAccount => 'پہلے سے اکاؤنٹ ہے؟ سائن اِن کریں';
+
+  @override
+  String get verifyPhone => 'فون کی تصدیق';
+
+  @override
+  String otpSentTo(String phone) {
+    return '$phone پر بھیجا گیا 6 ہندسوں کا کوڈ درج کریں';
+  }
+
+  @override
+  String get otpSixDigitsRequired => 'مکمل 6 ہندسوں کا کوڈ درج کریں';
+
+  @override
+  String otpExpiresIn(String time) {
+    return 'کوڈ $time میں ختم ہوگا';
+  }
+
+  @override
+  String get otpExpired => 'یہ کوڈ ختم ہو چکا ہے';
+
+  @override
+  String get authDevelopmentOtpHint =>
+      'ٹیسٹ ماحول: OTP لاراول کی storage/logs/laravel.log فائل سے دیکھیں۔';
+
+  @override
+  String get verifyAndCreateAccount => 'تصدیق اور اکاؤنٹ بنائیں';
+
+  @override
+  String get verifyCode => 'کوڈ کی تصدیق کریں';
+
+  @override
+  String get resendOtp => 'کوڈ دوبارہ بھیجیں';
+
+  @override
+  String get sendingOtp => 'بھیجا جا رہا ہے...';
+
+  @override
+  String get authOtpResent => 'نیا تصدیقی کوڈ جاری کر دیا گیا ہے۔';
+
+  @override
+  String get resetPassword => 'پاس ورڈ بحال کریں';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'پاس ورڈ تبدیل کرنے سے پہلے ہم آپ کے واٹس ایپ نمبر کی تصدیق کریں گے۔';
+
+  @override
+  String get passwordOtpPrivacyNotice =>
+      'آپ کی رازداری کے لیے جواب یکساں ہوگا، چاہے اکاؤنٹ موجود ہو یا نہ ہو۔';
+
+  @override
+  String get sendVerificationCode => 'تصدیقی کوڈ بھیجیں';
+
+  @override
+  String get chooseNewPassword => 'نیا پاس ورڈ';
+
+  @override
+  String get chooseNewPasswordSubtitle =>
+      'ایک مضبوط پاس ورڈ منتخب کریں جو پہلے استعمال نہ کیا ہو۔';
+
+  @override
+  String get newPassword => 'نیا پاس ورڈ';
+
+  @override
+  String get updatePassword => 'پاس ورڈ تبدیل کریں';
+
+  @override
+  String get passwordChangedSuccess => 'پاس ورڈ تبدیل ہوگیا۔ اب سائن اِن کریں۔';
+
+  @override
+  String get authNetworkError =>
+      'سرور سے رابطہ نہیں ہو سکا۔ انٹرنیٹ چیک کرکے دوبارہ کوشش کریں۔';
+
+  @override
+  String get authTooManyRequests =>
+      'بہت زیادہ کوششیں ہو چکی ہیں۔ انتظار کرکے دوبارہ کوشش کریں۔';
+
+  @override
+  String get authInvalidCredentials => 'فون نمبر یا پاس ورڈ درست نہیں ہے۔';
+
+  @override
+  String get authPhoneRequestFailed =>
+      'تصدیقی کوڈ نہیں بھیجا جا سکا۔ نمبر چیک کریں یا بعد میں کوشش کریں۔';
+
+  @override
+  String get authOtpInvalid =>
+      'تصدیقی کوڈ غلط، ختم شدہ یا پہلے استعمال ہو چکا ہے۔';
+
+  @override
+  String get authPasswordResetFailed =>
+      'پاس ورڈ تبدیل نہیں ہو سکا۔ دوبارہ پاس ورڈ بحالی شروع کریں۔';
+
+  @override
+  String get authUnexpectedError => 'کچھ غلط ہوگیا۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get signOut => 'سائن آؤٹ';
 
   @override
   String get dashboardGoodMorning => 'صبح بخیر';
@@ -270,7 +430,7 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get passwordTooShort =>
-      'Password kam az kam 6 characters ka hona chahiye';
+      'Password kam az kam 8 characters ka hona chahiye';
 
   @override
   String get showPassword => 'Password dikhayein';
@@ -281,6 +441,170 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   @override
   String get authNotConnected =>
       'Authentication API tayyar hone par login connect kiya jayega.';
+
+  @override
+  String get whatsAppPhone => 'WhatsApp phone number';
+
+  @override
+  String get phoneHint => '+92 300 1234567';
+
+  @override
+  String get phoneRequired => 'Apna phone number likhein';
+
+  @override
+  String get phoneInvalid =>
+      'Country code ke saath durust phone number likhein';
+
+  @override
+  String get createAccount => 'Account banayein';
+
+  @override
+  String get createAccountSubtitle =>
+      'Apne tailoring business ke liye mehfooz 14 din ka demo shuru karein.';
+
+  @override
+  String get noAccountYet => 'Tailor Manager par naye hain?';
+
+  @override
+  String get fullName => 'Aap ka naam';
+
+  @override
+  String get fullNameHint => 'Ayesha Khan';
+
+  @override
+  String get fullNameRequired => 'Apna poora naam likhein';
+
+  @override
+  String get businessName => 'Business ka naam';
+
+  @override
+  String get businessNameHint => 'Ayesha Tailors';
+
+  @override
+  String get businessNameRequired => 'Business ka naam likhein';
+
+  @override
+  String get passwordRequirements =>
+      'Kam az kam 8 characters, aik letter aur aik number istemal karein';
+
+  @override
+  String get confirmPassword => 'Password confirm karein';
+
+  @override
+  String get confirmPasswordHint => 'Password dobara likhein';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords aik jaise nahin hain';
+
+  @override
+  String get registrationTermsNotice =>
+      'Jaari rakh kar aap tasdeeq karte hain ke yeh WhatsApp number aap ka hai.';
+
+  @override
+  String get continueLabel => 'Jaari rakhein';
+
+  @override
+  String get alreadyHaveAccount => 'Pehle se account hai? Sign in karein';
+
+  @override
+  String get verifyPhone => 'Phone verify karein';
+
+  @override
+  String otpSentTo(String phone) {
+    return '$phone par bheja gaya 6 digit code likhein';
+  }
+
+  @override
+  String get otpSixDigitsRequired => 'Poora 6 digit code likhein';
+
+  @override
+  String otpExpiresIn(String time) {
+    return 'Code $time mein expire hoga';
+  }
+
+  @override
+  String get otpExpired => 'Yeh code expire ho chuka hai';
+
+  @override
+  String get authDevelopmentOtpHint =>
+      'Test environment: OTP Laravel ki storage/logs/laravel.log file se dekhein.';
+
+  @override
+  String get verifyAndCreateAccount => 'Verify karke account banayein';
+
+  @override
+  String get verifyCode => 'Code verify karein';
+
+  @override
+  String get resendOtp => 'Code dobara bhejein';
+
+  @override
+  String get sendingOtp => 'Bheja ja raha hai...';
+
+  @override
+  String get authOtpResent => 'Naya verification code jaari kar diya gaya hai.';
+
+  @override
+  String get resetPassword => 'Password reset karein';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Password badalne se pehle hum aap ka WhatsApp number verify karein ge.';
+
+  @override
+  String get passwordOtpPrivacyNotice =>
+      'Aap ki privacy ke liye jawab aik jaisa hoga, chahe account mojood ho ya na ho.';
+
+  @override
+  String get sendVerificationCode => 'Verification code bhejein';
+
+  @override
+  String get chooseNewPassword => 'Naya password';
+
+  @override
+  String get chooseNewPasswordSubtitle =>
+      'Aisa mazboot password chunain jo pehle istemal na kiya ho.';
+
+  @override
+  String get newPassword => 'Naya password';
+
+  @override
+  String get updatePassword => 'Password update karein';
+
+  @override
+  String get passwordChangedSuccess =>
+      'Password badal gaya. Ab sign in karein.';
+
+  @override
+  String get authNetworkError =>
+      'Server se rabta nahin ho saka. Internet check karke dobara koshish karein.';
+
+  @override
+  String get authTooManyRequests =>
+      'Bohat zyada koshishain ho chuki hain. Intizar karke dobara try karein.';
+
+  @override
+  String get authInvalidCredentials =>
+      'Phone number ya password durust nahin hai.';
+
+  @override
+  String get authPhoneRequestFailed =>
+      'Verification code nahin bheja ja saka. Number check karein ya baad mein try karein.';
+
+  @override
+  String get authOtpInvalid =>
+      'Verification code ghalat, expire, ya pehle istemal ho chuka hai.';
+
+  @override
+  String get authPasswordResetFailed =>
+      'Password badla nahin ja saka. Password recovery dobara shuru karein.';
+
+  @override
+  String get authUnexpectedError =>
+      'Kuch ghalat ho gaya. Dobara koshish karein.';
+
+  @override
+  String get signOut => 'Sign out';
 
   @override
   String get dashboardGoodMorning => 'Subah bakhair';

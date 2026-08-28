@@ -15,7 +15,7 @@ abstract final class AppColors {
 }
 
 abstract final class AppTheme {
-  static ThemeData get light {
+  static ThemeData light({required String fontFamily}) {
     const scheme = ColorScheme.light(
       primary: AppColors.primary,
       onPrimary: Colors.white,
@@ -31,6 +31,7 @@ abstract final class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: scheme,
+      fontFamily: fontFamily,
       scaffoldBackgroundColor: AppColors.canvas,
       splashFactory: InkSparkle.splashFactory,
       textTheme: const TextTheme(

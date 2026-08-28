@@ -2,8 +2,11 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tailor_app/core/theme/app_theme.dart';
+import 'package:tailor_app/features/auth/application/auth_controller.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -102,38 +105,22 @@ class _DashboardBackground extends StatelessWidget {
           Positioned(
             top: -80,
             left: -105,
-            child: _Glow(
-              color: Color(0xFFE4F9F1),
-              size: 300,
-              opacity: 0.78,
-            ),
+            child: _Glow(color: Color(0xFFE4F9F1), size: 300, opacity: 0.78),
           ),
           Positioned(
             top: 105,
             left: -155,
-            child: _Glow(
-              color: AppColors.lavender,
-              size: 390,
-              opacity: 0.34,
-            ),
+            child: _Glow(color: AppColors.lavender, size: 390, opacity: 0.34),
           ),
           Positioned(
             top: 230,
             right: -185,
-            child: _Glow(
-              color: Color(0xFFFFF3C9),
-              size: 430,
-              opacity: 0.56,
-            ),
+            child: _Glow(color: Color(0xFFFFF3C9), size: 430, opacity: 0.56),
           ),
           Positioned(
             top: 330,
             left: -210,
-            child: _Glow(
-              color: Color(0xFFDDF4FF),
-              size: 510,
-              opacity: 0.72,
-            ),
+            child: _Glow(color: Color(0xFFDDF4FF), size: 510, opacity: 0.72),
           ),
         ],
       ),
@@ -142,11 +129,7 @@ class _DashboardBackground extends StatelessWidget {
 }
 
 class _Glow extends StatelessWidget {
-  const _Glow({
-    required this.color,
-    required this.size,
-    required this.opacity,
-  });
+  const _Glow({required this.color, required this.size, required this.opacity});
 
   final Color color;
   final double size;
@@ -160,38 +143,74 @@ class _Glow extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
-          colors: [color.withValues(alpha: opacity), color.withValues(alpha: 0)],
+          colors: [
+            color.withValues(alpha: opacity),
+            color.withValues(alpha: 0),
+          ],
         ),
       ),
     );
   }
 }
 
-class _DashboardHeader extends StatelessWidget {
+class _DashboardHeader extends ConsumerWidget {
   const _DashboardHeader();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authControllerProvider).valueOrNull;
+    final user = authState is SignedIn ? authState.user : null;
+    final displayName = user?.name ?? context.l10n.dashboardShopName;
+    final initial = displayName.trim().isEmpty
+        ? 'T'
+        : displayName.trim().characters.first.toUpperCase();
+
     return Row(
       children: [
-        Container(
-          width: 46,
-          height: 46,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [AppColors.primaryLight, AppColors.primaryDark],
-            ),
+        PopupMenuButton<String>(
+          tooltip: context.l10n.dashboardProfile,
+          onSelected: (value) async {
+            if (value != 'logout') return;
+            await ref.read(authControllerProvider.notifier).logout();
+            if (context.mounted) context.go('/');
+          },
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: const BorderSide(color: AppColors.border),
           ),
-          child: const Text(
-            'A',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+          itemBuilder: (context) => [
+            PopupMenuItem<String>(
+              value: 'logout',
+              child: Row(
+                children: [
+                  const Icon(Icons.logout_rounded, size: 19),
+                  const SizedBox(width: 10),
+                  Text(context.l10n.signOut),
+                ],
+              ),
+            ),
+          ],
+          child: Container(
+            width: 46,
+            height: 46,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.primaryLight, AppColors.primaryDark],
+              ),
+            ),
+            child: Text(
+              initial,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
@@ -207,7 +226,7 @@ class _DashboardHeader extends StatelessWidget {
               ),
               const SizedBox(height: 1),
               Text(
-                context.l10n.dashboardShopName,
+                displayName,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleLarge
                     ?.copyWith(fontSize: 18),
@@ -812,8 +831,7 @@ class _RoundedDockNotchedShape extends NotchedShape {
       final a = -radius - shoulderInset;
       final b = host.top - guest.center.dy;
       final n2 = math.sqrt(
-        b * b * radius * radius *
-            (a * a + b * b - radius * radius),
+        b * b * radius * radius * (a * a + b * b - radius * radius),
       );
       final denominator = a * a + b * b;
       final p2xA = ((a * radius * radius) - n2) / denominator;

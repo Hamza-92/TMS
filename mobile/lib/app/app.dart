@@ -16,7 +16,7 @@ class TailorApp extends ConsumerWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
-      theme: AppTheme.light,
+      theme: AppTheme.light(fontFamily: selectedLocale.fontFamily),
       locale: selectedLocale.locale,
       supportedLocales: AppLocale.supportedLocales,
       localizationsDelegates: const [

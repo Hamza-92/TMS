@@ -1,10 +1,51 @@
 import 'package:go_router/go_router.dart';
+import 'package:tailor_app/features/auth/data/auth_models.dart';
 import 'package:tailor_app/features/auth/presentation/screens/entry_screen.dart';
+import 'package:tailor_app/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:tailor_app/features/auth/presentation/screens/password_otp_screen.dart';
+import 'package:tailor_app/features/auth/presentation/screens/registration_otp_screen.dart';
+import 'package:tailor_app/features/auth/presentation/screens/registration_screen.dart';
+import 'package:tailor_app/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:tailor_app/features/dashboard/presentation/screens/dashboard_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const EntryScreen()),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegistrationScreen(),
+    ),
+    GoRoute(
+      path: '/register/otp',
+      builder: (context, state) {
+        final draft = state.extra;
+        return draft is RegistrationDraft
+            ? RegistrationOtpScreen(draft: draft)
+            : const RegistrationScreen();
+      },
+    ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+    GoRoute(
+      path: '/forgot-password/otp',
+      builder: (context, state) {
+        final draft = state.extra;
+        return draft is PasswordOtpDraft
+            ? PasswordOtpScreen(draft: draft)
+            : const ForgotPasswordScreen();
+      },
+    ),
+    GoRoute(
+      path: '/forgot-password/reset',
+      builder: (context, state) {
+        final draft = state.extra;
+        return draft is PasswordResetDraft
+            ? ResetPasswordScreen(draft: draft)
+            : const ForgotPasswordScreen();
+      },
+    ),
     GoRoute(
       path: '/dashboard',
       builder: (context, state) => const DashboardScreen(),

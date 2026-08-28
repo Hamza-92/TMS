@@ -8,7 +8,11 @@ import 'package:go_router/go_router.dart';
 import 'package:tailor_app/core/localization/app_locale.dart';
 import 'package:tailor_app/core/storage/secure_storage_service.dart';
 import 'package:tailor_app/core/theme/app_theme.dart';
+import 'package:tailor_app/features/auth/application/auth_controller.dart';
+import 'package:tailor_app/features/auth/domain/phone_number.dart';
+import 'package:tailor_app/features/auth/presentation/widgets/auth_widgets.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
+import 'package:tailor_app/shared/widgets/pastel_page_background.dart';
 
 class EntryScreen extends ConsumerStatefulWidget {
   const EntryScreen({super.key});
@@ -29,6 +33,7 @@ class _EntryScreenState extends ConsumerState<EntryScreen> {
   bool _showForm = false;
   bool _obscurePassword = true;
   bool _hasSubmitted = false;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -71,22 +76,31 @@ class _EntryScreenState extends ConsumerState<EntryScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     FocusScope.of(context).unfocus();
     _hasSubmitted = true;
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.authNotConnected),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-      );
+    setState(() => _loading = true);
+
+    try {
+      await ref
+          .read(authControllerProvider.notifier)
+          .login(
+            phoneE164: PhoneNumber.normalize(_emailController.text)!,
+            password: _passwordController.text,
+          );
+      if (mounted) context.go('/dashboard');
+    } catch (error) {
+      if (mounted) {
+        showAuthSnackBar(
+          context,
+          localizedAuthError(context, error, AuthErrorScope.login),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   Future<void> _selectLocale(AppLocale locale) async {
@@ -195,11 +209,16 @@ class _EntryScreenState extends ConsumerState<EntryScreen> {
                                               _passwordController,
                                           passwordFocus: _passwordFocus,
                                           obscurePassword: _obscurePassword,
+                                          loading: _loading,
                                           onTogglePassword: () => setState(
                                             () => _obscurePassword =
                                                 !_obscurePassword,
                                           ),
                                           onSubmit: _submit,
+                                          onForgotPassword: () =>
+                                              context.push('/forgot-password'),
+                                          onCreateAccount: () =>
+                                              context.push('/register'),
                                         )
                                       : const SizedBox(
                                           key: ValueKey('login-placeholder'),
@@ -271,6 +290,7 @@ class _LanguageButton extends StatelessWidget {
                     _localeNativeLabel(locale),
                     textAlign: TextAlign.start,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontFamily: locale.fontFamily,
                       color: locale == selectedLocale
                           ? AppColors.primaryDark
                           : AppColors.ink,
@@ -315,60 +335,7 @@ class _EntryBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        const DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFAFFFD), AppColors.canvas, Color(0xFFFFFCF4)],
-              stops: [0, 0.56, 1],
-            ),
-          ),
-        ),
-        const Positioned(
-          top: -90,
-          right: -80,
-          child: _PastelGlow(size: 250, color: AppColors.lavender),
-        ),
-        const Positioned(
-          bottom: 120,
-          left: -100,
-          child: _PastelGlow(size: 240, color: AppColors.mint),
-        ),
-        const Positioned(
-          bottom: -110,
-          right: -80,
-          child: _PastelGlow(size: 260, color: AppColors.blush),
-        ),
-        child,
-      ],
-    );
-  }
-}
-
-class _PastelGlow extends StatelessWidget {
-  const _PastelGlow({required this.size, required this.color});
-
-  final double size;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [color.withValues(alpha: 0.72), color.withValues(alpha: 0)],
-          ),
-        ),
-      ),
-    );
+    return PastelPageBackground(child: child);
   }
 }
 
@@ -495,8 +462,11 @@ class _LoginCard extends StatelessWidget {
     required this.passwordController,
     required this.passwordFocus,
     required this.obscurePassword,
+    required this.loading,
     required this.onTogglePassword,
     required this.onSubmit,
+    required this.onForgotPassword,
+    required this.onCreateAccount,
   });
 
   final GlobalKey<FormState> formKey;
@@ -504,8 +474,11 @@ class _LoginCard extends StatelessWidget {
   final TextEditingController passwordController;
   final FocusNode passwordFocus;
   final bool obscurePassword;
+  final bool loading;
   final VoidCallback onTogglePassword;
   final VoidCallback onSubmit;
+  final VoidCallback onForgotPassword;
+  final VoidCallback onCreateAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -529,26 +502,23 @@ class _LoginCard extends StatelessWidget {
             TextFormField(
               key: const ValueKey('login-identifier-field'),
               controller: emailController,
-              keyboardType: TextInputType.emailAddress,
+              keyboardType: TextInputType.phone,
               textInputAction: TextInputAction.next,
+              textDirection: TextDirection.ltr,
               autocorrect: false,
-              autofillHints: const [
-                AutofillHints.username,
-                AutofillHints.email,
-                AutofillHints.telephoneNumber,
-              ],
+              autofillHints: const [AutofillHints.telephoneNumber],
               decoration: InputDecoration(
-                labelText: l10n.loginIdentifier,
-                hintText: l10n.loginIdentifierHint,
+                labelText: l10n.whatsAppPhone,
+                hintText: l10n.phoneHint,
                 prefixIcon: const _FieldIcon(
                   assetName: 'assets/icons/profile.svg',
                 ),
               ),
               validator: (value) {
                 final identifier = value?.trim() ?? '';
-                if (identifier.isEmpty) return l10n.loginIdentifierRequired;
-                if (!_isValidLoginIdentifier(identifier)) {
-                  return l10n.loginIdentifierInvalid;
+                if (identifier.isEmpty) return l10n.phoneRequired;
+                if (PhoneNumber.normalize(identifier) == null) {
+                  return l10n.phoneInvalid;
                 }
                 return null;
               },
@@ -584,7 +554,7 @@ class _LoginCard extends StatelessWidget {
               ),
               validator: (value) {
                 if (value?.isEmpty ?? true) return l10n.passwordRequired;
-                if (value!.length < 6) return l10n.passwordTooShort;
+                if (value!.length < 8) return l10n.passwordTooShort;
                 return null;
               },
               onFieldSubmitted: (_) => onSubmit(),
@@ -592,16 +562,7 @@ class _LoginCard extends StatelessWidget {
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.authNotConnected),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                },
+                onPressed: loading ? null : onForgotPassword,
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(
@@ -623,7 +584,28 @@ class _LoginCard extends StatelessWidget {
             _GradientButton(
               key: const ValueKey('sign-in-button'),
               label: l10n.signIn,
-              onPressed: onSubmit,
+              loading: loading,
+              onPressed: loading ? null : onSubmit,
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(
+                  l10n.noAccountYet,
+                  style: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w400),
+                ),
+                TextButton(
+                  key: const ValueKey('create-account-button'),
+                  onPressed: loading ? null : onCreateAccount,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                  ),
+                  child: Text(l10n.createAccount),
+                ),
+              ],
             ),
           ],
         ),
@@ -632,22 +614,17 @@ class _LoginCard extends StatelessWidget {
   }
 }
 
-bool _isValidLoginIdentifier(String value) {
-  final isEmail = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
-  final normalizedPhone = value.replaceAll(RegExp(r'[\s()\-]'), '');
-  final isPhone = RegExp(r'^\+?\d{7,15}$').hasMatch(normalizedPhone);
-  return isEmail || isPhone;
-}
-
 class _GradientButton extends StatelessWidget {
   const _GradientButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.loading = false,
   });
 
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -670,16 +647,24 @@ class _GradientButton extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: onPressed,
+            onTap: loading ? null : onPressed,
             borderRadius: BorderRadius.circular(16),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 13),
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: Colors.white, fontSize: 14),
-              ),
+              child: loading
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.labelLarge
+                          ?.copyWith(color: Colors.white, fontSize: 14),
+                    ),
             ),
           ),
         ),

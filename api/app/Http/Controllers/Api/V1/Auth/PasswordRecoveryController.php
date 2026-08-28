@@ -45,6 +45,7 @@ class PasswordRecoveryController extends Controller
             'data' => [
                 'otp_challenge_id' => $challengeId,
                 'expires_at' => $expiresAt->toIso8601String(),
+                'resend_after_seconds' => (int) config('authentication.otp.resend_cooldown_seconds'),
             ],
         ], 202);
     }

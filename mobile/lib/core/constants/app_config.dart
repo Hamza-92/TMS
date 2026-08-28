@@ -6,7 +6,10 @@ abstract final class AppConfig {
     defaultValue: 'development',
   );
 
-  static const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
+  static const apiBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:8000',
+  );
 
   static AppEnvironment get environment => switch (environmentName) {
     'staging' => AppEnvironment.staging,

@@ -252,7 +252,7 @@ abstract class AppLocalizations {
   /// No description provided for @passwordTooShort.
   ///
   /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
+  /// **'Password must be at least 8 characters'**
   String get passwordTooShort;
 
   /// No description provided for @showPassword.
@@ -272,6 +272,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login will be connected when the authentication API is ready.'**
   String get authNotConnected;
+
+  /// No description provided for @whatsAppPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp phone number'**
+  String get whatsAppPhone;
+
+  /// No description provided for @phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'+92 300 1234567'**
+  String get phoneHint;
+
+  /// No description provided for @phoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number'**
+  String get phoneRequired;
+
+  /// No description provided for @phoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number with country code'**
+  String get phoneInvalid;
+
+  /// No description provided for @createAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get createAccount;
+
+  /// No description provided for @createAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your secure 14-day demo for your tailoring business.'**
+  String get createAccountSubtitle;
+
+  /// No description provided for @noAccountYet.
+  ///
+  /// In en, this message translates to:
+  /// **'New to Tailor Manager?'**
+  String get noAccountYet;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get fullName;
+
+  /// No description provided for @fullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayesha Khan'**
+  String get fullNameHint;
+
+  /// No description provided for @fullNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your full name'**
+  String get fullNameRequired;
+
+  /// No description provided for @businessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Business name'**
+  String get businessName;
+
+  /// No description provided for @businessNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayesha Tailors'**
+  String get businessNameHint;
+
+  /// No description provided for @businessNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your business name'**
+  String get businessNameRequired;
+
+  /// No description provided for @passwordRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 8 characters with a letter and number'**
+  String get passwordRequirements;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
+  /// No description provided for @confirmPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the password again'**
+  String get confirmPasswordHint;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @registrationTermsNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you confirm that this WhatsApp number belongs to you.'**
+  String get registrationTermsNotice;
+
+  /// No description provided for @continueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLabel;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Sign in'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @verifyPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify phone'**
+  String get verifyPhone;
+
+  /// No description provided for @otpSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code sent to {phone}'**
+  String otpSentTo(String phone);
+
+  /// No description provided for @otpSixDigitsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the complete 6-digit code'**
+  String get otpSixDigitsRequired;
+
+  /// No description provided for @otpExpiresIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Code expires in {time}'**
+  String otpExpiresIn(String time);
+
+  /// No description provided for @otpExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This code has expired'**
+  String get otpExpired;
+
+  /// No description provided for @authDevelopmentOtpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Test environment: read the OTP from Laravel\'s storage/logs/laravel.log file.'**
+  String get authDevelopmentOtpHint;
+
+  /// No description provided for @verifyAndCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify & create account'**
+  String get verifyAndCreateAccount;
+
+  /// No description provided for @verifyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify code'**
+  String get verifyCode;
+
+  /// No description provided for @resendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendOtp;
+
+  /// No description provided for @sendingOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sendingOtp;
+
+  /// No description provided for @authOtpResent.
+  ///
+  /// In en, this message translates to:
+  /// **'A new verification code has been issued.'**
+  String get authOtpResent;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get resetPassword;
+
+  /// No description provided for @resetPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We will verify your WhatsApp number before changing the password.'**
+  String get resetPasswordSubtitle;
+
+  /// No description provided for @passwordOtpPrivacyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'For your privacy, the response is the same whether or not an account exists.'**
+  String get passwordOtpPrivacyNotice;
+
+  /// No description provided for @sendVerificationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send verification code'**
+  String get sendVerificationCode;
+
+  /// No description provided for @chooseNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get chooseNewPassword;
+
+  /// No description provided for @chooseNewPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a strong password you have not used before.'**
+  String get chooseNewPasswordSubtitle;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
+  /// No description provided for @updatePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Update password'**
+  String get updatePassword;
+
+  /// No description provided for @passwordChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. You can now sign in.'**
+  String get passwordChangedSuccess;
+
+  /// No description provided for @authNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot reach the server. Check your connection and try again.'**
+  String get authNetworkError;
+
+  /// No description provided for @authTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait and try again.'**
+  String get authTooManyRequests;
+
+  /// No description provided for @authInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'The phone number or password is incorrect.'**
+  String get authInvalidCredentials;
+
+  /// No description provided for @authPhoneRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not send a verification code. Check the number or try later.'**
+  String get authPhoneRequestFailed;
+
+  /// No description provided for @authOtpInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The verification code is incorrect, expired, or already used.'**
+  String get authOtpInvalid;
+
+  /// No description provided for @authPasswordResetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The password could not be changed. Please restart password recovery.'**
+  String get authPasswordResetFailed;
+
+  /// No description provided for @authUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get authUnexpectedError;
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOut;
 
   /// No description provided for @dashboardGoodMorning.
   ///

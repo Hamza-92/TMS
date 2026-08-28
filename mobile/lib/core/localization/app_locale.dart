@@ -27,6 +27,17 @@ enum AppLocale {
 
   final Locale locale;
 
+  String get apiCode => switch (this) {
+    AppLocale.english => 'en',
+    AppLocale.urdu => 'ur',
+    AppLocale.romanUrdu => 'ur-Latn',
+  };
+
+  String get fontFamily => switch (this) {
+    AppLocale.english || AppLocale.romanUrdu => 'Inter',
+    AppLocale.urdu => 'NotoNaskhArabic',
+  };
+
   static AppLocale? fromStorageValue(String? value) => switch (value) {
     'english' => AppLocale.english,
     'urdu' => AppLocale.urdu,

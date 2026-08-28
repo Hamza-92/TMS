@@ -1,6 +1,6 @@
 import 'package:drift/native.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tailor_app/app/app.dart';
@@ -9,6 +9,7 @@ import 'package:tailor_app/core/database/app_database.dart';
 import 'package:tailor_app/core/database/database_provider.dart';
 import 'package:tailor_app/core/localization/app_locale.dart';
 import 'package:tailor_app/core/storage/secure_storage_service.dart';
+import 'package:tailor_app/features/auth/application/auth_controller.dart';
 
 void main() {
   testWidgets('entry illustration reveals the localized login form', (
@@ -41,6 +42,10 @@ void main() {
     final loginCard = find.byKey(const ValueKey('login-card'));
     expect(loginCard, findsOneWidget);
     expect(
+      Theme.of(tester.element(loginCard)).textTheme.bodyMedium?.fontFamily,
+      'Inter',
+    );
+    expect(
       find.byKey(const ValueKey('login-identifier-field')),
       findsOneWidget,
     );
@@ -49,7 +54,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('sign-in-button')));
     await tester.pump();
-    expect(find.text('Enter your email or phone number'), findsOneWidget);
+    expect(find.text('Enter your phone number'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('language-button')));
     await tester.pumpAndSettle();
@@ -65,11 +70,27 @@ void main() {
       Directionality.of(tester.element(find.text('Roman Urdu'))),
       TextDirection.ltr,
     );
+    expect(
+      tester.widget<Text>(find.text('English')).style?.fontFamily,
+      'Inter',
+    );
+    expect(
+      tester.widget<Text>(find.text('اردو')).style?.fontFamily,
+      'NotoNaskhArabic',
+    );
+    expect(
+      tester.widget<Text>(find.text('Roman Urdu')).style?.fontFamily,
+      'Inter',
+    );
     await tester.tap(find.text('اردو'));
     await tester.pumpAndSettle();
     expect(Directionality.of(tester.element(loginCard)), TextDirection.rtl);
-    expect(find.text('اپنا ای میل یا فون نمبر درج کریں'), findsOneWidget);
-    expect(find.text('Enter your email or phone number'), findsNothing);
+    expect(
+      Theme.of(tester.element(loginCard)).textTheme.bodyMedium?.fontFamily,
+      'NotoNaskhArabic',
+    );
+    expect(find.text('اپنا فون نمبر درج کریں'), findsOneWidget);
+    expect(find.text('Enter your phone number'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('language-button')));
     await tester.pumpAndSettle();
@@ -93,11 +114,15 @@ void main() {
       '03001234567',
     );
     await tester.pump();
-    expect(find.text('اپنا ای میل یا فون نمبر درج کریں'), findsNothing);
+    expect(find.text('اپنا فون نمبر درج کریں'), findsNothing);
 
     await container.read(localeProvider.notifier).select(AppLocale.romanUrdu);
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(Directionality.of(tester.element(loginCard)), TextDirection.ltr);
+    expect(
+      Theme.of(tester.element(loginCard)).textTheme.bodyMedium?.fontFamily,
+      'Inter',
+    );
   });
 
   testWidgets('stored access token bypasses login and opens dashboard', (
@@ -116,6 +141,7 @@ void main() {
         secureStorageProvider.overrideWithValue(
           _FakeSecureStorageService('existing-token'),
         ),
+        authControllerProvider.overrideWith(_SignedInAuthController.new),
       ],
     );
     addTearDown(container.dispose);
@@ -165,6 +191,11 @@ void main() {
     await container.read(localeProvider.notifier).select(AppLocale.romanUrdu);
     expect(await database.readMetadata('app_locale'), 'romanUrdu');
   });
+}
+
+class _SignedInAuthController extends AuthController {
+  @override
+  Future<AuthState> build() async => const SignedIn();
 }
 
 class _FakeSecureStorageService extends SecureStorageService {
