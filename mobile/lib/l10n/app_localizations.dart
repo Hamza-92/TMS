@@ -272,6 +272,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login will be connected when the authentication API is ready.'**
   String get authNotConnected;
+
+  /// No description provided for @dashboardGoodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get dashboardGoodMorning;
+
+  /// No description provided for @dashboardShopName.
+  ///
+  /// In en, this message translates to:
+  /// **'Ali Tailors'**
+  String get dashboardShopName;
+
+  /// No description provided for @dashboardNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get dashboardNotifications;
+
+  /// No description provided for @dashboardTodaysWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s work'**
+  String get dashboardTodaysWork;
+
+  /// No description provided for @dashboardOrdersDueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'7 orders are due today'**
+  String get dashboardOrdersDueToday;
+
+  /// No description provided for @dashboardCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'completed'**
+  String get dashboardCompleted;
+
+  /// No description provided for @dashboardViewOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'View orders'**
+  String get dashboardViewOrders;
+
+  /// No description provided for @dashboardQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get dashboardQuickActions;
+
+  /// No description provided for @dashboardAddCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add customer'**
+  String get dashboardAddCustomer;
+
+  /// No description provided for @dashboardNewOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'New order'**
+  String get dashboardNewOrder;
+
+  /// No description provided for @dashboardMeasurements.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurements'**
+  String get dashboardMeasurements;
+
+  /// No description provided for @dashboardRecordPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record payment'**
+  String get dashboardRecordPayment;
+
+  /// No description provided for @dashboardAttentionNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention needed'**
+  String get dashboardAttentionNeeded;
+
+  /// No description provided for @dashboardOverdueOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue orders'**
+  String get dashboardOverdueOrders;
+
+  /// No description provided for @dashboardOverdueOrdersValue.
+  ///
+  /// In en, this message translates to:
+  /// **'3 orders'**
+  String get dashboardOverdueOrdersValue;
+
+  /// No description provided for @dashboardPendingPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending payments'**
+  String get dashboardPendingPayments;
+
+  /// No description provided for @dashboardPendingPaymentsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs 18,500'**
+  String get dashboardPendingPaymentsValue;
+
+  /// No description provided for @dashboardRecentOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent orders'**
+  String get dashboardRecentOrders;
+
+  /// No description provided for @dashboardSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get dashboardSeeAll;
+
+  /// No description provided for @dashboardOrderDetailOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Women\'s suit • Due today'**
+  String get dashboardOrderDetailOne;
+
+  /// No description provided for @dashboardOrderDetailTwo.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridal dress • Due tomorrow'**
+  String get dashboardOrderDetailTwo;
+
+  /// No description provided for @dashboardReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get dashboardReady;
+
+  /// No description provided for @dashboardInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get dashboardInProgress;
+
+  /// No description provided for @dashboardHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get dashboardHome;
+
+  /// No description provided for @dashboardCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get dashboardCalendar;
+
+  /// No description provided for @dashboardCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get dashboardCustomers;
+
+  /// No description provided for @dashboardCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new'**
+  String get dashboardCreate;
+
+  /// No description provided for @dashboardOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders'**
+  String get dashboardOrders;
+
+  /// No description provided for @dashboardProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get dashboardProfile;
 }
 
 class _AppLocalizationsDelegate

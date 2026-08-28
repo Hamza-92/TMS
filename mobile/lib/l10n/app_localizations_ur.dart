@@ -98,6 +98,93 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get authNotConnected =>
       'لاگ اِن سروس تصدیقی API تیار ہونے پر منسلک کی جائے گی۔';
+
+  @override
+  String get dashboardGoodMorning => 'صبح بخیر';
+
+  @override
+  String get dashboardShopName => 'علی ٹیلرز';
+
+  @override
+  String get dashboardNotifications => 'اطلاعات';
+
+  @override
+  String get dashboardTodaysWork => 'آج کا کام';
+
+  @override
+  String get dashboardOrdersDueToday => '7 آرڈرز آج مکمل ہونے ہیں';
+
+  @override
+  String get dashboardCompleted => 'مکمل';
+
+  @override
+  String get dashboardViewOrders => 'آرڈرز دیکھیں';
+
+  @override
+  String get dashboardQuickActions => 'فوری کام';
+
+  @override
+  String get dashboardAddCustomer => 'گاہک شامل کریں';
+
+  @override
+  String get dashboardNewOrder => 'نیا آرڈر';
+
+  @override
+  String get dashboardMeasurements => 'پیمائش';
+
+  @override
+  String get dashboardRecordPayment => 'ادائیگی درج کریں';
+
+  @override
+  String get dashboardAttentionNeeded => 'توجہ درکار';
+
+  @override
+  String get dashboardOverdueOrders => 'تاخیر شدہ آرڈرز';
+
+  @override
+  String get dashboardOverdueOrdersValue => '3 آرڈرز';
+
+  @override
+  String get dashboardPendingPayments => 'بقایا ادائیگیاں';
+
+  @override
+  String get dashboardPendingPaymentsValue => '18,500 روپے';
+
+  @override
+  String get dashboardRecentOrders => 'حالیہ آرڈرز';
+
+  @override
+  String get dashboardSeeAll => 'سب دیکھیں';
+
+  @override
+  String get dashboardOrderDetailOne => 'خواتین کا سوٹ • آج تک';
+
+  @override
+  String get dashboardOrderDetailTwo => 'دلہن کا لباس • کل تک';
+
+  @override
+  String get dashboardReady => 'تیار';
+
+  @override
+  String get dashboardInProgress => 'جاری';
+
+  @override
+  String get dashboardHome => 'ہوم';
+
+  @override
+  String get dashboardCalendar => 'کیلنڈر';
+
+  @override
+  String get dashboardCustomers => 'گاہک';
+
+  @override
+  String get dashboardCreate => 'نیا بنائیں';
+
+  @override
+  String get dashboardOrders => 'آرڈرز';
+
+  @override
+  String get dashboardProfile => 'پروفائل';
 }
 
 /// The translations for Urdu, using the Latin script (`ur_Latn`).
@@ -194,4 +281,91 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   @override
   String get authNotConnected =>
       'Authentication API tayyar hone par login connect kiya jayega.';
+
+  @override
+  String get dashboardGoodMorning => 'Subah bakhair';
+
+  @override
+  String get dashboardShopName => 'Ali Tailors';
+
+  @override
+  String get dashboardNotifications => 'Notifications';
+
+  @override
+  String get dashboardTodaysWork => 'Aaj ka kaam';
+
+  @override
+  String get dashboardOrdersDueToday => '7 orders aaj mukammal hone hain';
+
+  @override
+  String get dashboardCompleted => 'mukammal';
+
+  @override
+  String get dashboardViewOrders => 'Orders dekhein';
+
+  @override
+  String get dashboardQuickActions => 'Fori kaam';
+
+  @override
+  String get dashboardAddCustomer => 'Customer shamil karein';
+
+  @override
+  String get dashboardNewOrder => 'Naya order';
+
+  @override
+  String get dashboardMeasurements => 'Measurements';
+
+  @override
+  String get dashboardRecordPayment => 'Payment likhein';
+
+  @override
+  String get dashboardAttentionNeeded => 'Tawajjoh darkar';
+
+  @override
+  String get dashboardOverdueOrders => 'Late orders';
+
+  @override
+  String get dashboardOverdueOrdersValue => '3 orders';
+
+  @override
+  String get dashboardPendingPayments => 'Baqaya payments';
+
+  @override
+  String get dashboardPendingPaymentsValue => 'Rs 18,500';
+
+  @override
+  String get dashboardRecentOrders => 'Haliya orders';
+
+  @override
+  String get dashboardSeeAll => 'Sab dekhein';
+
+  @override
+  String get dashboardOrderDetailOne => 'Women\'s suit • Aaj tak';
+
+  @override
+  String get dashboardOrderDetailTwo => 'Bridal dress • Kal tak';
+
+  @override
+  String get dashboardReady => 'Tayyar';
+
+  @override
+  String get dashboardInProgress => 'Jaari';
+
+  @override
+  String get dashboardHome => 'Home';
+
+  @override
+  String get dashboardCalendar => 'Calendar';
+
+  @override
+  String get dashboardCustomers => 'Customers';
+
+  @override
+  String get dashboardCreate => 'Naya banayein';
+
+  @override
+  String get dashboardOrders => 'Orders';
+
+  @override
+  String get dashboardProfile => 'Profile';
 }

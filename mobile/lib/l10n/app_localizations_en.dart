@@ -98,4 +98,91 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authNotConnected =>
       'Login will be connected when the authentication API is ready.';
+
+  @override
+  String get dashboardGoodMorning => 'Good morning';
+
+  @override
+  String get dashboardShopName => 'Ali Tailors';
+
+  @override
+  String get dashboardNotifications => 'Notifications';
+
+  @override
+  String get dashboardTodaysWork => 'Today\'s work';
+
+  @override
+  String get dashboardOrdersDueToday => '7 orders are due today';
+
+  @override
+  String get dashboardCompleted => 'completed';
+
+  @override
+  String get dashboardViewOrders => 'View orders';
+
+  @override
+  String get dashboardQuickActions => 'Quick actions';
+
+  @override
+  String get dashboardAddCustomer => 'Add customer';
+
+  @override
+  String get dashboardNewOrder => 'New order';
+
+  @override
+  String get dashboardMeasurements => 'Measurements';
+
+  @override
+  String get dashboardRecordPayment => 'Record payment';
+
+  @override
+  String get dashboardAttentionNeeded => 'Attention needed';
+
+  @override
+  String get dashboardOverdueOrders => 'Overdue orders';
+
+  @override
+  String get dashboardOverdueOrdersValue => '3 orders';
+
+  @override
+  String get dashboardPendingPayments => 'Pending payments';
+
+  @override
+  String get dashboardPendingPaymentsValue => 'Rs 18,500';
+
+  @override
+  String get dashboardRecentOrders => 'Recent orders';
+
+  @override
+  String get dashboardSeeAll => 'See all';
+
+  @override
+  String get dashboardOrderDetailOne => 'Women\'s suit • Due today';
+
+  @override
+  String get dashboardOrderDetailTwo => 'Bridal dress • Due tomorrow';
+
+  @override
+  String get dashboardReady => 'Ready';
+
+  @override
+  String get dashboardInProgress => 'In progress';
+
+  @override
+  String get dashboardHome => 'Home';
+
+  @override
+  String get dashboardCalendar => 'Calendar';
+
+  @override
+  String get dashboardCustomers => 'Customers';
+
+  @override
+  String get dashboardCreate => 'Create new';
+
+  @override
+  String get dashboardOrders => 'Orders';
+
+  @override
+  String get dashboardProfile => 'Profile';
 }

@@ -103,6 +103,9 @@ void main() {
   testWidgets('stored access token bypasses login and opens dashboard', (
     tester,
   ) async {
+    await tester.binding.setSurfaceSize(const Size(360, 640));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
     final database = AppDatabase(NativeDatabase.memory());
     await database.initialize();
     addTearDown(database.close);
@@ -126,6 +129,14 @@ void main() {
 
     expect(find.byKey(const ValueKey('dashboard-root')), findsOneWidget);
     expect(find.byKey(const ValueKey('login-card')), findsNothing);
+    expect(find.text("Today's work"), findsOneWidget);
+    expect(find.text('Quick actions'), findsOneWidget);
+    expect(find.text('Recent orders'), findsOneWidget);
+
+    await container.read(localeProvider.notifier).select(AppLocale.urdu);
+    await tester.pump();
+    expect(find.text('آج کا کام'), findsOneWidget);
+    expect(find.text('فوری کام'), findsOneWidget);
   });
 
   test('Drift database initializes with its foundation table', () async {

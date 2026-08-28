@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 abstract final class AppColors {
   static const ink = Color(0xFF20202A);
   static const mutedInk = Color(0xFF767386);
-  static const primary = Color(0xFF6431EC);
+  static const primary = Color(0xFF5F33E1);
   static const primaryDark = Color(0xFF5125D6);
   static const primaryLight = Color(0xFF8B65F6);
   static const canvas = Color(0xFFFCFBFF);
