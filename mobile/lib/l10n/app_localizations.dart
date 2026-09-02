@@ -480,7 +480,7 @@ abstract class AppLocalizations {
   /// No description provided for @authDevelopmentOtpHint.
   ///
   /// In en, this message translates to:
-  /// **'Test environment: read the OTP from Laravel\'s storage/logs/laravel.log file.'**
+  /// **'Test environment: view the code in Superadmin > Test OTPs.'**
   String get authDevelopmentOtpHint;
 
   /// No description provided for @verifyAndCreateAccount.

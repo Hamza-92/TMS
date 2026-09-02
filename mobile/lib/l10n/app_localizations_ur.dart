@@ -215,7 +215,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get authDevelopmentOtpHint =>
-      'ٹیسٹ ماحول: OTP لاراول کی storage/logs/laravel.log فائل سے دیکھیں۔';
+      'ٹیسٹ ماحول: کوڈ سپر ایڈمن کے Test OTPs صفحے پر دیکھیں۔';
 
   @override
   String get verifyAndCreateAccount => 'تصدیق اور اکاؤنٹ بنائیں';
@@ -623,7 +623,7 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get authDevelopmentOtpHint =>
-      'Test environment: OTP Laravel ki storage/logs/laravel.log file se dekhein.';
+      'Test environment: code Superadmin ke Test OTPs page par dekhein.';
 
   @override
   String get verifyAndCreateAccount => 'Verify karke account banayein';

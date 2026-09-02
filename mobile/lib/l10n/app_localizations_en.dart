@@ -216,7 +216,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authDevelopmentOtpHint =>
-      'Test environment: read the OTP from Laravel\'s storage/logs/laravel.log file.';
+      'Test environment: view the code in Superadmin > Test OTPs.';
 
   @override
   String get verifyAndCreateAccount => 'Verify & create account';
