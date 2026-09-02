@@ -153,6 +153,36 @@ abstract class AppLocalizations {
   /// **'Manage customers, measurements, orders and payments with ease.'**
   String get introTagline;
 
+  /// No description provided for @welcomeToTailorManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Tailor Manager'**
+  String get welcomeToTailorManager;
+
+  /// No description provided for @whatsYourPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your phone number?'**
+  String get whatsYourPhoneNumber;
+
+  /// No description provided for @phoneLoginHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the WhatsApp number linked to your account.'**
+  String get phoneLoginHelp;
+
+  /// No description provided for @enterPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get enterPasswordTitle;
+
+  /// No description provided for @signingInAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in as {phone}'**
+  String signingInAs(String phone);
+
   /// No description provided for @tailorIllustrationLabel.
   ///
   /// In en, this message translates to:
@@ -294,7 +324,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid phone number with country code'**
+  /// **'Enter a valid number, for example +92 300 1234567'**
   String get phoneInvalid;
 
   /// No description provided for @createAccount.
@@ -354,8 +384,14 @@ abstract class AppLocalizations {
   /// No description provided for @passwordRequirements.
   ///
   /// In en, this message translates to:
-  /// **'Use at least 8 characters with a letter and number'**
+  /// **'Use 8+ characters with at least one letter and one number'**
   String get passwordRequirements;
+
+  /// No description provided for @passwordLetterAndNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Include at least one letter and one number'**
+  String get passwordLetterAndNumberRequired;
 
   /// No description provided for @confirmPassword.
   ///
@@ -368,6 +404,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter the password again'**
   String get confirmPasswordHint;
+
+  /// No description provided for @confirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your new password'**
+  String get confirmPasswordRequired;
 
   /// No description provided for @passwordsDoNotMatch.
   ///
@@ -420,7 +462,7 @@ abstract class AppLocalizations {
   /// No description provided for @otpExpired.
   ///
   /// In en, this message translates to:
-  /// **'This code has expired'**
+  /// **'Code expired. Request a new one.'**
   String get otpExpired;
 
   /// No description provided for @authDevelopmentOtpHint.
@@ -447,6 +489,12 @@ abstract class AppLocalizations {
   /// **'Resend code'**
   String get resendOtp;
 
+  /// No description provided for @resendOtpIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendOtpIn(int seconds);
+
   /// No description provided for @sendingOtp.
   ///
   /// In en, this message translates to:
@@ -456,7 +504,7 @@ abstract class AppLocalizations {
   /// No description provided for @authOtpResent.
   ///
   /// In en, this message translates to:
-  /// **'A new verification code has been issued.'**
+  /// **'A new code was sent.'**
   String get authOtpResent;
 
   /// No description provided for @resetPassword.
@@ -468,13 +516,13 @@ abstract class AppLocalizations {
   /// No description provided for @resetPasswordSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'We will verify your WhatsApp number before changing the password.'**
+  /// **'Verify your WhatsApp number'**
   String get resetPasswordSubtitle;
 
   /// No description provided for @passwordOtpPrivacyNotice.
   ///
   /// In en, this message translates to:
-  /// **'For your privacy, the response is the same whether or not an account exists.'**
+  /// **'If an account exists, we\'ll send a verification code.'**
   String get passwordOtpPrivacyNotice;
 
   /// No description provided for @sendVerificationCode.
@@ -522,7 +570,7 @@ abstract class AppLocalizations {
   /// No description provided for @authTooManyRequests.
   ///
   /// In en, this message translates to:
-  /// **'Too many attempts. Please wait and try again.'**
+  /// **'Too many attempts. Wait a moment and try again.'**
   String get authTooManyRequests;
 
   /// No description provided for @authInvalidCredentials.
@@ -540,7 +588,7 @@ abstract class AppLocalizations {
   /// No description provided for @authOtpInvalid.
   ///
   /// In en, this message translates to:
-  /// **'The verification code is incorrect, expired, or already used.'**
+  /// **'That code is incorrect or expired. Request a new code.'**
   String get authOtpInvalid;
 
   /// No description provided for @authPasswordResetFailed.

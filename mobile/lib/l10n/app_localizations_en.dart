@@ -38,6 +38,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Manage customers, measurements, orders and payments with ease.';
 
   @override
+  String get welcomeToTailorManager => 'Welcome to Tailor Manager';
+
+  @override
+  String get whatsYourPhoneNumber => 'What\'s your phone number?';
+
+  @override
+  String get phoneLoginHelp =>
+      'Use the WhatsApp number linked to your account.';
+
+  @override
+  String get enterPasswordTitle => 'Enter your password';
+
+  @override
+  String signingInAs(String phone) {
+    return 'Signing in as $phone';
+  }
+
+  @override
   String get tailorIllustrationLabel =>
       'Tailor working with a tablet beside a dress form';
 
@@ -109,7 +127,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneRequired => 'Enter your phone number';
 
   @override
-  String get phoneInvalid => 'Enter a valid phone number with country code';
+  String get phoneInvalid =>
+      'Enter a valid number, for example +92 300 1234567';
 
   @override
   String get createAccount => 'Create account';
@@ -141,13 +160,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordRequirements =>
-      'Use at least 8 characters with a letter and number';
+      'Use 8+ characters with at least one letter and one number';
+
+  @override
+  String get passwordLetterAndNumberRequired =>
+      'Include at least one letter and one number';
 
   @override
   String get confirmPassword => 'Confirm password';
 
   @override
   String get confirmPasswordHint => 'Enter the password again';
+
+  @override
+  String get confirmPasswordRequired => 'Confirm your new password';
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
@@ -179,7 +205,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get otpExpired => 'This code has expired';
+  String get otpExpired => 'Code expired. Request a new one.';
 
   @override
   String get authDevelopmentOtpHint =>
@@ -195,21 +221,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resendOtp => 'Resend code';
 
   @override
+  String resendOtpIn(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
   String get sendingOtp => 'Sending...';
 
   @override
-  String get authOtpResent => 'A new verification code has been issued.';
+  String get authOtpResent => 'A new code was sent.';
 
   @override
   String get resetPassword => 'Reset password';
 
   @override
-  String get resetPasswordSubtitle =>
-      'We will verify your WhatsApp number before changing the password.';
+  String get resetPasswordSubtitle => 'Verify your WhatsApp number';
 
   @override
   String get passwordOtpPrivacyNotice =>
-      'For your privacy, the response is the same whether or not an account exists.';
+      'If an account exists, we\'ll send a verification code.';
 
   @override
   String get sendVerificationCode => 'Send verification code';
@@ -236,7 +266,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authTooManyRequests =>
-      'Too many attempts. Please wait and try again.';
+      'Too many attempts. Wait a moment and try again.';
 
   @override
   String get authInvalidCredentials =>
@@ -248,7 +278,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authOtpInvalid =>
-      'The verification code is incorrect, expired, or already used.';
+      'That code is incorrect or expired. Request a new code.';
 
   @override
   String get authPasswordResetFailed =>

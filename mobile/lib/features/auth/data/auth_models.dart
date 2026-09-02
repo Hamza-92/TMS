@@ -38,6 +38,12 @@ class AuthResult {
   final AuthTokens tokens;
 }
 
+class LoginDraft {
+  const LoginDraft({required this.phoneE164});
+
+  final String phoneE164;
+}
+
 class OtpChallengeResult {
   const OtpChallengeResult({
     required this.challengeId,

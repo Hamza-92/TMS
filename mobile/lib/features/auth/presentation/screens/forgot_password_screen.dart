@@ -4,11 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:tailor_app/features/auth/data/auth_models.dart';
 import 'package:tailor_app/features/auth/data/auth_repository.dart';
 import 'package:tailor_app/features/auth/domain/phone_number.dart';
+import 'package:tailor_app/features/auth/presentation/widgets/auth_flow_widgets.dart';
 import 'package:tailor_app/features/auth/presentation/widgets/auth_widgets.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
-  const ForgotPasswordScreen({super.key});
+  const ForgotPasswordScreen({super.key, this.initialPhone});
+
+  final String? initialPhone;
 
   @override
   ConsumerState<ForgotPasswordScreen> createState() =>
@@ -17,8 +20,17 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
+  late final TextEditingController _phoneController;
   bool _loading = false;
+  String? _submissionError;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialPhone = widget.initialPhone ?? '';
+    _phoneController = TextEditingController(text: initialPhone)
+      ..selection = TextSelection.collapsed(offset: initialPhone.length);
+  }
 
   @override
   void dispose() {
@@ -29,7 +41,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Future<void> _continue() async {
     FocusScope.of(context).unfocus();
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _submissionError = null;
+    });
 
     try {
       final phone = PhoneNumber.normalize(_phoneController.text)!;
@@ -49,10 +64,13 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       );
     } catch (error) {
       if (mounted) {
-        showAuthSnackBar(
-          context,
-          localizedAuthError(context, error, AuthErrorScope.phone),
-        );
+        setState(() {
+          _submissionError = localizedAuthError(
+            context,
+            error,
+            AuthErrorScope.phone,
+          );
+        });
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -63,7 +81,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return AuthPageScaffold(
+    return AuthFlowScaffold(
       title: l10n.resetPassword,
       subtitle: l10n.resetPasswordSubtitle,
       iconAsset: 'assets/icons/lock.svg',
@@ -81,24 +99,38 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               textInputAction: TextInputAction.done,
               textDirection: TextDirection.ltr,
               autofillHints: const [AutofillHints.telephoneNumber],
-              decoration: InputDecoration(
+              decoration: authFieldDecoration(
                 labelText: l10n.whatsAppPhone,
                 hintText: l10n.phoneHint,
-                prefixIcon: const AuthFieldIcon('assets/icons/profile.svg'),
+                prefixIcon: const AuthFieldLeadingIcon(
+                  assetName: 'assets/icons/profile.svg',
+                ),
               ),
-              validator: (value) => PhoneNumber.normalize(value ?? '') == null
-                  ? l10n.phoneInvalid
-                  : null,
+              validator: (value) {
+                if (value?.trim().isEmpty ?? true) return l10n.phoneRequired;
+                return PhoneNumber.normalize(value!) == null
+                    ? l10n.phoneInvalid
+                    : null;
+              },
+              onChanged: (_) {
+                if (_submissionError != null) {
+                  setState(() => _submissionError = null);
+                }
+              },
               onFieldSubmitted: (_) => _continue(),
             ),
             const SizedBox(height: 12),
-            Text(
+            AuthSupportingText(
               l10n.passwordOtpPrivacyNotice,
-              style: Theme.of(context).textTheme.bodyMedium
-                  ?.copyWith(fontSize: 11.5, fontWeight: FontWeight.w400),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
-            AuthPrimaryButton(
+            if (_submissionError != null) ...[
+              const SizedBox(height: 16),
+              AuthInlineError(_submissionError!),
+              const SizedBox(height: 16),
+            ] else
+              const SizedBox(height: 24),
+            AuthPrimaryActionButton(
               key: const ValueKey('forgot-continue-button'),
               label: l10n.sendVerificationCode,
               loading: _loading,

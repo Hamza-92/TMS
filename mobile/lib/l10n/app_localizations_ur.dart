@@ -38,6 +38,24 @@ class AppLocalizationsUr extends AppLocalizations {
       'اپنے گاہک، پیمائشیں، آرڈرز اور ادائیگیاں آسانی سے سنبھالیں۔';
 
   @override
+  String get welcomeToTailorManager => 'ٹیلر مینیجر میں خوش آمدید';
+
+  @override
+  String get whatsYourPhoneNumber => 'آپ کا فون نمبر کیا ہے؟';
+
+  @override
+  String get phoneLoginHelp =>
+      'اپنے اکاؤنٹ سے منسلک واٹس ایپ نمبر استعمال کریں۔';
+
+  @override
+  String get enterPasswordTitle => 'اپنا پاس ورڈ درج کریں';
+
+  @override
+  String signingInAs(String phone) {
+    return '$phone سے سائن اِن کر رہے ہیں';
+  }
+
+  @override
   String get tailorIllustrationLabel =>
       'لباس کے سانچے کے پاس ٹیبلٹ استعمال کرتا ہوا درزی';
 
@@ -109,7 +127,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get phoneRequired => 'اپنا فون نمبر درج کریں';
 
   @override
-  String get phoneInvalid => 'ملکی کوڈ کے ساتھ درست فون نمبر درج کریں';
+  String get phoneInvalid => 'درست نمبر درج کریں، مثلاً +92 300 1234567';
 
   @override
   String get createAccount => 'اکاؤنٹ بنائیں';
@@ -141,13 +159,20 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get passwordRequirements =>
-      'کم از کم 8 حروف، ایک حرف اور ایک عدد استعمال کریں';
+      'کم از کم 8 حروف میں ایک حرف اور ایک عدد شامل کریں';
+
+  @override
+  String get passwordLetterAndNumberRequired =>
+      'کم از کم ایک حرف اور ایک عدد شامل کریں';
 
   @override
   String get confirmPassword => 'پاس ورڈ کی تصدیق';
 
   @override
   String get confirmPasswordHint => 'پاس ورڈ دوبارہ درج کریں';
+
+  @override
+  String get confirmPasswordRequired => 'نیا پاس ورڈ دوبارہ درج کریں';
 
   @override
   String get passwordsDoNotMatch => 'پاس ورڈ ایک جیسے نہیں ہیں';
@@ -179,7 +204,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get otpExpired => 'یہ کوڈ ختم ہو چکا ہے';
+  String get otpExpired => 'کوڈ ختم ہو گیا۔ نیا کوڈ منگوائیں۔';
 
   @override
   String get authDevelopmentOtpHint =>
@@ -195,21 +220,25 @@ class AppLocalizationsUr extends AppLocalizations {
   String get resendOtp => 'کوڈ دوبارہ بھیجیں';
 
   @override
+  String resendOtpIn(int seconds) {
+    return 'کوڈ $seconds سیکنڈ بعد دوبارہ بھیجیں';
+  }
+
+  @override
   String get sendingOtp => 'بھیجا جا رہا ہے...';
 
   @override
-  String get authOtpResent => 'نیا تصدیقی کوڈ جاری کر دیا گیا ہے۔';
+  String get authOtpResent => 'نیا کوڈ بھیج دیا گیا ہے۔';
 
   @override
   String get resetPassword => 'پاس ورڈ بحال کریں';
 
   @override
-  String get resetPasswordSubtitle =>
-      'پاس ورڈ تبدیل کرنے سے پہلے ہم آپ کے واٹس ایپ نمبر کی تصدیق کریں گے۔';
+  String get resetPasswordSubtitle => 'اپنے واٹس ایپ نمبر کی تصدیق کریں';
 
   @override
   String get passwordOtpPrivacyNotice =>
-      'آپ کی رازداری کے لیے جواب یکساں ہوگا، چاہے اکاؤنٹ موجود ہو یا نہ ہو۔';
+      'اگر اکاؤنٹ موجود ہوا تو تصدیقی کوڈ بھیج دیا جائے گا۔';
 
   @override
   String get sendVerificationCode => 'تصدیقی کوڈ بھیجیں';
@@ -236,7 +265,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get authTooManyRequests =>
-      'بہت زیادہ کوششیں ہو چکی ہیں۔ انتظار کرکے دوبارہ کوشش کریں۔';
+      'بہت زیادہ کوششیں ہو چکی ہیں۔ کچھ دیر بعد دوبارہ کوشش کریں۔';
 
   @override
   String get authInvalidCredentials => 'فون نمبر یا پاس ورڈ درست نہیں ہے۔';
@@ -246,8 +275,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'تصدیقی کوڈ نہیں بھیجا جا سکا۔ نمبر چیک کریں یا بعد میں کوشش کریں۔';
 
   @override
-  String get authOtpInvalid =>
-      'تصدیقی کوڈ غلط، ختم شدہ یا پہلے استعمال ہو چکا ہے۔';
+  String get authOtpInvalid => 'کوڈ غلط ہے یا ختم ہو گیا۔ نیا کوڈ منگوائیں۔';
 
   @override
   String get authPasswordResetFailed =>
@@ -380,6 +408,24 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
       'Apne customers, measurements, orders aur payments asaani se sambhalein.';
 
   @override
+  String get welcomeToTailorManager => 'Tailor Manager mein khush aamdeed';
+
+  @override
+  String get whatsYourPhoneNumber => 'Aap ka phone number kya hai?';
+
+  @override
+  String get phoneLoginHelp =>
+      'Apne account se linked WhatsApp number istemal karein.';
+
+  @override
+  String get enterPasswordTitle => 'Apna password likhein';
+
+  @override
+  String signingInAs(String phone) {
+    return '$phone se sign in kar rahe hain';
+  }
+
+  @override
   String get tailorIllustrationLabel =>
       'Dress form ke paas tablet istemal karta darzi';
 
@@ -453,7 +499,7 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get phoneInvalid =>
-      'Country code ke saath durust phone number likhein';
+      'Durust number likhein, misal ke taur par +92 300 1234567';
 
   @override
   String get createAccount => 'Account banayein';
@@ -485,13 +531,20 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get passwordRequirements =>
-      'Kam az kam 8 characters, aik letter aur aik number istemal karein';
+      '8 ya zyada characters mein kam az kam aik letter aur aik number rakhein';
+
+  @override
+  String get passwordLetterAndNumberRequired =>
+      'Kam az kam aik letter aur aik number shamil karein';
 
   @override
   String get confirmPassword => 'Password confirm karein';
 
   @override
   String get confirmPasswordHint => 'Password dobara likhein';
+
+  @override
+  String get confirmPasswordRequired => 'Naya password dobara likhein';
 
   @override
   String get passwordsDoNotMatch => 'Passwords aik jaise nahin hain';
@@ -523,7 +576,7 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   }
 
   @override
-  String get otpExpired => 'Yeh code expire ho chuka hai';
+  String get otpExpired => 'Code expire ho gaya. Naya code mangwayein.';
 
   @override
   String get authDevelopmentOtpHint =>
@@ -539,21 +592,25 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   String get resendOtp => 'Code dobara bhejein';
 
   @override
+  String resendOtpIn(int seconds) {
+    return 'Code ${seconds}s baad dobara bhejein';
+  }
+
+  @override
   String get sendingOtp => 'Bheja ja raha hai...';
 
   @override
-  String get authOtpResent => 'Naya verification code jaari kar diya gaya hai.';
+  String get authOtpResent => 'Naya code bhej diya gaya hai.';
 
   @override
   String get resetPassword => 'Password reset karein';
 
   @override
-  String get resetPasswordSubtitle =>
-      'Password badalne se pehle hum aap ka WhatsApp number verify karein ge.';
+  String get resetPasswordSubtitle => 'Apna WhatsApp number verify karein';
 
   @override
   String get passwordOtpPrivacyNotice =>
-      'Aap ki privacy ke liye jawab aik jaisa hoga, chahe account mojood ho ya na ho.';
+      'Agar account mojood hua to verification code bhej diya jayega.';
 
   @override
   String get sendVerificationCode => 'Verification code bhejein';
@@ -581,7 +638,7 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get authTooManyRequests =>
-      'Bohat zyada koshishain ho chuki hain. Intizar karke dobara try karein.';
+      'Bohat zyada koshishain ho chuki hain. Thori dair baad dobara try karein.';
 
   @override
   String get authInvalidCredentials =>
@@ -593,7 +650,7 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get authOtpInvalid =>
-      'Verification code ghalat, expire, ya pehle istemal ho chuka hai.';
+      'Code ghalat ya expire ho gaya hai. Naya code mangwayein.';
 
   @override
   String get authPasswordResetFailed =>

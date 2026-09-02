@@ -34,7 +34,7 @@ enum AppLocale {
   };
 
   String get fontFamily => switch (this) {
-    AppLocale.english || AppLocale.romanUrdu => 'Inter',
+    AppLocale.english || AppLocale.romanUrdu => 'PlusJakartaSans',
     AppLocale.urdu => 'NotoNaskhArabic',
   };
 

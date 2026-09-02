@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tailor_app/core/constants/app_config.dart';
-import 'package:tailor_app/core/theme/app_theme.dart';
 import 'package:tailor_app/features/auth/data/auth_models.dart';
 import 'package:tailor_app/features/auth/data/auth_repository.dart';
+import 'package:tailor_app/features/auth/presentation/widgets/auth_flow_widgets.dart';
 import 'package:tailor_app/features/auth/presentation/widgets/auth_widgets.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
 
@@ -29,6 +28,7 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
   int _resendSecondsRemaining = 0;
   bool _loading = false;
   bool _resending = false;
+  String? _submissionError;
 
   @override
   void initState() {
@@ -70,7 +70,11 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
   Future<void> _verify() async {
     FocusScope.of(context).unfocus();
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _loading = true);
+    if (_secondsRemaining == 0) return;
+    setState(() {
+      _loading = true;
+      _submissionError = null;
+    });
 
     try {
       final resetDraft = await ref
@@ -80,14 +84,17 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
             otp: _otpController.text,
           );
       if (mounted) {
-        await context.push('/forgot-password/reset', extra: resetDraft);
+        context.pushReplacement('/forgot-password/reset', extra: resetDraft);
       }
     } catch (error) {
       if (mounted) {
-        showAuthSnackBar(
-          context,
-          localizedAuthError(context, error, AuthErrorScope.otp),
-        );
+        setState(() {
+          _submissionError = localizedAuthError(
+            context,
+            error,
+            AuthErrorScope.otp,
+          );
+        });
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -95,7 +102,10 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
   }
 
   Future<void> _resend() async {
-    setState(() => _resending = true);
+    setState(() {
+      _resending = true;
+      _submissionError = null;
+    });
     try {
       final challenge = await ref
           .read(authRepositoryProvider)
@@ -109,15 +119,19 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
           resendAt: challenge.resendAt,
         );
         _otpController.clear();
+        _formKey.currentState?.reset();
       });
       _startTimer();
       showAuthSnackBar(context, context.l10n.authOtpResent);
     } catch (error) {
       if (mounted) {
-        showAuthSnackBar(
-          context,
-          localizedAuthError(context, error, AuthErrorScope.phone),
-        );
+        setState(() {
+          _submissionError = localizedAuthError(
+            context,
+            error,
+            AuthErrorScope.phone,
+          );
+        });
       }
     } finally {
       if (mounted) setState(() => _resending = false);
@@ -130,9 +144,9 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
     final minutes = (_secondsRemaining ~/ 60).toString().padLeft(2, '0');
     final seconds = (_secondsRemaining % 60).toString().padLeft(2, '0');
 
-    return AuthPageScaffold(
+    return AuthFlowScaffold(
       title: l10n.verifyPhone,
-      subtitle: l10n.otpSentTo(_draft.phoneE164),
+      subtitle: l10n.otpSentTo(isolateLtrText(_draft.phoneE164)),
       iconAsset: 'assets/icons/message.svg',
       child: Form(
         key: _formKey,
@@ -140,56 +154,52 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextFormField(
+            AuthOtpField(
               key: const ValueKey('password-otp-field'),
               controller: _otpController,
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              textInputAction: TextInputAction.done,
-              textAlign: TextAlign.center,
-              textDirection: TextDirection.ltr,
-              maxLength: 6,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: AppColors.ink,
-                letterSpacing: 12,
-                fontSize: 25,
-              ),
-              decoration: const InputDecoration(
-                counterText: '',
-                hintText: '------',
-                hintStyle: TextStyle(letterSpacing: 12),
-                contentPadding: EdgeInsets.symmetric(vertical: 16),
-              ),
+              onChanged: (_) {
+                if (_submissionError != null) {
+                  setState(() => _submissionError = null);
+                }
+              },
               validator: (value) =>
                   value?.length == 6 ? null : l10n.otpSixDigitsRequired,
-              onFieldSubmitted: (_) => _verify(),
             ),
             const SizedBox(height: 10),
             Text(
               _secondsRemaining > 0
-                  ? l10n.otpExpiresIn('$minutes:$seconds')
+                  ? l10n.otpExpiresIn(isolateLtrText('$minutes:$seconds'))
                   : l10n.otpExpired,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
+            if (_submissionError != null) ...[
+              const SizedBox(height: 12),
+              AuthInlineError(_submissionError!),
+            ],
             if (AppConfig.environment != AppEnvironment.production) ...[
               const SizedBox(height: 14),
               const DevelopmentOtpNotice(),
             ],
             const SizedBox(height: 20),
-            AuthPrimaryButton(
+            AuthPrimaryActionButton(
               key: const ValueKey('password-otp-verify-button'),
               label: l10n.verifyCode,
               loading: _loading,
-              onPressed: _verify,
+              onPressed: _secondsRemaining > 0 ? _verify : null,
             ),
             const SizedBox(height: 10),
             TextButton(
               onPressed: _resendSecondsRemaining > 0 || _resending
                   ? null
                   : _resend,
-              child: Text(_resending ? l10n.sendingOtp : l10n.resendOtp),
+              child: Text(
+                _resending
+                    ? l10n.sendingOtp
+                    : _resendSecondsRemaining > 0
+                    ? l10n.resendOtpIn(_resendSecondsRemaining)
+                    : l10n.resendOtp,
+              ),
             ),
           ],
         ),
