@@ -7,13 +7,17 @@ use App\Enums\OtpPurpose;
 use App\Enums\OtpStatus;
 use App\Models\OtpChallenge;
 use App\Models\User;
+use App\Services\Otp\StagingOtpVault;
 use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class OtpService
 {
-    public function __construct(private readonly OtpDeliveryGateway $deliveryGateway) {}
+    public function __construct(
+        private readonly OtpDeliveryGateway $deliveryGateway,
+        private readonly StagingOtpVault $stagingOtpVault,
+    ) {}
 
     public function issue(
         string $phoneE164,
@@ -128,7 +132,11 @@ class OtpService
             throw ValidationException::withMessages(['otp' => [$result['error']]]);
         }
 
-        return $result['challenge'];
+        /** @var OtpChallenge $challenge */
+        $challenge = $result['challenge'];
+        $this->stagingOtpVault->forget($challenge->id);
+
+        return $challenge;
     }
 
     public function issueActionToken(string $challengeId, OtpPurpose $purpose): string

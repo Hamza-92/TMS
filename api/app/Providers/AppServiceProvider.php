@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
                 throw new LogicException('The configured OTP delivery driver is not installed.');
             }
 
-            return new LogOtpDeliveryGateway;
+            return $this->app->make(LogOtpDeliveryGateway::class);
         });
     }
 
@@ -43,5 +43,8 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('auth-refresh', fn (Request $request): Limit => Limit::perMinute(30)
             ->by($request->ip()));
+
+        RateLimiter::for('admin-login', fn (Request $request): Limit => Limit::perMinute(5)
+            ->by($request->ip().'|'.mb_strtolower((string) $request->input('email'))));
     }
 }

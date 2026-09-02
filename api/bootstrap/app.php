@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Middleware\AuthenticateAccessToken;
+use App\Http\Middleware\EnsureAdminHasRole;
+use App\Http\Middleware\EnsureAdminIsActive;
+use App\Http\Middleware\EnsureStagingToolsAreEnabled;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,7 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'auth.access' => AuthenticateAccessToken::class,
+            'admin.active' => EnsureAdminIsActive::class,
+            'admin.role' => EnsureAdminHasRole::class,
+            'admin.staging-tools' => EnsureStagingToolsAreEnabled::class,
         ]);
+
+        $middleware->redirectGuestsTo(fn (Request $request): string => route('admin.login'));
+        $middleware->redirectUsersTo(fn (Request $request): string => route('admin.dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

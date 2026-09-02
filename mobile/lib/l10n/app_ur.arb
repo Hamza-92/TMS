@@ -66,7 +66,7 @@
   "otpExpiresIn": "کوڈ {time} میں ختم ہوگا",
   "@otpExpiresIn": {"placeholders": {"time": {"type": "String"}}},
   "otpExpired": "کوڈ ختم ہو گیا۔ نیا کوڈ منگوائیں۔",
-  "authDevelopmentOtpHint": "ٹیسٹ ماحول: OTP لاراول کی storage/logs/laravel.log فائل سے دیکھیں۔",
+  "authDevelopmentOtpHint": "ٹیسٹ ماحول: کوڈ سپر ایڈمن کے Test OTPs صفحے پر دیکھیں۔",
   "verifyAndCreateAccount": "تصدیق اور اکاؤنٹ بنائیں",
   "verifyCode": "کوڈ کی تصدیق کریں",
   "resendOtp": "کوڈ دوبارہ بھیجیں",

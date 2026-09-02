@@ -9,14 +9,18 @@ use Illuminate\Support\Facades\Log;
 
 class LogOtpDeliveryGateway implements OtpDeliveryGateway
 {
+    public function __construct(private readonly StagingOtpVault $stagingOtpVault) {}
+
     public function send(OtpChallenge $challenge, string $plainCode): void
     {
-        Log::info('Local authentication OTP', [
+        Log::info('Test authentication OTP', [
             'challenge_id' => $challenge->id,
             'phone_e164' => $challenge->phone_e164,
             'purpose' => $challenge->purpose->value,
             'code' => $plainCode,
         ]);
+
+        $this->stagingOtpVault->store($challenge, $plainCode);
 
         $challenge->messages()->create([
             'provider' => 'log',

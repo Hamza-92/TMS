@@ -66,7 +66,7 @@
   "otpExpiresIn": "Code {time} mein expire hoga",
   "@otpExpiresIn": {"placeholders": {"time": {"type": "String"}}},
   "otpExpired": "Code expire ho gaya. Naya code mangwayein.",
-  "authDevelopmentOtpHint": "Test environment: OTP Laravel ki storage/logs/laravel.log file se dekhein.",
+  "authDevelopmentOtpHint": "Test environment: code Superadmin ke Test OTPs page par dekhein.",
   "verifyAndCreateAccount": "Verify karke account banayein",
   "verifyCode": "Code verify karein",
   "resendOtp": "Code dobara bhejein",

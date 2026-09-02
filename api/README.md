@@ -33,3 +33,7 @@ LAN-device instructions.
 
 The implemented phone authentication endpoints, local OTP testing workflow, and
 Laravel API terminology are documented in `docs/AUTHENTICATION_API.md`.
+
+The internal session-based superadmin portal is available at `/admin/login`.
+Account creation, security behavior, and current portal scope are documented in
+`docs/SUPERADMIN.md`.
