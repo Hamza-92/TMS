@@ -355,6 +355,9 @@ void main() {
 
     expect(find.byKey(const ValueKey('dashboard-root')), findsOneWidget);
     expect(find.byKey(const ValueKey('welcome-root')), findsNothing);
+    expect(find.text('Ayesha Tailors'), findsOneWidget);
+    expect(find.text('Good morning, Ayesha Khan'), findsOneWidget);
+    expect(find.text('Ali Tailors'), findsNothing);
     expect(find.text("Today's work"), findsOneWidget);
     expect(find.text('Quick actions'), findsOneWidget);
     expect(find.text('Recent orders'), findsOneWidget);
@@ -399,7 +402,46 @@ void main() {
 
 class _SignedInAuthController extends AuthController {
   @override
-  Future<AuthState> build() async => const SignedIn();
+  Future<AuthState> build() async => SignedIn(
+    session: AuthSessionSnapshot(
+      user: const AuthUser(
+        id: '01HUSER0000000000000000000',
+        name: 'Ayesha Khan',
+        phoneE164: '+923001234567',
+        preferredLocale: 'en',
+      ),
+      businesses: [
+        AuthBusiness(
+          id: '01HBUSINESS00000000000000',
+          name: 'Ayesha Tailors',
+          role: 'owner',
+          membershipStatus: 'active',
+          businessStatus: 'active',
+          countryCode: 'PK',
+          currencyCode: 'PKR',
+          timezone: 'Asia/Karachi',
+          preferredLocale: 'en',
+          subscription: AuthSubscription(
+            id: '01HSUBSCRIPTION00000000000',
+            planCode: 'demo',
+            source: 'trial',
+            status: 'trialing',
+            startsAt: DateTime.now(),
+            expiresAt: DateTime.now().add(const Duration(days: 14)),
+            offlineGraceUntil: DateTime.now().add(const Duration(days: 17)),
+          ),
+          access: AuthBusinessAccess(
+            state: 'active',
+            canUseApp: true,
+            onlineVerificationRequired: false,
+            validUntil: DateTime.now().add(const Duration(days: 14)),
+          ),
+        ),
+      ],
+      selectedBusinessId: '01HBUSINESS00000000000000',
+      syncedAt: DateTime.now(),
+    ),
+  );
 }
 
 class _FakeSecureStorageService extends SecureStorageService {

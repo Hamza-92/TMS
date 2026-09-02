@@ -302,7 +302,31 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashboardGoodMorning => 'صبح بخیر';
 
   @override
-  String get dashboardShopName => 'علی ٹیلرز';
+  String dashboardGreeting(String name) {
+    return 'صبح بخیر، $name';
+  }
+
+  @override
+  String get accountAccessPaused => 'اکاؤنٹ تک رسائی رکی ہوئی ہے';
+
+  @override
+  String get subscriptionExpiredMessage =>
+      'آپ کا ڈیمو یا سبسکرپشن ختم ہو گیا ہے۔ ادائیگی کے بعد رسائی بحال کروانے کے لیے سپورٹ سے رابطہ کریں۔';
+
+  @override
+  String get businessSuspendedMessage =>
+      'یہ کاروبار معطل ہے۔ رسائی بحال کروانے کے لیے سپورٹ سے رابطہ کریں۔';
+
+  @override
+  String get membershipInactiveMessage =>
+      'اس کاروبار تک آپ کی رسائی فعال نہیں ہے۔ کاروبار کے مالک یا سپورٹ سے رابطہ کریں۔';
+
+  @override
+  String get accountAccessUnavailableMessage =>
+      'یہ کاروبار فی الحال دستیاب نہیں ہے۔ اپنا انٹرنیٹ چیک کریں یا سپورٹ سے رابطہ کریں۔';
+
+  @override
+  String get checkAccessAgain => 'دوبارہ چیک کریں';
 
   @override
   String get dashboardNotifications => 'اطلاعات';
@@ -690,7 +714,31 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   String get dashboardGoodMorning => 'Subah bakhair';
 
   @override
-  String get dashboardShopName => 'Ali Tailors';
+  String dashboardGreeting(String name) {
+    return 'Subah bakhair, $name';
+  }
+
+  @override
+  String get accountAccessPaused => 'Account access ruki hui hai';
+
+  @override
+  String get subscriptionExpiredMessage =>
+      'Aap ka demo ya subscription khatam ho gaya hai. Payment ke baad access bahal karwane ke liye support se rabta karein.';
+
+  @override
+  String get businessSuspendedMessage =>
+      'Yeh business suspended hai. Access bahal karwane ke liye support se rabta karein.';
+
+  @override
+  String get membershipInactiveMessage =>
+      'Is business tak aap ki access active nahin hai. Business owner ya support se rabta karein.';
+
+  @override
+  String get accountAccessUnavailableMessage =>
+      'Yeh business filhal available nahin hai. Internet check karein ya support se rabta karein.';
+
+  @override
+  String get checkAccessAgain => 'Dobara check karein';
 
   @override
   String get dashboardNotifications => 'Notifications';

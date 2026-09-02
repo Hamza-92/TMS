@@ -45,6 +45,13 @@ enum AppLocale {
     _ => null,
   };
 
+  static AppLocale? fromApiCode(String? value) => switch (value) {
+    'en' => AppLocale.english,
+    'ur' => AppLocale.urdu,
+    'ur-Latn' => AppLocale.romanUrdu,
+    _ => null,
+  };
+
   static const supportedLocales = [
     Locale('en'),
     Locale.fromSubtags(

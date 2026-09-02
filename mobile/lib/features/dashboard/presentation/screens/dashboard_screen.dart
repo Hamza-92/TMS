@@ -9,11 +9,53 @@ import 'package:tailor_app/core/theme/app_theme.dart';
 import 'package:tailor_app/features/auth/application/auth_controller.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authControllerProvider);
+    final authState = auth.valueOrNull;
+
+    if (auth.isLoading && authState == null) {
+      return const _DashboardBootstrapLoading();
+    }
+
+    if (authState is SignedOut) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) context.go('/welcome');
+      });
+      return const _DashboardBootstrapLoading();
+    }
+
+    if (authState is SignedIn) {
+      final business = authState.business;
+      if (business != null && !business.canUseAppAt(DateTime.now())) {
+        return _AccountAccessPaused(
+          reason: business.access.reason,
+          loading: auth.isLoading,
+          onRetry: () async {
+            try {
+              await ref.read(authControllerProvider.notifier).refreshSession();
+            } catch (_) {
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text(context.l10n.accountAccessUnavailableMessage),
+                  ),
+                );
+            }
+          },
+          onSignOut: () async {
+            await ref.read(authControllerProvider.notifier).logout();
+            if (context.mounted) context.go('/welcome');
+          },
+        );
+      }
+    }
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark.copyWith(
         statusBarColor: Colors.transparent,
@@ -66,6 +108,164 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DashboardBootstrapLoading extends StatelessWidget {
+  const _DashboardBootstrapLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+      child: const Scaffold(
+        backgroundColor: AppColors.canvas,
+        body: Stack(
+          children: [
+            Positioned.fill(child: _DashboardBackground()),
+            Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 2.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountAccessPaused extends StatelessWidget {
+  const _AccountAccessPaused({
+    required this.reason,
+    required this.loading,
+    required this.onRetry,
+    required this.onSignOut,
+  });
+
+  final String? reason;
+  final bool loading;
+  final Future<void> Function() onRetry;
+  final Future<void> Function() onSignOut;
+
+  @override
+  Widget build(BuildContext context) {
+    final message = switch (reason) {
+      final value? when value.startsWith('membership_') =>
+        context.l10n.membershipInactiveMessage,
+      final value? when value.startsWith('business_') =>
+        context.l10n.businessSuspendedMessage,
+      final value? when value.startsWith('subscription_') =>
+        context.l10n.subscriptionExpiredMessage,
+      _ => context.l10n.accountAccessUnavailableMessage,
+    };
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.canvas,
+        body: Stack(
+          children: [
+            const Positioned.fill(child: _DashboardBackground()),
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(22, 26, 22, 18),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.94),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.white),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x142A2040),
+                            blurRadius: 24,
+                            offset: Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 62,
+                            height: 62,
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                              color: AppColors.lavender,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const _SvgIcon(
+                              assetName: 'assets/icons/lock.svg',
+                              size: 27,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            context.l10n.accountAccessPaused,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(fontSize: 22),
+                          ),
+                          const SizedBox(height: 9),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(height: 1.5),
+                          ),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 52,
+                            child: FilledButton(
+                              onPressed: loading ? null : onRetry,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: loading
+                                  ? const SizedBox.square(
+                                      dimension: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2.2,
+                                      ),
+                                    )
+                                  : Text(context.l10n.checkAccessAgain),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          TextButton(
+                            onPressed: loading ? null : onSignOut,
+                            child: Text(context.l10n.signOut),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -159,11 +359,17 @@ class _DashboardHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider).valueOrNull;
-    final user = authState is SignedIn ? authState.user : null;
-    final displayName = user?.name ?? context.l10n.dashboardShopName;
-    final initial = displayName.trim().isEmpty
+    final signedIn = authState is SignedIn ? authState : null;
+    final user = signedIn?.user;
+    final business = signedIn?.business;
+    final displayName = business?.name ?? user?.name ?? context.l10n.appName;
+    final avatarName = user?.name ?? displayName;
+    final greeting = user?.name.trim().isNotEmpty == true
+        ? context.l10n.dashboardGreeting(user!.name)
+        : context.l10n.dashboardGoodMorning;
+    final initial = avatarName.trim().isEmpty
         ? 'T'
-        : displayName.trim().characters.first.toUpperCase();
+        : avatarName.trim().characters.first.toUpperCase();
 
     return Row(
       children: [
@@ -220,7 +426,7 @@ class _DashboardHeader extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                context.l10n.dashboardGoodMorning,
+                greeting,
                 style: Theme.of(context).textTheme.bodyMedium
                     ?.copyWith(fontSize: 12, fontWeight: FontWeight.w400),
               ),

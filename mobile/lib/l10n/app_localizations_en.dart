@@ -305,7 +305,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardGoodMorning => 'Good morning';
 
   @override
-  String get dashboardShopName => 'Ali Tailors';
+  String dashboardGreeting(String name) {
+    return 'Good morning, $name';
+  }
+
+  @override
+  String get accountAccessPaused => 'Account access paused';
+
+  @override
+  String get subscriptionExpiredMessage =>
+      'Your demo or subscription has expired. Contact support after payment to reactivate access.';
+
+  @override
+  String get businessSuspendedMessage =>
+      'This business is suspended. Contact support to restore access.';
+
+  @override
+  String get membershipInactiveMessage =>
+      'Your access to this business is not active. Contact the business owner or support.';
+
+  @override
+  String get accountAccessUnavailableMessage =>
+      'This business is not available right now. Check your connection or contact support.';
+
+  @override
+  String get checkAccessAgain => 'Check again';
 
   @override
   String get dashboardNotifications => 'Notifications';

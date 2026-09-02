@@ -6,6 +6,7 @@ use App\Contracts\OtpDeliveryGateway;
 use App\Enums\WhatsAppMessageStatus;
 use App\Models\AuthSession;
 use App\Models\OtpChallenge;
+use App\Models\Subscription;
 use App\Models\User;
 use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -60,6 +61,14 @@ class AuthenticationTest extends TestCase
             ->assertJsonPath('data.business.name', 'Ayesha Tailors')
             ->assertJsonPath('data.subscription.plan_code', 'demo')
             ->assertJsonPath('data.subscription.status', 'trialing')
+            ->assertJsonPath('data.businesses.0.name', 'Ayesha Tailors')
+            ->assertJsonPath('data.businesses.0.role', 'owner')
+            ->assertJsonPath('data.businesses.0.membership_status', 'active')
+            ->assertJsonPath('data.businesses.0.business_status', 'active')
+            ->assertJsonPath('data.businesses.0.subscription.plan_code', 'demo')
+            ->assertJsonPath('data.businesses.0.access.state', 'active')
+            ->assertJsonPath('data.businesses.0.access.can_use_app', true)
+            ->assertJsonPath('data.businesses.0.access.online_verification_required', false)
             ->assertJsonStructure(['data' => ['tokens' => ['access_token', 'refresh_token']]]);
 
         $this->assertDatabaseCount('users', 1);
@@ -77,7 +86,33 @@ class AuthenticationTest extends TestCase
         $this->withToken($accessToken)
             ->getJson('/api/v1/auth/me')
             ->assertOk()
-            ->assertJsonPath('data.businesses.0.role', 'owner');
+            ->assertJsonPath('data.user.status', 'active')
+            ->assertJsonPath('data.businesses.0.role', 'owner')
+            ->assertJsonPath('data.businesses.0.subscription.status', 'trialing')
+            ->assertJsonPath('data.businesses.0.access.can_use_app', true)
+            ->assertJsonStructure(['data' => ['synced_at']]);
+
+        $subscription = Subscription::query()->firstOrFail();
+        $subscription->forceFill([
+            'expires_at' => now()->subMinute(),
+            'offline_grace_until' => now()->addDay(),
+        ])->save();
+
+        $this->withToken($accessToken)
+            ->getJson('/api/v1/auth/me')
+            ->assertOk()
+            ->assertJsonPath('data.businesses.0.access.state', 'offline_grace')
+            ->assertJsonPath('data.businesses.0.access.can_use_app', true)
+            ->assertJsonPath('data.businesses.0.access.online_verification_required', true);
+
+        $subscription->forceFill(['offline_grace_until' => now()->subMinute()])->save();
+
+        $this->withToken($accessToken)
+            ->getJson('/api/v1/auth/me')
+            ->assertOk()
+            ->assertJsonPath('data.businesses.0.access.state', 'blocked')
+            ->assertJsonPath('data.businesses.0.access.can_use_app', false)
+            ->assertJsonPath('data.businesses.0.access.reason', 'subscription_expired');
     }
 
     public function test_customer_can_login_refresh_tokens_and_logout(): void

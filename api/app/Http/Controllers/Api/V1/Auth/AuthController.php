@@ -10,8 +10,8 @@ use App\Http\Requests\Api\V1\Auth\RefreshTokenRequest;
 use App\Http\Requests\Api\V1\Auth\RequestRegistrationOtpRequest;
 use App\Http\Resources\Api\V1\BusinessResource;
 use App\Http\Resources\Api\V1\SubscriptionResource;
-use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
+use App\Services\Auth\AuthBootstrapService;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\AuthTokenService;
 use App\Services\Auth\OtpService;
@@ -24,6 +24,7 @@ class AuthController extends Controller
         private readonly OtpService $otpService,
         private readonly AuthenticationService $authenticationService,
         private readonly AuthTokenService $tokenService,
+        private readonly AuthBootstrapService $bootstrapService,
     ) {}
 
     public function requestRegistrationOtp(RequestRegistrationOtpRequest $request): JsonResponse
@@ -65,12 +66,13 @@ class AuthController extends Controller
 
         $result = $this->authenticationService->register($data, $request);
         $result['subscription']->load('plan');
+        $bootstrap = $this->bootstrapService->forUser($result['user'], $request);
 
         return response()->json([
             'success' => true,
             'message' => 'Your account and demo subscription are ready.',
             'data' => [
-                'user' => UserResource::make($result['user'])->resolve($request),
+                ...$bootstrap,
                 'business' => BusinessResource::make($result['business'])->resolve($request),
                 'subscription' => SubscriptionResource::make($result['subscription'])->resolve($request),
                 'tokens' => $result['tokens'],
@@ -81,12 +83,13 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authenticationService->login($request->validated(), $request);
+        $bootstrap = $this->bootstrapService->forUser($result['user'], $request);
 
         return response()->json([
             'success' => true,
             'message' => 'Signed in successfully.',
             'data' => [
-                'user' => UserResource::make($result['user'])->resolve($request),
+                ...$bootstrap,
                 'tokens' => $result['tokens'],
             ],
         ]);

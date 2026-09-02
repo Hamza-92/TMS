@@ -633,11 +633,47 @@ abstract class AppLocalizations {
   /// **'Good morning'**
   String get dashboardGoodMorning;
 
-  /// No description provided for @dashboardShopName.
+  /// No description provided for @dashboardGreeting.
   ///
   /// In en, this message translates to:
-  /// **'Ali Tailors'**
-  String get dashboardShopName;
+  /// **'Good morning, {name}'**
+  String dashboardGreeting(String name);
+
+  /// No description provided for @accountAccessPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Account access paused'**
+  String get accountAccessPaused;
+
+  /// No description provided for @subscriptionExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your demo or subscription has expired. Contact support after payment to reactivate access.'**
+  String get subscriptionExpiredMessage;
+
+  /// No description provided for @businessSuspendedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This business is suspended. Contact support to restore access.'**
+  String get businessSuspendedMessage;
+
+  /// No description provided for @membershipInactiveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your access to this business is not active. Contact the business owner or support.'**
+  String get membershipInactiveMessage;
+
+  /// No description provided for @accountAccessUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This business is not available right now. Check your connection or contact support.'**
+  String get accountAccessUnavailableMessage;
+
+  /// No description provided for @checkAccessAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Check again'**
+  String get checkAccessAgain;
 
   /// No description provided for @dashboardNotifications.
   ///

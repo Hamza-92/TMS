@@ -35,4 +35,8 @@ class AppDatabase extends _$AppDatabase {
       into(appMetadata).insertOnConflictUpdate(
         AppMetadataCompanion.insert(key: metadataKey, value: metadataValue),
       );
+
+  Future<int> deleteMetadata(String metadataKey) => (delete(
+    appMetadata,
+  )..where((entry) => entry.key.equals(metadataKey))).go();
 }

@@ -7,16 +7,19 @@ import 'package:tailor_app/core/network/network_exception.dart';
 import 'package:tailor_app/core/storage/secure_storage_service.dart';
 import 'package:tailor_app/core/utils/uuid_provider.dart';
 import 'package:tailor_app/features/auth/data/auth_models.dart';
+import 'package:tailor_app/features/auth/data/auth_session_store.dart';
 
 class AuthRepository {
   AuthRepository({
     required this.client,
     required this.secureStorage,
+    required this.sessionStore,
     required this.createUuid,
   });
 
   final Dio client;
   final SecureStorageService secureStorage;
+  final AuthSessionStore sessionStore;
   final String Function() createUuid;
 
   Future<String> installationUuid() async {
@@ -79,14 +82,27 @@ class AuthRepository {
     }
   }
 
-  Future<AuthUser> currentUser() async {
+  Future<AuthSessionSnapshot> currentSession() async {
     try {
       final response = await client.get<Map<String, dynamic>>(ApiEndpoints.me);
       final data = response.data!['data'] as Map<String, dynamic>;
-      return AuthUser.fromJson(data['user'] as Map<String, dynamic>);
+      final session = await _parseSession(data);
+      await sessionStore.write(session);
+      return session;
     } on DioException catch (error) {
       throw NetworkException.fromDio(error);
     }
+  }
+
+  Future<AuthSessionSnapshot?> cachedSession() => sessionStore.read();
+
+  Future<AuthSessionSnapshot> selectBusiness(
+    AuthSessionSnapshot session,
+    String businessId,
+  ) async {
+    final selected = session.selectBusiness(businessId);
+    await sessionStore.write(selected);
+    return selected;
   }
 
   Future<OtpChallengeResult> requestPasswordOtp(String phoneE164) async {
@@ -128,6 +144,7 @@ class AuthRepository {
         },
       );
       await secureStorage.deleteAuthTokens();
+      await sessionStore.clear();
     } on DioException catch (error) {
       throw NetworkException.fromDio(error);
     }
@@ -140,6 +157,7 @@ class AuthRepository {
       // Local sign-out must still work when the server is unavailable.
     } finally {
       await secureStorage.deleteAuthTokens();
+      await sessionStore.clear();
     }
   }
 
@@ -172,14 +190,23 @@ class AuthRepository {
 
   Future<AuthResult> _storeAuthResult(Map<String, dynamic> response) async {
     final data = response['data'] as Map<String, dynamic>;
-    final user = AuthUser.fromJson(data['user'] as Map<String, dynamic>);
     final tokens = AuthTokens.fromJson(data['tokens'] as Map<String, dynamic>);
+    final session = await _parseSession(data);
     await secureStorage.writeTokens(
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     );
+    await sessionStore.write(session);
 
-    return AuthResult(user: user, tokens: tokens);
+    return AuthResult(session: session, tokens: tokens);
+  }
+
+  Future<AuthSessionSnapshot> _parseSession(Map<String, dynamic> data) async {
+    final cached = await sessionStore.read();
+    return AuthSessionSnapshot.fromJson(
+      data,
+      preferredBusinessId: cached?.selectedBusinessId,
+    );
   }
 
   Map<String, String> _deviceData() => {
@@ -194,6 +221,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(
     client: ref.watch(apiClientProvider).dio,
     secureStorage: ref.watch(secureStorageProvider),
+    sessionStore: ref.watch(authSessionStoreProvider),
     createUuid: () => uuid.v4(),
   );
 });
