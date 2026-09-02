@@ -5,7 +5,7 @@ import 'package:tailor_app/core/theme/app_theme.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
 import 'package:tailor_app/shared/widgets/pastel_page_background.dart';
 
-enum AuthErrorScope { login, phone, otp, password, general }
+enum AuthErrorScope { login, phone, registration, otp, password, general }
 
 String localizedAuthError(
   BuildContext context,
@@ -16,10 +16,12 @@ String localizedAuthError(
   if (error is! NetworkException) return l10n.authUnexpectedError;
   if (error.statusCode == null) return l10n.authNetworkError;
   if (error.statusCode == 429) return l10n.authTooManyRequests;
+  if (error.statusCode! >= 500) return l10n.authUnexpectedError;
 
   return switch (scope) {
     AuthErrorScope.login => l10n.authInvalidCredentials,
     AuthErrorScope.phone => l10n.authPhoneRequestFailed,
+    AuthErrorScope.registration => l10n.authRegistrationFailed,
     AuthErrorScope.otp => l10n.authOtpInvalid,
     AuthErrorScope.password => l10n.authPasswordResetFailed,
     AuthErrorScope.general => l10n.authUnexpectedError,

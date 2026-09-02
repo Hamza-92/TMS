@@ -149,6 +149,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get fullNameRequired => 'اپنا پورا نام درج کریں';
 
   @override
+  String get fullNameTooShort => 'اپنے نام کے لیے کم از کم 2 حروف درج کریں';
+
+  @override
   String get businessName => 'کاروبار کا نام';
 
   @override
@@ -156,6 +159,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get businessNameRequired => 'کاروبار کا نام درج کریں';
+
+  @override
+  String get businessNameTooShort =>
+      'کاروبار کے نام کے لیے کم از کم 2 حروف درج کریں';
 
   @override
   String get passwordRequirements =>
@@ -273,6 +280,10 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get authPhoneRequestFailed =>
       'تصدیقی کوڈ نہیں بھیجا جا سکا۔ نمبر چیک کریں یا بعد میں کوشش کریں۔';
+
+  @override
+  String get authRegistrationFailed =>
+      'رجسٹریشن شروع نہیں ہو سکی۔ ممکن ہے اس نمبر کا اکاؤنٹ پہلے سے موجود ہو، یا کچھ دیر بعد دوبارہ کوشش کریں۔';
 
   @override
   String get authOtpInvalid => 'کوڈ غلط ہے یا ختم ہو گیا۔ نیا کوڈ منگوائیں۔';
@@ -521,6 +532,10 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   String get fullNameRequired => 'Apna poora naam likhein';
 
   @override
+  String get fullNameTooShort =>
+      'Apne naam ke liye kam az kam 2 characters likhein';
+
+  @override
   String get businessName => 'Business ka naam';
 
   @override
@@ -528,6 +543,10 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get businessNameRequired => 'Business ka naam likhein';
+
+  @override
+  String get businessNameTooShort =>
+      'Business ke naam ke liye kam az kam 2 characters likhein';
 
   @override
   String get passwordRequirements =>
@@ -647,6 +666,10 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   @override
   String get authPhoneRequestFailed =>
       'Verification code nahin bheja ja saka. Number check karein ya baad mein try karein.';
+
+  @override
+  String get authRegistrationFailed =>
+      'Registration shuru nahin ho saki. Is number ka account pehle se ho sakta hai, ya baad mein dobara try karein.';
 
   @override
   String get authOtpInvalid =>

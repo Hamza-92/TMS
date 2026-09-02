@@ -150,6 +150,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fullNameRequired => 'Enter your full name';
 
   @override
+  String get fullNameTooShort => 'Enter at least 2 characters for your name';
+
+  @override
   String get businessName => 'Business name';
 
   @override
@@ -157,6 +160,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get businessNameRequired => 'Enter your business name';
+
+  @override
+  String get businessNameTooShort =>
+      'Enter at least 2 characters for the business name';
 
   @override
   String get passwordRequirements =>
@@ -275,6 +282,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authPhoneRequestFailed =>
       'We could not send a verification code. Check the number or try later.';
+
+  @override
+  String get authRegistrationFailed =>
+      'We could not start registration. This number may already have an account, or you can try again later.';
 
   @override
   String get authOtpInvalid =>

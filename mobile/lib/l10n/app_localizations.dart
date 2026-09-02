@@ -363,6 +363,12 @@ abstract class AppLocalizations {
   /// **'Enter your full name'**
   String get fullNameRequired;
 
+  /// No description provided for @fullNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least 2 characters for your name'**
+  String get fullNameTooShort;
+
   /// No description provided for @businessName.
   ///
   /// In en, this message translates to:
@@ -380,6 +386,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your business name'**
   String get businessNameRequired;
+
+  /// No description provided for @businessNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least 2 characters for the business name'**
+  String get businessNameTooShort;
 
   /// No description provided for @passwordRequirements.
   ///
@@ -584,6 +596,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We could not send a verification code. Check the number or try later.'**
   String get authPhoneRequestFailed;
+
+  /// No description provided for @authRegistrationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not start registration. This number may already have an account, or you can try again later.'**
+  String get authRegistrationFailed;
 
   /// No description provided for @authOtpInvalid.
   ///
