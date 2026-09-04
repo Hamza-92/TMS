@@ -50,7 +50,7 @@
                     <tbody>
                     @foreach ($recentBusinesses as $business)
                         <tr>
-                            <td><strong>{{ $business->name }}</strong><small>{{ $business->phone_e164 ?: 'No business phone' }}</small></td>
+                            <td><a class="table-primary-link" href="{{ route('admin.businesses.show', $business) }}"><strong>{{ $business->name }}</strong></a><small>{{ $business->phone_e164 ?: 'No business phone' }}</small></td>
                             <td><span>{{ $business->creator->name }}</span><small>{{ $business->creator->phone_e164 }}</small></td>
                             <td>{{ $business->memberships_count }}</td>
                             <td><span class="status-pill status-pill--{{ $business->status->value }}">{{ str($business->status->value)->headline() }}</span></td>
@@ -83,7 +83,7 @@
     <section class="content-card dashboard-grid__full">
         <header class="content-card__header">
             <div><h2>Payments awaiting review</h2><p>Bank and offline payments requiring administrator verification.</p></div>
-            @if ($metrics['pendingPayments'] > 0)<span class="attention-chip">Needs attention</span>@endif
+            <a class="row-action" href="{{ route('admin.payments.index', ['status' => 'pending']) }}">{{ $metrics['pendingPayments'] > 0 ? 'Review queue' : 'View payments' }} <x-admin.icon name="arrow-right" size="15" /></a>
         </header>
         @if ($pendingPayments->isEmpty())
             <div class="empty-state empty-state--compact"><span><x-admin.icon name="payment" size="22" /></span><h3>Payment queue is clear</h3><p>Submitted payment proofs will be listed here for review.</p></div>
@@ -94,7 +94,7 @@
                     <tbody>
                     @foreach ($pendingPayments as $payment)
                         <tr>
-                            <td><strong>{{ $payment->business->name }}</strong></td>
+                            <td><a class="table-primary-link" href="{{ route('admin.payments.show', $payment) }}"><strong>{{ $payment->business->name }}</strong></a></td>
                             <td><span>{{ $payment->submittedBy?->name ?: 'Not recorded' }}</span><small>{{ $payment->submittedBy?->phone_e164 }}</small></td>
                             <td>{{ $payment->plan->name }}</td>
                             <td><span class="reference-code">{{ $payment->transaction_reference ?: '—' }}</span></td>

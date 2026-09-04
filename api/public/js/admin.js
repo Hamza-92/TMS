@@ -42,4 +42,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1600);
         });
     });
+
+    document.querySelectorAll('[data-dialog-open]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const dialog = document.getElementById(button.getAttribute('data-dialog-open'));
+            if (!(dialog instanceof HTMLDialogElement)) return;
+            dialog.showModal();
+            document.body.classList.add('has-dialog-open');
+        });
+    });
+
+    document.querySelectorAll('.admin-dialog').forEach((dialog) => {
+        if (!(dialog instanceof HTMLDialogElement)) return;
+
+        dialog.querySelectorAll('[data-dialog-close]').forEach((button) => {
+            button.addEventListener('click', () => dialog.close());
+        });
+        dialog.addEventListener('click', (event) => {
+            if (event.target === dialog) dialog.close();
+        });
+        dialog.addEventListener('close', () => document.body.classList.remove('has-dialog-open'));
+
+        if (dialog.hasAttribute('data-dialog-auto-open')) {
+            dialog.showModal();
+            document.body.classList.add('has-dialog-open');
+        }
+    });
 });

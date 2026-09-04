@@ -1,0 +1,231 @@
+name: Test and deploy Laravel staging
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - api/**
+      - .github/workflows/deploy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tailor-api-staging
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test Laravel API
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: ctype, curl, dom, fileinfo, filter, mbstring, openssl, pdo, pdo_sqlite, session, tokenizer, xml
+          coverage: none
+
+      - name: Install test dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare test environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Check PHP formatting
+        run: vendor/bin/pint --test
+
+      - name: Run automated tests
+        run: php artisan test
+
+  deploy:
+    name: Deploy Laravel API to staging
+    needs: test
+    if: ${{ vars.SSH_DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    environment: staging
+
+    env:
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      ARCHIVE_NAME: tailor-api-${{ github.run_id }}-${{ github.sha }}.tar.gz
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          : "${SSH_HOST:?Missing SSH_HOST secret}"
+          : "${SSH_PORT:?Missing SSH_PORT secret}"
+          : "${SSH_USERNAME:?Missing SSH_USERNAME secret}"
+          : "${SSH_PRIVATE_KEY:?Missing SSH_PRIVATE_KEY secret}"
+          : "${SSH_KNOWN_HOSTS:?Missing SSH_KNOWN_HOSTS secret}"
+          : "${DEPLOY_PATH:?Missing DEPLOY_PATH secret}"
+
+          expected_path='/home/u496151366/domains/counterpos.pk/public_html/TailorApp'
+          if [[ "$DEPLOY_PATH" != "$expected_path" ]]; then
+            echo "DEPLOY_PATH does not match the approved staging directory." >&2
+            exit 1
+          fi
+
+      - name: Configure verified SSH host
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null
+          ssh-keygen -F "[$SSH_HOST]:$SSH_PORT" -f ~/.ssh/known_hosts > /dev/null \
+            || ssh-keygen -F "$SSH_HOST" -f ~/.ssh/known_hosts > /dev/null
+
+      - name: Package Laravel API only
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          tar -C api \
+            --exclude='.env' \
+            --exclude='vendor' \
+            --exclude='node_modules' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/data/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            -czf "$RUNNER_TEMP/$ARCHIVE_NAME" .
+
+          tar -tzf "$RUNNER_TEMP/$ARCHIVE_NAME" > /dev/null
+
+      - name: Upload uniquely named release archive
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          scp -i ~/.ssh/deploy_key \
+            -P "$SSH_PORT" \
+            "$RUNNER_TEMP/$ARCHIVE_NAME" \
+            "$SSH_USERNAME@$SSH_HOST:/tmp/$ARCHIVE_NAME"
+
+      - name: Install and deploy Laravel
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          ssh -i ~/.ssh/deploy_key \
+            -p "$SSH_PORT" \
+            "$SSH_USERNAME@$SSH_HOST" \
+            "ARCHIVE_NAME='$ARCHIVE_NAME' bash -s" <<'REMOTE'
+          set -Eeuo pipefail
+
+          deploy_root='/home/u496151366/domains/counterpos.pk/public_html/TailorApp'
+          app_path="$deploy_root/api"
+          archive_path="/tmp/$ARCHIVE_NAME"
+          staging_path="$deploy_root/.deploy/${ARCHIVE_NAME%.tar.gz}"
+
+          if [[ "$app_path" != '/home/u496151366/domains/counterpos.pk/public_html/TailorApp/api' ]]; then
+            echo 'Refusing to deploy outside the approved API directory.' >&2
+            exit 1
+          fi
+
+          case "$staging_path" in
+            "$deploy_root"/.deploy/tailor-api-*) ;;
+            *) echo 'Unsafe staging path.' >&2; exit 1 ;;
+          esac
+
+          [[ -f "$app_path/artisan" ]] || { echo 'Laravel artisan file is missing from the live API directory.' >&2; exit 1; }
+          [[ -f "$app_path/.env" ]] || { echo 'The server-side api/.env file is missing.' >&2; exit 1; }
+          [[ -f "$archive_path" ]] || { echo 'Uploaded release archive was not found.' >&2; exit 1; }
+
+          command -v php > /dev/null || { echo 'PHP CLI is unavailable.' >&2; exit 1; }
+          command -v composer > /dev/null || { echo 'Composer is unavailable.' >&2; exit 1; }
+          command -v rsync > /dev/null || { echo 'rsync is unavailable.' >&2; exit 1; }
+          php -r 'exit(version_compare(PHP_VERSION, "8.3.0", ">=") ? 0 : 1);' \
+            || { echo 'PHP 8.3 or newer is required.' >&2; exit 1; }
+
+          cleanup() {
+            rm -f -- "$archive_path"
+            if [[ "$staging_path" == "$deploy_root"/.deploy/tailor-api-* ]]; then
+              rm -rf -- "$staging_path"
+            fi
+          }
+          trap cleanup EXIT
+
+          mkdir -p "$deploy_root/.deploy"
+          rm -rf -- "$staging_path"
+          mkdir -p "$staging_path"
+          tar -xzf "$archive_path" -C "$staging_path"
+
+          [[ -f "$staging_path/artisan" ]] || { echo 'Release does not contain artisan at its root.' >&2; exit 1; }
+          [[ -f "$staging_path/composer.lock" ]] || { echo 'Release does not contain composer.lock.' >&2; exit 1; }
+
+          cp "$app_path/.env" "$staging_path/.env"
+          rm -rf -- "$staging_path/storage"
+          ln -s "$app_path/storage" "$staging_path/storage"
+          mkdir -p "$staging_path/bootstrap/cache"
+          chmod -R ug+rwX "$app_path/storage" "$app_path/bootstrap/cache" "$staging_path/bootstrap/cache"
+
+          composer install \
+            --working-dir="$staging_path" \
+            --no-dev \
+            --no-interaction \
+            --no-progress \
+            --prefer-dist \
+            --optimize-autoloader
+
+          php "$app_path/artisan" down --retry=60
+
+          rsync -a --delete \
+            --exclude='/.env' \
+            --exclude='/storage/' \
+            --exclude='/public/storage' \
+            "$staging_path/" "$app_path/"
+
+          cd "$app_path"
+          chmod -R ug+rwX storage bootstrap/cache
+          php artisan optimize:clear
+          php artisan migrate --isolated --force
+          php artisan optimize
+          php artisan queue:restart
+          php artisan up
+          REMOTE
+
+      - name: Verify staging health
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          response="$(curl --fail --silent --show-error \
+            --retry 5 \
+            --retry-delay 3 \
+            --retry-all-errors \
+            'https://tailor.counterpos.pk/api/v1/health')"
+
+          printf '%s' "$response" | grep -Eq '"success"[[:space:]]*:[[:space:]]*true'
+
+      - name: Remove runner SSH credentials
+        if: ${{ always() }}
+        shell: bash
+        run: rm -f ~/.ssh/deploy_key ~/.ssh/known_hosts

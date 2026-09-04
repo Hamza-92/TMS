@@ -20,4 +20,8 @@ return [
         'plan_code' => env('AUTH_TRIAL_PLAN_CODE', 'demo'),
         'offline_grace_days' => (int) env('AUTH_OFFLINE_GRACE_DAYS', 3),
     ],
+
+    'paid_subscription' => [
+        'offline_grace_days' => (int) env('SUBSCRIPTION_OFFLINE_GRACE_DAYS', 3),
+    ],
 ];

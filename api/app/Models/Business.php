@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
@@ -59,9 +60,19 @@ class Business extends Model
         return $this->hasMany(Subscription::class);
     }
 
+    public function latestSubscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class)->latestOfMany('created_at');
+    }
+
     public function subscriptionPayments(): HasMany
     {
         return $this->hasMany(SubscriptionPayment::class);
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AdminAuditLog::class);
     }
 
     protected function casts(): array

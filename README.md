@@ -143,3 +143,8 @@ Normal tailor data must save locally without internet access, and future UI code
 must not wait for an HTTP request before treating a local operation as saved.
 
 See `docs/architecture/README.md` for the layer boundary and future sync flow.
+
+## Staging deployment
+
+The Laravel staging CI/CD workflow and its one-time hPanel transition are
+documented in `docs/deployment/STAGING.md`.

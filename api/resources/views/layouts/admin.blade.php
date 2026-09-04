@@ -35,11 +35,12 @@
             </a>
 
             <span class="admin-nav__label">Management</span>
+            <a @class(['admin-nav__item', 'is-active' => request()->routeIs('admin.businesses.*')]) href="{{ route('admin.businesses.index') }}" @if(request()->routeIs('admin.businesses.*')) aria-current="page" @endif>
+                <x-admin.icon name="business" />
+                <span>Businesses</span>
+            </a>
             @foreach ([
-                ['business', 'Businesses'],
                 ['users', 'Users'],
-                ['subscription', 'Subscriptions'],
-                ['payment', 'Payment requests'],
             ] as [$icon, $label])
                 <span class="admin-nav__item is-disabled" aria-disabled="true" title="Coming in the next admin milestone">
                     <x-admin.icon :name="$icon" />
@@ -47,6 +48,14 @@
                     <small>Soon</small>
                 </span>
             @endforeach
+            <a @class(['admin-nav__item', 'is-active' => request()->routeIs('admin.plans.*')]) href="{{ route('admin.plans.index') }}" @if(request()->routeIs('admin.plans.*')) aria-current="page" @endif>
+                <x-admin.icon name="subscription" />
+                <span>Subscription plans</span>
+            </a>
+            <a @class(['admin-nav__item', 'is-active' => request()->routeIs('admin.payments.*')]) href="{{ route('admin.payments.index') }}" @if(request()->routeIs('admin.payments.*')) aria-current="page" @endif>
+                <x-admin.icon name="payment" />
+                <span>Payment requests</span>
+            </a>
 
             <span class="admin-nav__label">System</span>
             @if (
@@ -101,6 +110,30 @@
         </header>
 
         <div class="admin-page">
+            @if (session('status'))
+                <div class="page-alert page-alert--success" role="status">
+                    <span><x-admin.icon name="check" size="18" /></span>
+                    <p>{{ session('status') }}</p>
+                </div>
+            @endif
+            @if ($errors->has('business'))
+                <div class="page-alert page-alert--danger" role="alert">
+                    <span><x-admin.icon name="alert" size="18" /></span>
+                    <p>{{ $errors->first('business') }}</p>
+                </div>
+            @endif
+            @if ($errors->has('payment'))
+                <div class="page-alert page-alert--danger" role="alert">
+                    <span><x-admin.icon name="alert" size="18" /></span>
+                    <p>{{ $errors->first('payment') }}</p>
+                </div>
+            @endif
+            @if ($errors->has('plan'))
+                <div class="page-alert page-alert--danger" role="alert">
+                    <span><x-admin.icon name="alert" size="18" /></span>
+                    <p>{{ $errors->first('plan') }}</p>
+                </div>
+            @endif
             @yield('content')
         </div>
     </main>

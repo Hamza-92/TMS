@@ -38,9 +38,15 @@ limited to five attempts per minute for each email and IP combination.
 - active-admin enforcement on every protected request;
 - responsive portal navigation and dashboard;
 - real business, user, subscription, pending-payment, and expiring-trial data;
-- login activity audit records.
+- login activity audit records;
+- searchable and filterable business directory with paginated results;
+- business detail records for members, subscriptions, payments, and admin activity;
+- superadmin-only business suspension and reactivation with mandatory audit logs;
+- searchable payment-review queue and complete payment detail records;
+- finance/superadmin payment approval or rejection with transactional subscription activation and audit logs;
+- single-workspace paid-plan creation and editing with immutable historical billing and audited availability controls.
 
-Business management, payment decisions, plan management, role permissions,
+Payment submission, user management, audit-log browsing,
 two-factor authentication, and admin password recovery are subsequent portal
 milestones.
 
