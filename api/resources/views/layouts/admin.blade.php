@@ -6,8 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('title', 'Dashboard') · Tailor Admin</title>
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-    <script src="{{ asset('js/admin.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ filemtime(public_path('css/admin.css')) }}">
+    <script src="{{ asset('js/admin.js') }}?v={{ filemtime(public_path('js/admin.js')) }}" defer></script>
 </head>
 <body class="admin-app">
 @php
