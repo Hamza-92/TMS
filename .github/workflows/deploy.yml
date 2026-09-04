@@ -158,6 +158,8 @@ jobs:
           [[ -f "$app_path/artisan" ]] || { echo 'Laravel artisan file is missing from the live API directory.' >&2; exit 1; }
           [[ -f "$app_path/.env" ]] || { echo 'The server-side api/.env file is missing.' >&2; exit 1; }
           [[ -f "$archive_path" ]] || { echo 'Uploaded release archive was not found.' >&2; exit 1; }
+          [[ -d "$app_path/storage" && ! -L "$app_path/storage" ]] \
+            || { echo 'The live storage path must be a real directory, not a symbolic link.' >&2; exit 1; }
 
           command -v php > /dev/null || { echo 'PHP CLI is unavailable.' >&2; exit 1; }
           command -v composer > /dev/null || { echo 'Composer is unavailable.' >&2; exit 1; }
@@ -180,10 +182,10 @@ jobs:
 
           [[ -f "$staging_path/artisan" ]] || { echo 'Release does not contain artisan at its root.' >&2; exit 1; }
           [[ -f "$staging_path/composer.lock" ]] || { echo 'Release does not contain composer.lock.' >&2; exit 1; }
+          [[ -d "$staging_path/storage" && ! -L "$staging_path/storage" ]] \
+            || { echo 'Release storage must be a real directory.' >&2; exit 1; }
 
           cp "$app_path/.env" "$staging_path/.env"
-          rm -rf -- "$staging_path/storage"
-          ln -s "$app_path/storage" "$staging_path/storage"
           mkdir -p "$staging_path/bootstrap/cache"
           chmod -R ug+rwX "$app_path/storage" "$app_path/bootstrap/cache" "$staging_path/bootstrap/cache"
 
@@ -199,9 +201,12 @@ jobs:
 
           rsync -a --delete \
             --exclude='/.env' \
-            --exclude='/storage/' \
+            --exclude='/storage/***' \
             --exclude='/public/storage' \
             "$staging_path/" "$app_path/"
+
+          [[ -d "$app_path/storage" && ! -L "$app_path/storage" ]] \
+            || { echo 'Deployment refused because live storage is no longer a real directory.' >&2; exit 1; }
 
           cd "$app_path"
           chmod -R ug+rwX storage bootstrap/cache
