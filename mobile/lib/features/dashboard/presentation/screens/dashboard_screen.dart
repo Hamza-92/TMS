@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:tailor_app/core/theme/app_theme.dart';
 import 'package:tailor_app/features/auth/application/auth_controller.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
+import 'package:tailor_app/shared/widgets/app_bottom_navigation.dart';
+import 'package:tailor_app/shared/widgets/app_status_sheet.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -39,13 +39,13 @@ class DashboardScreen extends ConsumerWidget {
               await ref.read(authControllerProvider.notifier).refreshSession();
             } catch (_) {
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text(context.l10n.accountAccessUnavailableMessage),
-                  ),
-                );
+              await showAppStatusSheet(
+                context,
+                type: AppStatusType.danger,
+                title: context.l10n.errorTitle,
+                message: context.l10n.accountAccessUnavailableMessage,
+                actionLabel: context.l10n.okayLabel,
+              );
             }
           },
           onSignOut: () async {
@@ -57,7 +57,7 @@ class DashboardScreen extends ConsumerWidget {
     }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark.copyWith(
+      value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: Colors.white,
         systemNavigationBarIconBrightness: Brightness.dark,
@@ -65,49 +65,42 @@ class DashboardScreen extends ConsumerWidget {
       child: Scaffold(
         extendBody: true,
         backgroundColor: AppColors.canvas,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: const _DashboardCreateButton(),
-        bottomNavigationBar: const _DashboardNavigation(),
-        body: Stack(
+        bottomNavigationBar: const TailorBottomNavigation(
+          selected: AppSection.home,
+        ),
+        body: CustomScrollView(
           key: const ValueKey('dashboard-root'),
-          children: [
-            const Positioned.fill(child: _DashboardBackground()),
-            SafeArea(
-              bottom: false,
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(
-                      20,
-                      10,
-                      20,
-                      116,
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            const SliverToBoxAdapter(child: _DashboardHeader()),
+            SliverPadding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AppSpacing.page,
+                20,
+                AppSpacing.page,
+                112,
+              ),
+              sliver: const SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _TodayCard(),
+                    SizedBox(height: AppSpacing.section),
+                    _SectionTitle(titleKey: _DashboardText.quickActions),
+                    SizedBox(height: 12),
+                    _QuickActions(),
+                    SizedBox(height: AppSpacing.section),
+                    _SectionTitle(titleKey: _DashboardText.attentionNeeded),
+                    SizedBox(height: 12),
+                    _AttentionCards(),
+                    SizedBox(height: AppSpacing.section),
+                    _SectionTitle(
+                      titleKey: _DashboardText.recentOrders,
+                      trailingKey: _DashboardText.seeAll,
                     ),
-                    sliver: SliverList.list(
-                      children: const [
-                        _DashboardHeader(),
-                        SizedBox(height: 18),
-                        _TodayCard(),
-                        SizedBox(height: 22),
-                        _SectionTitle(titleKey: _DashboardText.quickActions),
-                        SizedBox(height: 11),
-                        _QuickActions(),
-                        SizedBox(height: 22),
-                        _SectionTitle(titleKey: _DashboardText.attentionNeeded),
-                        SizedBox(height: 11),
-                        _AttentionCards(),
-                        SizedBox(height: 22),
-                        _SectionTitle(
-                          titleKey: _DashboardText.recentOrders,
-                          trailingKey: _DashboardText.seeAll,
-                        ),
-                        SizedBox(height: 11),
-                        _RecentOrders(),
-                      ],
-                    ),
-                  ),
-                ],
+                    SizedBox(height: 12),
+                    _RecentOrders(),
+                  ],
+                ),
               ),
             ),
           ],
@@ -371,81 +364,101 @@ class _DashboardHeader extends ConsumerWidget {
         ? 'T'
         : avatarName.trim().characters.first.toUpperCase();
 
-    return Row(
-      children: [
-        PopupMenuButton<String>(
-          tooltip: context.l10n.dashboardProfile,
-          onSelected: (value) async {
-            if (value != 'logout') return;
-            await ref.read(authControllerProvider.notifier).logout();
-            if (context.mounted) context.go('/');
-          },
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: const BorderSide(color: AppColors.border),
-          ),
-          itemBuilder: (context) => [
-            PopupMenuItem<String>(
-              value: 'logout',
-              child: Row(
+    return Container(
+      height: 154,
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 22),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: [AppColors.primaryDark, AppColors.primaryLight],
+        ),
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(AppRadii.page),
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            PopupMenuButton<String>(
+              tooltip: context.l10n.dashboardProfile,
+              onSelected: (value) async {
+                if (value != 'logout') return;
+                await ref.read(authControllerProvider.notifier).logout();
+                if (context.mounted) context.go('/');
+              },
+              color: Colors.white,
+              surfaceTintColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: const BorderSide(color: AppColors.border),
+              ),
+              itemBuilder: (context) => [
+                PopupMenuItem<String>(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.logout_rounded, size: 19),
+                      const SizedBox(width: 10),
+                      Text(context.l10n.signOut),
+                    ],
+                  ),
+                ),
+              ],
+              child: Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.18),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.34),
+                  ),
+                ),
+                child: Text(
+                  initial,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.logout_rounded, size: 19),
-                  const SizedBox(width: 10),
-                  Text(context.l10n.signOut),
+                  Text(
+                    greeting,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.78),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    displayName,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge
+                        ?.copyWith(color: Colors.white, fontSize: 18),
+                  ),
                 ],
               ),
             ),
+            _IconButton(
+              assetName: 'assets/icons/notification.svg',
+              semanticLabel: context.l10n.dashboardNotifications,
+              showBadge: true,
+            ),
           ],
-          child: Container(
-            width: 46,
-            height: 46,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.primaryLight, AppColors.primaryDark],
-              ),
-            ),
-            child: Text(
-              initial,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
         ),
-        const SizedBox(width: 11),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                greeting,
-                style: Theme.of(context).textTheme.bodyMedium
-                    ?.copyWith(fontSize: 12, fontWeight: FontWeight.w400),
-              ),
-              const SizedBox(height: 1),
-              Text(
-                displayName,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleLarge
-                    ?.copyWith(fontSize: 18),
-              ),
-            ],
-          ),
-        ),
-        _IconButton(
-          assetName: 'assets/icons/notification.svg',
-          semanticLabel: context.l10n.dashboardNotifications,
-          showBadge: true,
-        ),
-      ],
+      ),
     );
   }
 }
@@ -474,14 +487,14 @@ class _IconButton extends StatelessWidget {
             height: 40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.84),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.border),
+              color: Colors.white.withValues(alpha: 0.16),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
             ),
             child: _SvgIcon(
               assetName: assetName,
               size: 20,
-              color: AppColors.ink,
+              color: Colors.white,
             ),
           ),
           if (showBadge)
@@ -654,6 +667,7 @@ class _QuickActions extends StatelessWidget {
         context.l10n.dashboardAddCustomer,
         AppColors.blush,
         const Color(0xFFE85F97),
+        onTap: () => context.push('/customers/new'),
       ),
       _QuickActionData(
         'assets/icons/work.svg',
@@ -701,12 +715,19 @@ class _QuickActions extends StatelessWidget {
 }
 
 class _QuickActionData {
-  const _QuickActionData(this.assetName, this.label, this.fill, this.color);
+  const _QuickActionData(
+    this.assetName,
+    this.label,
+    this.fill,
+    this.color, {
+    this.onTap,
+  });
 
   final String assetName;
   final String label;
   final Color fill;
   final Color color;
+  final VoidCallback? onTap;
 }
 
 class _QuickAction extends StatelessWidget {
@@ -719,36 +740,40 @@ class _QuickAction extends StatelessWidget {
     return Semantics(
       button: true,
       label: data.label,
-      child: Column(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: data.fill,
-              borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: data.onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: data.fill,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: _SvgIcon(
+                assetName: data.assetName,
+                size: 21,
+                color: data.color,
+              ),
             ),
-            child: _SvgIcon(
-              assetName: data.assetName,
-              size: 21,
-              color: data.color,
+            const SizedBox(height: 7),
+            Text(
+              data.label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.ink,
+                fontSize: 10.5,
+                height: 1.18,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(height: 7),
-          Text(
-            data.label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.ink,
-              fontSize: 10.5,
-              height: 1.18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -959,219 +984,6 @@ class _OrderRow extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DashboardNavigation extends StatelessWidget {
-  const _DashboardNavigation();
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      height: 64,
-      padding: EdgeInsets.zero,
-      color: const Color(0xFFEEE9FF),
-      surfaceTintColor: Colors.transparent,
-      elevation: 2,
-      shadowColor: const Color(0x1F30284A),
-      notchMargin: 5,
-      shape: const _RoundedDockNotchedShape(),
-      child: Row(
-        children: [
-          Expanded(
-            child: _NavItem(
-              assetName: 'assets/icons/home.svg',
-              label: context.l10n.dashboardHome,
-              selected: true,
-            ),
-          ),
-          Expanded(
-            child: _NavItem(
-              assetName: 'assets/icons/calendar.svg',
-              label: context.l10n.dashboardCalendar,
-            ),
-          ),
-          const Expanded(child: SizedBox()),
-          Expanded(
-            child: _NavItem(
-              assetName: 'assets/icons/orders.svg',
-              label: context.l10n.dashboardOrders,
-            ),
-          ),
-          Expanded(
-            child: _NavItem(
-              assetName: 'assets/icons/customers.svg',
-              label: context.l10n.dashboardCustomers,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RoundedDockNotchedShape extends NotchedShape {
-  const _RoundedDockNotchedShape();
-
-  static const double _barCornerRadius = 28;
-
-  @override
-  Path getOuterPath(Rect host, Rect? guest) {
-    final path = Path()
-      ..moveTo(host.left, host.bottom)
-      ..lineTo(host.left, host.top + _barCornerRadius)
-      ..quadraticBezierTo(
-        host.left,
-        host.top,
-        host.left + _barCornerRadius,
-        host.top,
-      );
-
-    if (guest != null && host.overlaps(guest)) {
-      final radius = guest.width / 2;
-      final notchRadius = Radius.circular(radius);
-      const shoulderLength = 15.0;
-      const shoulderInset = 1.0;
-      final a = -radius - shoulderInset;
-      final b = host.top - guest.center.dy;
-      final n2 = math.sqrt(
-        b * b * radius * radius * (a * a + b * b - radius * radius),
-      );
-      final denominator = a * a + b * b;
-      final p2xA = ((a * radius * radius) - n2) / denominator;
-      final p2xB = ((a * radius * radius) + n2) / denominator;
-      final p2yA = math.sqrt(radius * radius - p2xA * p2xA);
-      final p2yB = math.sqrt(radius * radius - p2xB * p2xB);
-      final compareDirection = b < 0 ? -1.0 : 1.0;
-      final p2 = compareDirection * p2yA > compareDirection * p2yB
-          ? Offset(p2xA, p2yA)
-          : Offset(p2xB, p2yB);
-      final points = <Offset>[
-        Offset(a - shoulderLength, b),
-        Offset(a, b),
-        p2,
-        Offset(-p2.dx, p2.dy),
-        Offset(-a, b),
-        Offset(-a + shoulderLength, b),
-      ].map((point) => point + guest.center).toList();
-
-      path
-        ..lineTo(points[0].dx, points[0].dy)
-        ..quadraticBezierTo(
-          points[1].dx,
-          points[1].dy,
-          points[2].dx,
-          points[2].dy,
-        )
-        ..arcToPoint(points[3], radius: notchRadius, clockwise: false)
-        ..quadraticBezierTo(
-          points[4].dx,
-          points[4].dy,
-          points[5].dx,
-          points[5].dy,
-        );
-    }
-
-    path.lineTo(host.right - _barCornerRadius, host.top);
-
-    return path
-      ..quadraticBezierTo(
-        host.right,
-        host.top,
-        host.right,
-        host.top + _barCornerRadius,
-      )
-      ..lineTo(host.right, host.bottom)
-      ..close();
-  }
-}
-
-class _DashboardCreateButton extends StatelessWidget {
-  const _DashboardCreateButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: context.l10n.dashboardCreate,
-      child: Transform.scale(
-        scale: 1.08,
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x3D5F33E1),
-                blurRadius: 14,
-                offset: Offset(0, 7),
-              ),
-            ],
-          ),
-          child: FloatingActionButton(
-            heroTag: 'dashboard-create',
-            onPressed: () {},
-            mini: true,
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            elevation: 1,
-            highlightElevation: 2,
-            shape: const CircleBorder(),
-            child: const _SvgIcon(
-              assetName: 'assets/icons/plus_plain.svg',
-              size: 21,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  const _NavItem({
-    required this.assetName,
-    required this.label,
-    this.selected = false,
-  });
-
-  final String assetName;
-  final String label;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = selected ? AppColors.primaryDark : const Color(0xFF9C80EA);
-
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: label,
-      child: Center(
-        child: Container(
-          width: 30,
-          height: 30,
-          alignment: Alignment.center,
-          decoration: selected
-              ? const BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x385F33E1),
-                      blurRadius: 12,
-                      offset: Offset(0, 7),
-                    ),
-                  ],
-                )
-              : null,
-          child: _SvgIcon(
-            assetName: assetName,
-            size: selected ? 23 : 21,
-            color: color,
-          ),
-        ),
       ),
     );
   }

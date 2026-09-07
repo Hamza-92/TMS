@@ -70,6 +70,16 @@ class Business extends Model
         return $this->hasMany(SubscriptionPayment::class);
     }
 
+    public function customers(): HasMany
+    {
+        return $this->hasMany(Customer::class);
+    }
+
+    public function customerOperations(): HasMany
+    {
+        return $this->hasMany(CustomerOperation::class);
+    }
+
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AdminAuditLog::class);

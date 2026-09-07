@@ -122,7 +122,7 @@ class _PasswordOtpScreenState extends ConsumerState<PasswordOtpScreen> {
         _formKey.currentState?.reset();
       });
       _startTimer();
-      showAuthSnackBar(context, context.l10n.authOtpResent);
+      showAuthStatusSheet(context, context.l10n.authOtpResent);
     } catch (error) {
       if (mounted) {
         setState(() {

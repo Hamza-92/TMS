@@ -411,4 +411,214 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardProfile => 'Profile';
+
+  @override
+  String get customersTitle => 'Customers';
+
+  @override
+  String get addCustomer => 'Add customer';
+
+  @override
+  String get editCustomer => 'Edit customer';
+
+  @override
+  String get customerDetails => 'Customer details';
+
+  @override
+  String get customerSearchHint => 'Search name or phone number';
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String get syncCustomers => 'Sync customers';
+
+  @override
+  String get customerChangesSynced => 'Customer changes are backed up.';
+
+  @override
+  String customerPendingChanges(int count) {
+    return '$count change(s) waiting to sync';
+  }
+
+  @override
+  String get customerOfflineNotice =>
+      'Offline — changes are safe on this phone.';
+
+  @override
+  String get retryLabel => 'Retry';
+
+  @override
+  String get noCustomersTitle => 'No customers found';
+
+  @override
+  String get noCustomersMessage =>
+      'Pull down to sync, or add your first customer to get started.';
+
+  @override
+  String get noArchivedCustomersTitle => 'No archived customers';
+
+  @override
+  String get noArchivedCustomersMessage =>
+      'Customers you archive will appear here and can be restored.';
+
+  @override
+  String get noCustomerMatches => 'No customer found';
+
+  @override
+  String get tryAnotherSearch => 'Try another name or phone number.';
+
+  @override
+  String get customerLoadFailed => 'Customers could not be loaded.';
+
+  @override
+  String get noPhoneNumber => 'No phone number';
+
+  @override
+  String get customerSyncConflict => 'Needs review before syncing';
+
+  @override
+  String get customerWaitingToSync =>
+      'Saved on this phone and waiting for backup.';
+
+  @override
+  String get customerNotFound => 'This customer is no longer available.';
+
+  @override
+  String get customerBasicInformation => 'Basic information';
+
+  @override
+  String get customerFormHelp =>
+      'A name is required. Everything else can be added later.';
+
+  @override
+  String get customerName => 'Customer name';
+
+  @override
+  String get customerNameHint => 'Ayesha Khan';
+
+  @override
+  String get customerNameRequired => 'Enter the customer name.';
+
+  @override
+  String get customerNameTooShort => 'Enter at least 2 characters.';
+
+  @override
+  String get customerPhone => 'WhatsApp phone number';
+
+  @override
+  String get customerAlternatePhone => 'Alternate phone number';
+
+  @override
+  String get customerPhoneInvalid =>
+      'Enter a valid number, for example +92 300 1234567.';
+
+  @override
+  String get customerAlternatePhoneDifferent =>
+      'Use a different alternate phone number.';
+
+  @override
+  String get customerAddress => 'Address';
+
+  @override
+  String get customerAddressHint => 'Street, area and city';
+
+  @override
+  String get customerNotes => 'Notes';
+
+  @override
+  String get customerNotesHint => 'Preferences or important details';
+
+  @override
+  String get customerOfflineSaveHelp =>
+      'You can save without internet. Backup happens automatically when a connection is available.';
+
+  @override
+  String get saveCustomer => 'Save customer';
+
+  @override
+  String get customerSavedLocally =>
+      'The customer details have been saved successfully.';
+
+  @override
+  String get customerContactInformation => 'Contact information';
+
+  @override
+  String get notProvided => 'Not provided';
+
+  @override
+  String get noCustomerNotes => 'No notes have been added.';
+
+  @override
+  String get customerStatusActive => 'Active';
+
+  @override
+  String get customerStatusArchived => 'Archived';
+
+  @override
+  String get archiveCustomer => 'Archive customer';
+
+  @override
+  String get restoreCustomer => 'Restore customer';
+
+  @override
+  String get archiveCustomerMessage =>
+      'This customer will be hidden from the active list. Their history will remain safe.';
+
+  @override
+  String get cancelLabel => 'Cancel';
+
+  @override
+  String get archiveLabel => 'Archive';
+
+  @override
+  String get customerArchived => 'Customer archived.';
+
+  @override
+  String get customerRestored => 'Customer restored.';
+
+  @override
+  String get customerConflictHelp =>
+      'This customer changed on another device. Review the details and save again to confirm your version.';
+
+  @override
+  String get doneLabel => 'Done';
+
+  @override
+  String get okayLabel => 'OK';
+
+  @override
+  String get successTitle => 'Success';
+
+  @override
+  String get errorTitle => 'Something went wrong';
+
+  @override
+  String get syncCompleteTitle => 'Sync complete';
+
+  @override
+  String get customerSavedTitle => 'Customer saved';
+
+  @override
+  String get chooseCustomerPhoto => 'Customer photo';
+
+  @override
+  String get takePhoto => 'Take a photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from gallery';
+
+  @override
+  String get removePhoto => 'Remove photo';
+
+  @override
+  String get customerPhotoHint => 'Customer image';
+
+  @override
+  String get photoSelectionFailed =>
+      'The photo could not be selected. Please try another image.';
+
+  @override
+  String get customerSaveFailed =>
+      'The customer could not be saved. Please review the details and try again.';
 }

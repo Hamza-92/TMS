@@ -3,6 +3,7 @@
 use App\Http\Middleware\AuthenticateAccessToken;
 use App\Http\Middleware\EnsureAdminHasRole;
 use App\Http\Middleware\EnsureAdminIsActive;
+use App\Http\Middleware\EnsureBusinessAccess;
 use App\Http\Middleware\EnsureStagingToolsAreEnabled;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'auth.access' => AuthenticateAccessToken::class,
+            'business.access' => EnsureBusinessAccess::class,
             'admin.active' => EnsureAdminIsActive::class,
             'admin.role' => EnsureAdminHasRole::class,
             'admin.staging-tools' => EnsureStagingToolsAreEnabled::class,

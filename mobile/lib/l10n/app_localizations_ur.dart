@@ -408,6 +408,214 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dashboardProfile => 'پروفائل';
+
+  @override
+  String get customersTitle => 'گاہک';
+
+  @override
+  String get addCustomer => 'گاہک شامل کریں';
+
+  @override
+  String get editCustomer => 'گاہک میں ترمیم کریں';
+
+  @override
+  String get customerDetails => 'گاہک کی تفصیل';
+
+  @override
+  String get customerSearchHint => 'نام یا فون نمبر تلاش کریں';
+
+  @override
+  String get clearSearch => 'تلاش صاف کریں';
+
+  @override
+  String get syncCustomers => 'گاہک سنک کریں';
+
+  @override
+  String get customerChangesSynced => 'گاہکوں کی تبدیلیوں کا بیک اپ ہوگیا۔';
+
+  @override
+  String customerPendingChanges(int count) {
+    return '$count تبدیلیاں سنک ہونے کی منتظر ہیں';
+  }
+
+  @override
+  String get customerOfflineNotice =>
+      'آف لائن — تبدیلیاں اس فون میں محفوظ ہیں۔';
+
+  @override
+  String get retryLabel => 'دوبارہ کوشش';
+
+  @override
+  String get noCustomersTitle => 'کوئی گاہک نہیں ملا';
+
+  @override
+  String get noCustomersMessage =>
+      'فہرست ہم وقت کرنے کے لیے نیچے کھینچیں، یا پہلا گاہک شامل کریں۔';
+
+  @override
+  String get noArchivedCustomersTitle => 'کوئی محفوظ شدہ گاہک نہیں';
+
+  @override
+  String get noArchivedCustomersMessage =>
+      'محفوظ فہرست میں ڈالے گئے گاہک یہاں نظر آئیں گے اور دوبارہ بحال کیے جا سکیں گے۔';
+
+  @override
+  String get noCustomerMatches => 'کوئی گاہک نہیں ملا';
+
+  @override
+  String get tryAnotherSearch => 'کوئی دوسرا نام یا فون نمبر لکھیں۔';
+
+  @override
+  String get customerLoadFailed => 'گاہک لوڈ نہیں ہوسکے۔';
+
+  @override
+  String get noPhoneNumber => 'فون نمبر موجود نہیں';
+
+  @override
+  String get customerSyncConflict => 'سنک سے پہلے جائزہ ضروری ہے';
+
+  @override
+  String get customerWaitingToSync =>
+      'اس فون میں محفوظ ہے اور بیک اپ کا منتظر ہے۔';
+
+  @override
+  String get customerNotFound => 'یہ گاہک اب دستیاب نہیں ہے۔';
+
+  @override
+  String get customerBasicInformation => 'بنیادی معلومات';
+
+  @override
+  String get customerFormHelp =>
+      'نام ضروری ہے۔ باقی معلومات بعد میں بھی شامل کی جاسکتی ہیں۔';
+
+  @override
+  String get customerName => 'گاہک کا نام';
+
+  @override
+  String get customerNameHint => 'عائشہ خان';
+
+  @override
+  String get customerNameRequired => 'گاہک کا نام لکھیں۔';
+
+  @override
+  String get customerNameTooShort => 'کم از کم 2 حروف لکھیں۔';
+
+  @override
+  String get customerPhone => 'واٹس ایپ فون نمبر';
+
+  @override
+  String get customerAlternatePhone => 'دوسرا فون نمبر';
+
+  @override
+  String get customerPhoneInvalid => 'درست نمبر لکھیں، مثلاً +92 300 1234567۔';
+
+  @override
+  String get customerAlternatePhoneDifferent =>
+      'دوسرا فون نمبر مختلف ہونا چاہیے۔';
+
+  @override
+  String get customerAddress => 'پتہ';
+
+  @override
+  String get customerAddressHint => 'گلی، علاقہ اور شہر';
+
+  @override
+  String get customerNotes => 'نوٹس';
+
+  @override
+  String get customerNotesHint => 'پسند یا ضروری تفصیل';
+
+  @override
+  String get customerOfflineSaveHelp =>
+      'انٹرنیٹ کے بغیر بھی محفوظ کرسکتے ہیں۔ رابطہ ملتے ہی بیک اپ خود ہوجائے گا۔';
+
+  @override
+  String get saveCustomer => 'گاہک محفوظ کریں';
+
+  @override
+  String get customerSavedLocally => 'گاہک کی معلومات کامیابی سے محفوظ ہوگئیں۔';
+
+  @override
+  String get customerContactInformation => 'رابطے کی معلومات';
+
+  @override
+  String get notProvided => 'فراہم نہیں کیا گیا';
+
+  @override
+  String get noCustomerNotes => 'کوئی نوٹس شامل نہیں کیے گئے۔';
+
+  @override
+  String get customerStatusActive => 'فعال';
+
+  @override
+  String get customerStatusArchived => 'محفوظ شدہ';
+
+  @override
+  String get archiveCustomer => 'گاہک محفوظ فہرست میں ڈالیں';
+
+  @override
+  String get restoreCustomer => 'گاہک بحال کریں';
+
+  @override
+  String get archiveCustomerMessage =>
+      'گاہک فعال فہرست سے چھپ جائے گا۔ اس کی تاریخ محفوظ رہے گی۔';
+
+  @override
+  String get cancelLabel => 'منسوخ';
+
+  @override
+  String get archiveLabel => 'محفوظ کریں';
+
+  @override
+  String get customerArchived => 'گاہک محفوظ فہرست میں چلا گیا۔';
+
+  @override
+  String get customerRestored => 'گاہک بحال ہوگیا۔';
+
+  @override
+  String get customerConflictHelp =>
+      'یہ گاہک دوسرے آلے پر تبدیل ہوا ہے۔ تفصیل دیکھ کر اپنا ورژن دوبارہ محفوظ کریں۔';
+
+  @override
+  String get doneLabel => 'مکمل';
+
+  @override
+  String get okayLabel => 'ٹھیک ہے';
+
+  @override
+  String get successTitle => 'کامیاب';
+
+  @override
+  String get errorTitle => 'کچھ درست نہیں ہوا';
+
+  @override
+  String get syncCompleteTitle => 'ہم وقت مکمل';
+
+  @override
+  String get customerSavedTitle => 'گاہک محفوظ ہوگیا';
+
+  @override
+  String get chooseCustomerPhoto => 'گاہک کی تصویر';
+
+  @override
+  String get takePhoto => 'تصویر کھینچیں';
+
+  @override
+  String get chooseFromGallery => 'گیلری سے منتخب کریں';
+
+  @override
+  String get removePhoto => 'تصویر ہٹائیں';
+
+  @override
+  String get customerPhotoHint => 'گاہک کی تصویر';
+
+  @override
+  String get photoSelectionFailed =>
+      'تصویر منتخب نہیں ہوسکی۔ کوئی دوسری تصویر آزمائیں۔';
+
+  @override
+  String get customerSaveFailed =>
+      'گاہک محفوظ نہیں ہوسکا۔ معلومات دیکھ کر دوبارہ کوشش کریں۔';
 }
 
 /// The translations for Urdu, using the Latin script (`ur_Latn`).
@@ -820,4 +1028,214 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get dashboardProfile => 'Profile';
+
+  @override
+  String get customersTitle => 'Customers';
+
+  @override
+  String get addCustomer => 'Customer shamil karein';
+
+  @override
+  String get editCustomer => 'Customer edit karein';
+
+  @override
+  String get customerDetails => 'Customer ki tafseel';
+
+  @override
+  String get customerSearchHint => 'Naam ya phone number talash karein';
+
+  @override
+  String get clearSearch => 'Search saaf karein';
+
+  @override
+  String get syncCustomers => 'Customers sync karein';
+
+  @override
+  String get customerChangesSynced => 'Customer changes ka backup ho gaya.';
+
+  @override
+  String customerPendingChanges(int count) {
+    return '$count change(s) sync ke muntazir';
+  }
+
+  @override
+  String get customerOfflineNotice =>
+      'Offline — changes is phone mein mehfooz hain.';
+
+  @override
+  String get retryLabel => 'Dobara koshish';
+
+  @override
+  String get noCustomersTitle => 'Koi customer nahin mila';
+
+  @override
+  String get noCustomersMessage =>
+      'List sync karne ke liye neeche khenchain, ya pehla customer shamil karein.';
+
+  @override
+  String get noArchivedCustomersTitle => 'Koi archived customer nahin';
+
+  @override
+  String get noArchivedCustomersMessage =>
+      'Archive kiye gaye customers yahan nazar aayenge aur restore kiye ja sakenge.';
+
+  @override
+  String get noCustomerMatches => 'Customer nahin mila';
+
+  @override
+  String get tryAnotherSearch => 'Koi aur naam ya phone number likhein.';
+
+  @override
+  String get customerLoadFailed => 'Customers load nahin ho sake.';
+
+  @override
+  String get noPhoneNumber => 'Phone number nahin diya';
+
+  @override
+  String get customerSyncConflict => 'Sync se pehle review zaroori hai';
+
+  @override
+  String get customerWaitingToSync =>
+      'Is phone mein save hai aur backup ka muntazir hai.';
+
+  @override
+  String get customerNotFound => 'Yeh customer ab available nahin hai.';
+
+  @override
+  String get customerBasicInformation => 'Bunyadi maloomat';
+
+  @override
+  String get customerFormHelp =>
+      'Naam zaroori hai. Baqi maloomat baad mein bhi di ja sakti hai.';
+
+  @override
+  String get customerName => 'Customer ka naam';
+
+  @override
+  String get customerNameHint => 'Ayesha Khan';
+
+  @override
+  String get customerNameRequired => 'Customer ka naam likhein.';
+
+  @override
+  String get customerNameTooShort => 'Kam az kam 2 characters likhein.';
+
+  @override
+  String get customerPhone => 'WhatsApp phone number';
+
+  @override
+  String get customerAlternatePhone => 'Doosra phone number';
+
+  @override
+  String get customerPhoneInvalid =>
+      'Durust number likhein, misal +92 300 1234567.';
+
+  @override
+  String get customerAlternatePhoneDifferent =>
+      'Doosra phone number mukhtalif hona chahiye.';
+
+  @override
+  String get customerAddress => 'Pata';
+
+  @override
+  String get customerAddressHint => 'Gali, ilaqa aur shehar';
+
+  @override
+  String get customerNotes => 'Notes';
+
+  @override
+  String get customerNotesHint => 'Pasand ya zaroori tafseel';
+
+  @override
+  String get customerOfflineSaveHelp =>
+      'Internet ke baghair bhi save kar sakte hain. Connection milte hi backup khud ho jayega.';
+
+  @override
+  String get saveCustomer => 'Customer save karein';
+
+  @override
+  String get customerSavedLocally =>
+      'Customer ki maloomat kamyabi se save ho gayi.';
+
+  @override
+  String get customerContactInformation => 'Rabtay ki maloomat';
+
+  @override
+  String get notProvided => 'Nahin diya gaya';
+
+  @override
+  String get noCustomerNotes => 'Koi notes shamil nahin kiye gaye.';
+
+  @override
+  String get customerStatusActive => 'Active';
+
+  @override
+  String get customerStatusArchived => 'Archived';
+
+  @override
+  String get archiveCustomer => 'Customer archive karein';
+
+  @override
+  String get restoreCustomer => 'Customer restore karein';
+
+  @override
+  String get archiveCustomerMessage =>
+      'Customer active list se chhup jayega. Uski history mehfooz rahegi.';
+
+  @override
+  String get cancelLabel => 'Cancel';
+
+  @override
+  String get archiveLabel => 'Archive';
+
+  @override
+  String get customerArchived => 'Customer archive ho gaya.';
+
+  @override
+  String get customerRestored => 'Customer restore ho gaya.';
+
+  @override
+  String get customerConflictHelp =>
+      'Yeh customer doosre device par badla hai. Tafseel review karke apna version dobara save karein.';
+
+  @override
+  String get doneLabel => 'Done';
+
+  @override
+  String get okayLabel => 'Theek hai';
+
+  @override
+  String get successTitle => 'Kamyaab';
+
+  @override
+  String get errorTitle => 'Kuch durust nahin hua';
+
+  @override
+  String get syncCompleteTitle => 'Sync mukammal';
+
+  @override
+  String get customerSavedTitle => 'Customer save ho gaya';
+
+  @override
+  String get chooseCustomerPhoto => 'Customer photo';
+
+  @override
+  String get takePhoto => 'Photo khenchain';
+
+  @override
+  String get chooseFromGallery => 'Gallery se chunain';
+
+  @override
+  String get removePhoto => 'Photo hata dein';
+
+  @override
+  String get customerPhotoHint => 'Customer image';
+
+  @override
+  String get photoSelectionFailed =>
+      'Photo select nahin ho saki. Koi aur image try karein.';
+
+  @override
+  String get customerSaveFailed =>
+      'Customer save nahin ho saka. Maloomat dekh kar dobara koshish karein.';
 }

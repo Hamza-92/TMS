@@ -10,6 +10,9 @@ import 'package:tailor_app/features/auth/presentation/screens/registration_scree
 import 'package:tailor_app/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:tailor_app/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:tailor_app/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:tailor_app/features/customers/presentation/screens/customer_detail_screen.dart';
+import 'package:tailor_app/features/customers/presentation/screens/customer_form_screen.dart';
+import 'package:tailor_app/features/customers/presentation/screens/customer_list_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   routes: [
@@ -71,6 +74,24 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/dashboard',
       builder: (context, state) => const DashboardScreen(),
+    ),
+    GoRoute(
+      path: '/customers',
+      builder: (context, state) => const CustomerListScreen(),
+    ),
+    GoRoute(
+      path: '/customers/new',
+      builder: (context, state) => const CustomerFormScreen(),
+    ),
+    GoRoute(
+      path: '/customers/:clientUuid',
+      builder: (context, state) =>
+          CustomerDetailScreen(clientUuid: state.pathParameters['clientUuid']!),
+    ),
+    GoRoute(
+      path: '/customers/:clientUuid/edit',
+      builder: (context, state) =>
+          CustomerFormScreen(clientUuid: state.pathParameters['clientUuid']!),
     ),
   ],
 );

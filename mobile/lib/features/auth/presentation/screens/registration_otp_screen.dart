@@ -124,7 +124,7 @@ class _RegistrationOtpScreenState extends ConsumerState<RegistrationOtpScreen> {
         _formKey.currentState?.reset();
       });
       _startTimer();
-      showAuthSnackBar(context, context.l10n.authOtpResent);
+      showAuthStatusSheet(context, context.l10n.authOtpResent);
     } catch (error) {
       if (mounted) {
         setState(() {

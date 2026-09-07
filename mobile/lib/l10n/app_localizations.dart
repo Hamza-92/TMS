@@ -836,6 +836,396 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get dashboardProfile;
+
+  /// No description provided for @customersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get customersTitle;
+
+  /// No description provided for @addCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add customer'**
+  String get addCustomer;
+
+  /// No description provided for @editCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit customer'**
+  String get editCustomer;
+
+  /// No description provided for @customerDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer details'**
+  String get customerDetails;
+
+  /// No description provided for @customerSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name or phone number'**
+  String get customerSearchHint;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @syncCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync customers'**
+  String get syncCustomers;
+
+  /// No description provided for @customerChangesSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer changes are backed up.'**
+  String get customerChangesSynced;
+
+  /// No description provided for @customerPendingChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} change(s) waiting to sync'**
+  String customerPendingChanges(int count);
+
+  /// No description provided for @customerOfflineNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline — changes are safe on this phone.'**
+  String get customerOfflineNotice;
+
+  /// No description provided for @retryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryLabel;
+
+  /// No description provided for @noCustomersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No customers found'**
+  String get noCustomersTitle;
+
+  /// No description provided for @noCustomersMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull down to sync, or add your first customer to get started.'**
+  String get noCustomersMessage;
+
+  /// No description provided for @noArchivedCustomersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived customers'**
+  String get noArchivedCustomersTitle;
+
+  /// No description provided for @noArchivedCustomersMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers you archive will appear here and can be restored.'**
+  String get noArchivedCustomersMessage;
+
+  /// No description provided for @noCustomerMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No customer found'**
+  String get noCustomerMatches;
+
+  /// No description provided for @tryAnotherSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another name or phone number.'**
+  String get tryAnotherSearch;
+
+  /// No description provided for @customerLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers could not be loaded.'**
+  String get customerLoadFailed;
+
+  /// No description provided for @noPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone number'**
+  String get noPhoneNumber;
+
+  /// No description provided for @customerSyncConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs review before syncing'**
+  String get customerSyncConflict;
+
+  /// No description provided for @customerWaitingToSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone and waiting for backup.'**
+  String get customerWaitingToSync;
+
+  /// No description provided for @customerNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This customer is no longer available.'**
+  String get customerNotFound;
+
+  /// No description provided for @customerBasicInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic information'**
+  String get customerBasicInformation;
+
+  /// No description provided for @customerFormHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A name is required. Everything else can be added later.'**
+  String get customerFormHelp;
+
+  /// No description provided for @customerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer name'**
+  String get customerName;
+
+  /// No description provided for @customerNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayesha Khan'**
+  String get customerNameHint;
+
+  /// No description provided for @customerNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the customer name.'**
+  String get customerNameRequired;
+
+  /// No description provided for @customerNameTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least 2 characters.'**
+  String get customerNameTooShort;
+
+  /// No description provided for @customerPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp phone number'**
+  String get customerPhone;
+
+  /// No description provided for @customerAlternatePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternate phone number'**
+  String get customerAlternatePhone;
+
+  /// No description provided for @customerPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number, for example +92 300 1234567.'**
+  String get customerPhoneInvalid;
+
+  /// No description provided for @customerAlternatePhoneDifferent.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different alternate phone number.'**
+  String get customerAlternatePhoneDifferent;
+
+  /// No description provided for @customerAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get customerAddress;
+
+  /// No description provided for @customerAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Street, area and city'**
+  String get customerAddressHint;
+
+  /// No description provided for @customerNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get customerNotes;
+
+  /// No description provided for @customerNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences or important details'**
+  String get customerNotesHint;
+
+  /// No description provided for @customerOfflineSaveHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'You can save without internet. Backup happens automatically when a connection is available.'**
+  String get customerOfflineSaveHelp;
+
+  /// No description provided for @saveCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Save customer'**
+  String get saveCustomer;
+
+  /// No description provided for @customerSavedLocally.
+  ///
+  /// In en, this message translates to:
+  /// **'The customer details have been saved successfully.'**
+  String get customerSavedLocally;
+
+  /// No description provided for @customerContactInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact information'**
+  String get customerContactInformation;
+
+  /// No description provided for @notProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'Not provided'**
+  String get notProvided;
+
+  /// No description provided for @noCustomerNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes have been added.'**
+  String get noCustomerNotes;
+
+  /// No description provided for @customerStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get customerStatusActive;
+
+  /// No description provided for @customerStatusArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get customerStatusArchived;
+
+  /// No description provided for @archiveCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive customer'**
+  String get archiveCustomer;
+
+  /// No description provided for @restoreCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore customer'**
+  String get restoreCustomer;
+
+  /// No description provided for @archiveCustomerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This customer will be hidden from the active list. Their history will remain safe.'**
+  String get archiveCustomerMessage;
+
+  /// No description provided for @cancelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelLabel;
+
+  /// No description provided for @archiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archiveLabel;
+
+  /// No description provided for @customerArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer archived.'**
+  String get customerArchived;
+
+  /// No description provided for @customerRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer restored.'**
+  String get customerRestored;
+
+  /// No description provided for @customerConflictHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This customer changed on another device. Review the details and save again to confirm your version.'**
+  String get customerConflictHelp;
+
+  /// No description provided for @doneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get doneLabel;
+
+  /// No description provided for @okayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get okayLabel;
+
+  /// No description provided for @successTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get successTitle;
+
+  /// No description provided for @errorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get errorTitle;
+
+  /// No description provided for @syncCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync complete'**
+  String get syncCompleteTitle;
+
+  /// No description provided for @customerSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer saved'**
+  String get customerSavedTitle;
+
+  /// No description provided for @chooseCustomerPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer photo'**
+  String get chooseCustomerPhoto;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get removePhoto;
+
+  /// No description provided for @customerPhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer image'**
+  String get customerPhotoHint;
+
+  /// No description provided for @photoSelectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo could not be selected. Please try another image.'**
+  String get photoSelectionFailed;
+
+  /// No description provided for @customerSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The customer could not be saved. Please review the details and try again.'**
+  String get customerSaveFailed;
 }
 
 class _AppLocalizationsDelegate

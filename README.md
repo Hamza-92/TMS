@@ -1,8 +1,9 @@
 # Tailor App
 
-Blank, production-oriented foundation for an offline-first Tailor Management
-mobile application. This repository intentionally contains no business features
-and no final theme or design system.
+Production-oriented foundation for an offline-first Tailor Management mobile
+application and its Laravel SaaS API. Authentication, subscription-aware tenant
+access, superadmin operations, and the first customer-management vertical slice
+are implemented.
 
 ## Repository structure
 
@@ -40,9 +41,8 @@ flutter analyze
 flutter test
 ```
 
-The app uses Riverpod at the root, `go_router` for `/`, Drift/SQLite for local
-storage, Dio for future API calls, secure storage for future credentials, and
-UUIDs for offline-created records.
+The app uses Riverpod, `go_router`, Drift/SQLite, Dio, secure token storage, and
+device-generated UUIDs for offline-created records.
 
 Generated Drift and localization files are produced from source definitions.
 Re-run the build-runner command after changing Drift tables. Flutter generates
@@ -131,9 +131,9 @@ php artisan migrate
 php artisan serve --host=0.0.0.0 --port=8000
 ```
 
-Verify the public endpoint at `GET /api/v1/health`. All future mobile-facing
-routes must remain below `/api/v1`. Sanctum provides the API authentication
-foundation; no authentication UI or business endpoint exists yet.
+Verify the public endpoint at `GET /api/v1/health`. All mobile-facing routes
+remain below `/api/v1`. See `api/docs/AUTHENTICATION_API.md` and
+`api/docs/CUSTOMERS_API.md` for the implemented contracts.
 
 ## Offline-first rule
 

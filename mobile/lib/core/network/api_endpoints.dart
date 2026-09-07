@@ -10,4 +10,16 @@ abstract final class ApiEndpoints {
   static const me = '/api/v1/auth/me';
   static const logout = '/api/v1/auth/logout';
   static const logoutAll = '/api/v1/auth/logout-all';
+
+  static String customers(String businessId) =>
+      '/api/v1/businesses/$businessId/customers';
+
+  static String customer(String businessId, String clientUuid) =>
+      '${customers(businessId)}/$clientUuid';
+
+  static String restoreCustomer(String businessId, String clientUuid) =>
+      '${customer(businessId, clientUuid)}/restore';
+
+  static String customerPhoto(String businessId, String clientUuid) =>
+      '${customer(businessId, clientUuid)}/photo';
 }

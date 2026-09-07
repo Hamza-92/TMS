@@ -24,7 +24,7 @@
             <span class="admin-brand__mark" aria-hidden="true">
                 <img src="{{ asset('assets/images/sewing_machine_mark.webp') }}" alt="">
             </span>
-            <span><strong>Tailor</strong><small>Superadmin</small></span>
+            <span><strong>Tailor</strong><small>Management</small></span>
         </div>
 
         <nav class="admin-nav">
@@ -100,9 +100,9 @@
                 <x-admin.icon name="menu" />
                 <span class="sr-only">Open navigation</span>
             </button>
-            <div class="admin-topbar__title">
+            <!-- <div class="admin-topbar__title">
                 <span>Control center</span>
-            </div>
+            </div> -->
             <div class="admin-profile">
                 <span class="admin-profile__avatar">{{ $initials ?: 'SA' }}</span>
                 <span class="admin-profile__copy"><strong>{{ $admin->name }}</strong><small>{{ str($admin->role->value)->headline() }}</small></span>

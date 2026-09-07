@@ -60,6 +60,16 @@ class User extends Authenticatable
         return $this->hasMany(OtpChallenge::class);
     }
 
+    public function createdCustomers(): HasMany
+    {
+        return $this->hasMany(Customer::class, 'created_by_user_id');
+    }
+
+    public function updatedCustomers(): HasMany
+    {
+        return $this->hasMany(Customer::class, 'updated_by_user_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

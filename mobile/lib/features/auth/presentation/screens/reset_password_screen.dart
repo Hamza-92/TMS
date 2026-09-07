@@ -49,7 +49,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             password: _passwordController.text,
           );
       if (!mounted) return;
-      showAuthSnackBar(context, context.l10n.passwordChangedSuccess);
+      showAuthStatusSheet(context, context.l10n.passwordChangedSuccess);
       context.go('/login/phone');
     } catch (error) {
       if (mounted) {

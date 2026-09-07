@@ -210,6 +210,7 @@ jobs:
 
           cd "$app_path"
           chmod -R ug+rwX storage bootstrap/cache
+          php artisan storage:link
           php artisan optimize:clear
           php artisan migrate --isolated --force
           php artisan optimize

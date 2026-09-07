@@ -79,7 +79,7 @@ a.admin-nav__item:hover { color: var(--primary); background: var(--primary-softe
 .admin-logout { display: flex; width: 100%; align-items: center; gap: 12px; padding: 10px 12px; color: #77798a; background: transparent; border: 0; border-radius: 12px; font-size: var(--text-base); font-weight: 600; text-align: left; }
 .admin-logout:hover { color: var(--danger); background: var(--danger-soft); }
 .admin-main { min-height: 100vh; margin-left: 252px; }
-.admin-topbar { position: sticky; top: 0; z-index: 20; display: flex; height: 72px; align-items: center; padding: 0 clamp(22px, 4vw, 48px); background: rgba(247,247,251,.88); border-bottom: 1px solid rgba(225,225,236,.7); backdrop-filter: blur(14px); }
+.admin-topbar { position: sticky; top: 0; z-index: 20; display: flex; height: 72px; align-items: center; padding: 0 clamp(22px, 4vw, 48px); background: #fff; border-bottom: 1px solid rgba(225,225,236,.7); backdrop-filter: blur(14px); }
 .admin-topbar__title { display: flex; align-items: center; color: var(--muted); font-size: var(--text-sm); font-weight: 600; }
 .admin-profile { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 .admin-profile__avatar { display: grid; width: 38px; height: 38px; place-items: center; color: var(--primary); background: var(--primary-soft); border: 1px solid #dfd6ff; border-radius: 12px; font-size: var(--text-sm); font-weight: 700; }

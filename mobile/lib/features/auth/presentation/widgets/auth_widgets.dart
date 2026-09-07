@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tailor_app/core/network/network_exception.dart';
 import 'package:tailor_app/core/theme/app_theme.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
+import 'package:tailor_app/shared/widgets/app_status_sheet.dart';
 import 'package:tailor_app/shared/widgets/pastel_page_background.dart';
 
 enum AuthErrorScope { login, phone, registration, otp, password, general }
@@ -28,17 +31,16 @@ String localizedAuthError(
   };
 }
 
-void showAuthSnackBar(BuildContext context, String message) {
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      ),
-    );
+void showAuthStatusSheet(BuildContext context, String message) {
+  unawaited(
+    showAppStatusSheet(
+      context,
+      type: AppStatusType.success,
+      title: context.l10n.successTitle,
+      message: message,
+      actionLabel: context.l10n.doneLabel,
+    ),
+  );
 }
 
 class AuthPageScaffold extends StatelessWidget {
