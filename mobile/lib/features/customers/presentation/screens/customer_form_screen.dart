@@ -177,7 +177,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
@@ -190,7 +190,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                   ),
                   validator: (value) => _phoneError(value, alternate: false),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _alternatePhoneController,
                   keyboardType: TextInputType.phone,
@@ -203,7 +203,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                   ),
                   validator: (value) => _phoneError(value, alternate: true),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _addressController,
                   textCapitalization: TextCapitalization.sentences,
@@ -217,7 +217,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                     multiline: true,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _notesController,
                   textCapitalization: TextCapitalization.sentences,
