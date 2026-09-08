@@ -70,6 +70,16 @@ class User extends Authenticatable
         return $this->hasMany(Customer::class, 'updated_by_user_id');
     }
 
+    public function createdMeasurementProfiles(): HasMany
+    {
+        return $this->hasMany(CustomerMeasurementProfile::class, 'created_by_user_id');
+    }
+
+    public function createdMeasurementRevisions(): HasMany
+    {
+        return $this->hasMany(CustomerMeasurementRevision::class, 'created_by_user_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

@@ -53,6 +53,11 @@ class Customer extends Model
         return $this->hasMany(CustomerOperation::class, 'customer_client_uuid', 'client_uuid');
     }
 
+    public function measurementProfiles(): HasMany
+    {
+        return $this->hasMany(CustomerMeasurementProfile::class);
+    }
+
     protected function casts(): array
     {
         return [

@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Requests\Api\V1;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class MeasurementStateRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /** @return array<string, mixed> */
+    public function rules(): array
+    {
+        return [
+            'operation_uuid' => ['required', 'uuid'],
+            'base_version' => ['required', 'integer', 'min:1'],
+        ];
+    }
+}

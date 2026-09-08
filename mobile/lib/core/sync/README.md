@@ -25,8 +25,15 @@ new version, and marks the record for review/retry instead of silently losing
 either side.
 
 Archiving is synchronized as a state change rather than a destructive delete.
-A customer created and archived before its first successful upload can be
-removed locally because no server history exists yet.
+This also applies to customers created offline: the local record remains visible
+in the archived list, and both its creation and archived state are uploaded when
+connectivity returns.
+
+Permanent deletion is available only from the archived list. Unsynced local-only
+customers are removed immediately. Synced customers first become hidden local
+tombstones and queue a versioned delete operation. The server erases their
+identifiable fields but retains a minimal versioned tombstone so deletion reaches
+other devices and stale offline data cannot recreate the customer.
 
 Authentication still requires connectivity. Normal customer creation and
 editing do not.

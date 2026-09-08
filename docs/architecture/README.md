@@ -23,7 +23,10 @@ normal create or update operation does not depend on a successful HTTP response.
 UUIDs are generated on the device so records created offline do not depend on
 MySQL identifiers. Customer synchronization implements durable retry operations,
 idempotency, incremental pulls, and optimistic version conflicts. The same
-boundary will be reused by measurements, orders, and payments.
+boundary now supports measurement templates and customer measurement profiles.
+Template definitions and customer revisions are immutable, while profile
+metadata is versioned. Orders will later copy a chosen measurement revision into
+an order-item snapshot so subsequent edits cannot change historical work.
 
 ## API and tenant boundary
 

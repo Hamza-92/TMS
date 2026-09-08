@@ -621,4 +621,93 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get customerSaveFailed =>
       'The customer could not be saved. Please review the details and try again.';
+
+  @override
+  String get customerCreated => 'Customer since';
+
+  @override
+  String get customerUpdated => 'Last updated';
+
+  @override
+  String get customerQuickActions => 'Quick actions';
+
+  @override
+  String get customerPersonalInformation => 'Personal information';
+
+  @override
+  String get customerMoreActions => 'Customer actions';
+
+  @override
+  String get featureUnavailableTitle => 'Not available yet';
+
+  @override
+  String get featureUnavailableMessage =>
+      'This feature will be available in the next module.';
+
+  @override
+  String get customerStatusChangeFailed =>
+      'The customer status could not be changed. Please try again.';
+
+  @override
+  String customersSelected(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get selectAllCustomers => 'Select all customers';
+
+  @override
+  String get clearSelection => 'Clear selection';
+
+  @override
+  String get archiveSelectedCustomers => 'Archive selected customers';
+
+  @override
+  String get restoreSelectedCustomers => 'Restore selected customers';
+
+  @override
+  String archiveSelectedCustomersMessage(int count) {
+    return 'Archive $count selected customers? They will leave the active list, but their information will remain safe.';
+  }
+
+  @override
+  String restoreSelectedCustomersMessage(int count) {
+    return 'Restore $count selected customers to the active list?';
+  }
+
+  @override
+  String customersArchived(int count) {
+    return '$count customers archived.';
+  }
+
+  @override
+  String customersRestored(int count) {
+    return '$count customers restored.';
+  }
+
+  @override
+  String get deletePermanently => 'Delete permanently';
+
+  @override
+  String get deletePermanentlyTitle => 'Delete permanently?';
+
+  @override
+  String get deletePermanentlyMessage =>
+      'This customer\'s information will be erased from every synced device and cannot be recovered.';
+
+  @override
+  String deleteSelectedPermanentlyMessage(int count) {
+    return 'Permanently delete $count selected customers? Their information will be erased from every synced device and cannot be recovered.';
+  }
+
+  @override
+  String get deleteLabel => 'Delete';
+
+  @override
+  String get customerDeletedPermanently => 'Customer permanently deleted.';
+
+  @override
+  String customersDeletedPermanently(int count) {
+    return '$count customers permanently deleted.';
+  }
 }

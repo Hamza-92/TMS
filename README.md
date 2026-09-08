@@ -2,8 +2,9 @@
 
 Production-oriented foundation for an offline-first Tailor Management mobile
 application and its Laravel SaaS API. Authentication, subscription-aware tenant
-access, superadmin operations, and the first customer-management vertical slice
-are implemented.
+access, superadmin operations, customer management, and the Laravel foundation
+for versioned measurement templates and customer measurement histories are
+implemented.
 
 ## Repository structure
 
@@ -132,8 +133,9 @@ php artisan serve --host=0.0.0.0 --port=8000
 ```
 
 Verify the public endpoint at `GET /api/v1/health`. All mobile-facing routes
-remain below `/api/v1`. See `api/docs/AUTHENTICATION_API.md` and
-`api/docs/CUSTOMERS_API.md` for the implemented contracts.
+remain below `/api/v1`. See `api/docs/AUTHENTICATION_API.md`,
+`api/docs/CUSTOMERS_API.md`, and `api/docs/MEASUREMENTS_API.md` for the
+implemented contracts.
 
 ## Offline-first rule
 

@@ -80,6 +80,26 @@ class Business extends Model
         return $this->hasMany(CustomerOperation::class);
     }
 
+    public function measurementTemplates(): HasMany
+    {
+        return $this->hasMany(MeasurementTemplate::class);
+    }
+
+    public function customerMeasurementProfiles(): HasMany
+    {
+        return $this->hasMany(CustomerMeasurementProfile::class);
+    }
+
+    public function customerMeasurementRevisions(): HasMany
+    {
+        return $this->hasMany(CustomerMeasurementRevision::class);
+    }
+
+    public function measurementOperations(): HasMany
+    {
+        return $this->hasMany(MeasurementOperation::class);
+    }
+
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AdminAuditLog::class);

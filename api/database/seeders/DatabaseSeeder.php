@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PlanSeeder::class,
+            MeasurementTemplateSeeder::class,
             AdminUserSeeder::class,
         ]);
     }

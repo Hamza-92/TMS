@@ -132,20 +132,76 @@ class CustomerRepository {
     return (await _localCustomer(businessId, clientUuid))!;
   }
 
-  Future<void> archive(CustomerRecord customer) async {
-    if (customer.serverVersion == 0) {
-      await _database.transaction(() async {
-        await _deleteOperations(customer.businessId, customer.clientUuid);
-        await _deleteLocal(customer.businessId, customer.clientUuid);
-      });
-      return;
+  Future<void> archive(CustomerRecord customer) => archiveMany([customer]);
+
+  Future<void> restore(CustomerRecord customer) => restoreMany([customer]);
+
+  Future<void> archiveMany(Iterable<CustomerRecord> customers) =>
+      _queueStateChanges(customers, 'archive', 'archived');
+
+  Future<void> restoreMany(Iterable<CustomerRecord> customers) =>
+      _queueStateChanges(customers, 'restore', 'active');
+
+  Future<void> deletePermanently(CustomerRecord customer) =>
+      deletePermanentlyMany([customer]);
+
+  Future<void> deletePermanentlyMany(Iterable<CustomerRecord> customers) async {
+    final records = customers.toList(growable: false);
+    if (records.isEmpty) return;
+    final now = DateTime.now();
+    final localPhotosToDelete = <String>[];
+
+    await _database.transaction(() async {
+      for (final customer in records) {
+        if (customer.serverVersion == 0) {
+          await _deleteOperations(customer.businessId, customer.clientUuid);
+          await _deleteLocal(customer.businessId, customer.clientUuid);
+          if (customer.photoLocalPath case final String path) {
+            localPhotosToDelete.add(path);
+          }
+          continue;
+        }
+
+        await (_database.delete(_database.customerSyncOperations)..where(
+              (operation) =>
+                  operation.businessId.equals(customer.businessId) &
+                  operation.customerClientUuid.equals(customer.clientUuid) &
+                  operation.action.equals('delete'),
+            ))
+            .go();
+        await _database
+            .into(_database.customerSyncOperations)
+            .insert(
+              CustomerSyncOperationsCompanion.insert(
+                operationUuid: _createUuid(),
+                businessId: customer.businessId,
+                customerClientUuid: customer.clientUuid,
+                action: 'delete',
+                baseVersion: customer.serverVersion,
+                payloadJson: '{}',
+                createdAt: now,
+              ),
+            );
+        await (_database.update(_database.localCustomers)..where(
+              (row) =>
+                  row.businessId.equals(customer.businessId) &
+                  row.clientUuid.equals(customer.clientUuid),
+            ))
+            .write(
+              LocalCustomersCompanion(
+                status: const Value('deleted'),
+                syncState: const Value('pending'),
+                syncError: const Value(null),
+                updatedAt: Value(now),
+              ),
+            );
+      }
+    });
+
+    for (final path in localPhotosToDelete) {
+      await _deletePhotoFile(path);
     }
-
-    await _queueStateChange(customer, 'archive', 'archived');
   }
-
-  Future<void> restore(CustomerRecord customer) =>
-      _queueStateChange(customer, 'restore', 'active');
 
   Future<CustomerSyncReport> synchronize(String businessId) async {
     if (_syncing) {
@@ -227,40 +283,44 @@ class CustomerRepository {
     return (await query.map((row) => row.read(count) ?? 0).getSingle());
   }
 
-  Future<void> _queueStateChange(
-    CustomerRecord customer,
+  Future<void> _queueStateChanges(
+    Iterable<CustomerRecord> customers,
     String action,
     String status,
   ) async {
+    final records = customers.toList(growable: false);
+    if (records.isEmpty) return;
     final now = DateTime.now();
     await _database.transaction(() async {
-      await _database
-          .into(_database.customerSyncOperations)
-          .insert(
-            CustomerSyncOperationsCompanion.insert(
-              operationUuid: _createUuid(),
-              businessId: customer.businessId,
-              customerClientUuid: customer.clientUuid,
-              action: action,
-              baseVersion: customer.serverVersion,
-              payloadJson: '{}',
-              createdAt: now,
-            ),
-          );
-      await (_database.update(_database.localCustomers)..where(
-            (row) =>
-                row.businessId.equals(customer.businessId) &
-                row.clientUuid.equals(customer.clientUuid),
-          ))
-          .write(
-            LocalCustomersCompanion(
-              status: Value(status),
-              syncState: const Value('pending'),
-              syncError: const Value(null),
-              archivedAt: Value(status == 'archived' ? now : null),
-              updatedAt: Value(now),
-            ),
-          );
+      for (final customer in records) {
+        await _database
+            .into(_database.customerSyncOperations)
+            .insert(
+              CustomerSyncOperationsCompanion.insert(
+                operationUuid: _createUuid(),
+                businessId: customer.businessId,
+                customerClientUuid: customer.clientUuid,
+                action: action,
+                baseVersion: customer.serverVersion,
+                payloadJson: '{}',
+                createdAt: now,
+              ),
+            );
+        await (_database.update(_database.localCustomers)..where(
+              (row) =>
+                  row.businessId.equals(customer.businessId) &
+                  row.clientUuid.equals(customer.clientUuid),
+            ))
+            .write(
+              LocalCustomersCompanion(
+                status: Value(status),
+                syncState: const Value('pending'),
+                syncError: const Value(null),
+                archivedAt: Value(status == 'archived' ? now : null),
+                updatedAt: Value(now),
+              ),
+            );
+      }
     });
   }
 
@@ -313,6 +373,14 @@ class CustomerRepository {
       };
       response = operation.action == 'archive'
           ? await _client.delete<Map<String, dynamic>>(endpoint, data: data)
+          : operation.action == 'delete'
+          ? await _client.delete<Map<String, dynamic>>(
+              ApiEndpoints.deleteCustomerPermanently(
+                operation.businessId,
+                operation.customerClientUuid,
+              ),
+              data: data,
+            )
           : await _client.post<Map<String, dynamic>>(
               ApiEndpoints.restoreCustomer(
                 operation.businessId,
@@ -331,6 +399,22 @@ class CustomerRepository {
     CustomerSyncOperation operation,
     CustomerRecord remote,
   ) async {
+    if (operation.action == 'delete') {
+      final local = await _localCustomer(
+        operation.businessId,
+        operation.customerClientUuid,
+      );
+      await _database.transaction(() async {
+        await _deleteOperations(
+          operation.businessId,
+          operation.customerClientUuid,
+        );
+        await _deleteLocal(operation.businessId, operation.customerClientUuid);
+      });
+      await _deletePhotoFile(local?.photoLocalPath);
+      return;
+    }
+
     await _database.transaction(() async {
       await (_database.delete(_database.customerSyncOperations)
             ..where((row) => row.operationUuid.equals(operation.operationUuid)))
@@ -483,6 +567,15 @@ class CustomerRepository {
 
   Future<void> _storeRemoteIfClean(CustomerRecord remote) async {
     final local = await _localCustomer(remote.businessId, remote.clientUuid);
+    if (remote.status == 'deleted') {
+      if (local == null) return;
+      await _database.transaction(() async {
+        await _deleteOperations(remote.businessId, remote.clientUuid);
+        await _deleteLocal(remote.businessId, remote.clientUuid);
+      });
+      await _deletePhotoFile(local.photoLocalPath);
+      return;
+    }
     if (local == null ||
         (local.syncState == CustomerSyncState.synced &&
             remote.serverVersion >= local.serverVersion)) {
@@ -543,6 +636,16 @@ class CustomerRepository {
                 customer.clientUuid.equals(clientUuid),
           ))
           .go();
+
+  Future<void> _deletePhotoFile(String? path) async {
+    if (path == null) return;
+    try {
+      final file = File(path);
+      if (await file.exists()) await file.delete();
+    } on FileSystemException {
+      // Database deletion remains authoritative if cached file cleanup fails.
+    }
+  }
 }
 
 final customerRepositoryProvider = Provider<CustomerRepository>((ref) {

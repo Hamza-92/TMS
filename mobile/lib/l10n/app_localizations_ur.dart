@@ -616,6 +616,95 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get customerSaveFailed =>
       'گاہک محفوظ نہیں ہوسکا۔ معلومات دیکھ کر دوبارہ کوشش کریں۔';
+
+  @override
+  String get customerCreated => 'شمولیت کی تاریخ';
+
+  @override
+  String get customerUpdated => 'آخری تبدیلی';
+
+  @override
+  String get customerQuickActions => 'فوری کام';
+
+  @override
+  String get customerPersonalInformation => 'ذاتی معلومات';
+
+  @override
+  String get customerMoreActions => 'گاہک کے اختیارات';
+
+  @override
+  String get featureUnavailableTitle => 'ابھی دستیاب نہیں';
+
+  @override
+  String get featureUnavailableMessage =>
+      'یہ سہولت اگلے ماڈیول میں دستیاب ہوگی۔';
+
+  @override
+  String get customerStatusChangeFailed =>
+      'گاہک کی حیثیت تبدیل نہیں ہوسکی۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String customersSelected(int count) {
+    return '$count منتخب';
+  }
+
+  @override
+  String get selectAllCustomers => 'تمام گاہک منتخب کریں';
+
+  @override
+  String get clearSelection => 'انتخاب ختم کریں';
+
+  @override
+  String get archiveSelectedCustomers => 'منتخب گاہک محفوظ فہرست میں ڈالیں';
+
+  @override
+  String get restoreSelectedCustomers => 'منتخب گاہک بحال کریں';
+
+  @override
+  String archiveSelectedCustomersMessage(int count) {
+    return '$count منتخب گاہک محفوظ فہرست میں ڈالیں؟ وہ فعال فہرست سے ہٹ جائیں گے لیکن ان کی معلومات محفوظ رہیں گی۔';
+  }
+
+  @override
+  String restoreSelectedCustomersMessage(int count) {
+    return '$count منتخب گاہک فعال فہرست میں بحال کریں؟';
+  }
+
+  @override
+  String customersArchived(int count) {
+    return '$count گاہک محفوظ فہرست میں منتقل ہوگئے۔';
+  }
+
+  @override
+  String customersRestored(int count) {
+    return '$count گاہک بحال ہوگئے۔';
+  }
+
+  @override
+  String get deletePermanently => 'ہمیشہ کے لیے حذف کریں';
+
+  @override
+  String get deletePermanentlyTitle => 'ہمیشہ کے لیے حذف کریں؟';
+
+  @override
+  String get deletePermanentlyMessage =>
+      'اس گاہک کی معلومات تمام ہم وقت آلات سے مٹا دی جائیں گی اور واپس حاصل نہیں ہوسکیں گی۔';
+
+  @override
+  String deleteSelectedPermanentlyMessage(int count) {
+    return '$count منتخب گاہک ہمیشہ کے لیے حذف کریں؟ ان کی معلومات تمام ہم وقت آلات سے مٹا دی جائیں گی اور واپس حاصل نہیں ہوسکیں گی۔';
+  }
+
+  @override
+  String get deleteLabel => 'حذف کریں';
+
+  @override
+  String get customerDeletedPermanently => 'گاہک ہمیشہ کے لیے حذف ہوگیا۔';
+
+  @override
+  String customersDeletedPermanently(int count) {
+    return '$count گاہک ہمیشہ کے لیے حذف ہوگئے۔';
+  }
 }
 
 /// The translations for Urdu, using the Latin script (`ur_Latn`).
@@ -1238,4 +1327,94 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   @override
   String get customerSaveFailed =>
       'Customer save nahin ho saka. Maloomat dekh kar dobara koshish karein.';
+
+  @override
+  String get customerCreated => 'Customer banne ki tareekh';
+
+  @override
+  String get customerUpdated => 'Aakhri tabdeeli';
+
+  @override
+  String get customerQuickActions => 'Fori kaam';
+
+  @override
+  String get customerPersonalInformation => 'Zaati maloomat';
+
+  @override
+  String get customerMoreActions => 'Customer ke options';
+
+  @override
+  String get featureUnavailableTitle => 'Abhi available nahin';
+
+  @override
+  String get featureUnavailableMessage =>
+      'Yeh feature aglay module mein available hoga.';
+
+  @override
+  String get customerStatusChangeFailed =>
+      'Customer ka status tabdeel nahin ho saka. Dobara koshish karein.';
+
+  @override
+  String customersSelected(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get selectAllCustomers => 'Sab customers select karein';
+
+  @override
+  String get clearSelection => 'Selection khatam karein';
+
+  @override
+  String get archiveSelectedCustomers => 'Selected customers archive karein';
+
+  @override
+  String get restoreSelectedCustomers => 'Selected customers restore karein';
+
+  @override
+  String archiveSelectedCustomersMessage(int count) {
+    return '$count selected customers archive karein? Woh active list se hat jayenge lekin unki maloomat mehfooz rahegi.';
+  }
+
+  @override
+  String restoreSelectedCustomersMessage(int count) {
+    return '$count selected customers active list mein restore karein?';
+  }
+
+  @override
+  String customersArchived(int count) {
+    return '$count customers archive ho gaye.';
+  }
+
+  @override
+  String customersRestored(int count) {
+    return '$count customers restore ho gaye.';
+  }
+
+  @override
+  String get deletePermanently => 'Hamesha ke liye delete karein';
+
+  @override
+  String get deletePermanentlyTitle => 'Hamesha ke liye delete karein?';
+
+  @override
+  String get deletePermanentlyMessage =>
+      'Is customer ki maloomat har synced device se mita di jayegi aur wapas hasil nahin ho sakegi.';
+
+  @override
+  String deleteSelectedPermanentlyMessage(int count) {
+    return '$count selected customers hamesha ke liye delete karein? Unki maloomat har synced device se mita di jayegi aur wapas hasil nahin ho sakegi.';
+  }
+
+  @override
+  String get deleteLabel => 'Delete';
+
+  @override
+  String get customerDeletedPermanently =>
+      'Customer hamesha ke liye delete ho gaya.';
+
+  @override
+  String customersDeletedPermanently(int count) {
+    return '$count customers hamesha ke liye delete ho gaye.';
+  }
 }

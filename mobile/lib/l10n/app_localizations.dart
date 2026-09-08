@@ -1226,6 +1226,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The customer could not be saved. Please review the details and try again.'**
   String get customerSaveFailed;
+
+  /// No description provided for @customerCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer since'**
+  String get customerCreated;
+
+  /// No description provided for @customerUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated'**
+  String get customerUpdated;
+
+  /// No description provided for @customerQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get customerQuickActions;
+
+  /// No description provided for @customerPersonalInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal information'**
+  String get customerPersonalInformation;
+
+  /// No description provided for @customerMoreActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer actions'**
+  String get customerMoreActions;
+
+  /// No description provided for @featureUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available yet'**
+  String get featureUnavailableTitle;
+
+  /// No description provided for @featureUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature will be available in the next module.'**
+  String get featureUnavailableMessage;
+
+  /// No description provided for @customerStatusChangeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The customer status could not be changed. Please try again.'**
+  String get customerStatusChangeFailed;
+
+  /// No description provided for @customersSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String customersSelected(int count);
+
+  /// No description provided for @selectAllCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all customers'**
+  String get selectAllCustomers;
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear selection'**
+  String get clearSelection;
+
+  /// No description provided for @archiveSelectedCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive selected customers'**
+  String get archiveSelectedCustomers;
+
+  /// No description provided for @restoreSelectedCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore selected customers'**
+  String get restoreSelectedCustomers;
+
+  /// No description provided for @archiveSelectedCustomersMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive {count} selected customers? They will leave the active list, but their information will remain safe.'**
+  String archiveSelectedCustomersMessage(int count);
+
+  /// No description provided for @restoreSelectedCustomersMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore {count} selected customers to the active list?'**
+  String restoreSelectedCustomersMessage(int count);
+
+  /// No description provided for @customersArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} customers archived.'**
+  String customersArchived(int count);
+
+  /// No description provided for @customersRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} customers restored.'**
+  String customersRestored(int count);
+
+  /// No description provided for @deletePermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently'**
+  String get deletePermanently;
+
+  /// No description provided for @deletePermanentlyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete permanently?'**
+  String get deletePermanentlyTitle;
+
+  /// No description provided for @deletePermanentlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This customer\'s information will be erased from every synced device and cannot be recovered.'**
+  String get deletePermanentlyMessage;
+
+  /// No description provided for @deleteSelectedPermanentlyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete {count} selected customers? Their information will be erased from every synced device and cannot be recovered.'**
+  String deleteSelectedPermanentlyMessage(int count);
+
+  /// No description provided for @deleteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteLabel;
+
+  /// No description provided for @customerDeletedPermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer permanently deleted.'**
+  String get customerDeletedPermanently;
+
+  /// No description provided for @customersDeletedPermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} customers permanently deleted.'**
+  String customersDeletedPermanently(int count);
 }
 
 class _AppLocalizationsDelegate

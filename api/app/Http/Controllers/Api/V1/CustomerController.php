@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\CustomerStatus;
 use App\Exceptions\CustomerLimitReached;
 use App\Exceptions\CustomerOperationConflict;
 use App\Exceptions\CustomerVersionConflict;
@@ -153,6 +154,39 @@ class CustomerController extends Controller
         ]);
     }
 
+    public function deletePermanently(
+        CustomerStateRequest $request,
+        Business $business,
+        string $customer,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $request->user();
+
+        try {
+            $result = $this->mutationService->deletePermanently(
+                $business,
+                $user,
+                $customer,
+                $request->validated(),
+            );
+        } catch (CustomerVersionConflict $exception) {
+            return $this->versionConflict($request, $exception);
+        } catch (CustomerOperationConflict $exception) {
+            return $this->operationConflict($exception);
+        }
+
+        if ($result['photo_path']) {
+            Storage::disk('public')->delete($result['photo_path']);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer permanently deleted.',
+            'data' => CustomerResource::make($result['customer'])->resolve($request),
+            'meta' => ['replayed' => $result['replayed']],
+        ]);
+    }
+
     public function updatePhoto(Request $request, Business $business, string $customer): JsonResponse
     {
         $request->validate([
@@ -201,7 +235,10 @@ class CustomerController extends Controller
 
     private function findCustomer(Business $business, string $clientUuid): Customer
     {
-        return $business->customers()->where('client_uuid', $clientUuid)->firstOrFail();
+        return $business->customers()
+            ->where('client_uuid', $clientUuid)
+            ->where('status', '!=', CustomerStatus::Deleted->value)
+            ->firstOrFail();
     }
 
     private function versionConflict(Request $request, CustomerVersionConflict $exception): JsonResponse

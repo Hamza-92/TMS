@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tailor_app/core/database/app_database.dart';
@@ -58,7 +59,7 @@ void main() {
   );
 
   test(
-    'archiving a never-synced customer removes its local operation',
+    'archiving a never-synced customer preserves it and queues both changes',
     () async {
       const businessId = '01HBUSINESS00000000000000';
       final customer = await repository.save(
@@ -68,13 +69,91 @@ void main() {
 
       await repository.archive(customer);
 
-      expect(await repository.pendingCount(businessId), 0);
-      expect(
-        await repository.watchOne(businessId, customer.clientUuid).first,
-        isNull,
-      );
+      expect(await repository.pendingCount(businessId), 2);
+      final archived = await repository
+          .watchOne(businessId, customer.clientUuid)
+          .first;
+      expect(archived, isNotNull);
+      expect(archived!.status, 'archived');
+      expect(archived.syncState, CustomerSyncState.pending);
     },
   );
+
+  test('batch archive preserves every customer in the archived list', () async {
+    const businessId = '01HBUSINESS00000000000000';
+    final first = await repository.save(
+      businessId: businessId,
+      draft: const CustomerDraft(name: 'First Customer'),
+    );
+    final second = await repository.save(
+      businessId: businessId,
+      draft: const CustomerDraft(name: 'Second Customer'),
+    );
+
+    await repository.archiveMany([first, second]);
+
+    final customers = await repository.watchAll(businessId).first;
+    expect(customers, hasLength(2));
+    expect(
+      customers.every((customer) => customer.status == 'archived'),
+      isTrue,
+    );
+    expect(await repository.pendingCount(businessId), 4);
+  });
+
+  test('permanent deletion removes a never-synced archived customer', () async {
+    const businessId = '01HBUSINESS00000000000000';
+    final customer = await repository.save(
+      businessId: businessId,
+      draft: const CustomerDraft(name: 'Temporary Customer'),
+    );
+    await repository.archive(customer);
+    final archived = await repository
+        .watchOne(businessId, customer.clientUuid)
+        .first;
+
+    await repository.deletePermanently(archived!);
+
+    expect(await repository.pendingCount(businessId), 0);
+    expect(
+      await repository.watchOne(businessId, customer.clientUuid).first,
+      isNull,
+    );
+  });
+
+  test('permanent deletion of a synced customer queues a tombstone', () async {
+    const businessId = '01HBUSINESS00000000000000';
+    final customer = await repository.save(
+      businessId: businessId,
+      draft: const CustomerDraft(name: 'Synced Customer'),
+    );
+    await database.delete(database.customerSyncOperations).go();
+    await (database.update(database.localCustomers)..where(
+          (row) =>
+              row.businessId.equals(businessId) &
+              row.clientUuid.equals(customer.clientUuid),
+        ))
+        .write(
+          const LocalCustomersCompanion(
+            status: Value('archived'),
+            serverVersion: Value(2),
+            syncState: Value('synced'),
+          ),
+        );
+    final archived = await repository
+        .watchOne(businessId, customer.clientUuid)
+        .first;
+
+    await repository.deletePermanently(archived!);
+
+    expect(await repository.pendingCount(businessId), 1);
+    final tombstone = await repository
+        .watchOne(businessId, customer.clientUuid)
+        .first;
+    expect(tombstone, isNotNull);
+    expect(tombstone!.status, 'deleted');
+    expect(tombstone.syncState, CustomerSyncState.pending);
+  });
 
   test('customer stream is isolated by business', () async {
     await repository.save(

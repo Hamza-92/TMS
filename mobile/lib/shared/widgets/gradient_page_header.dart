@@ -8,6 +8,7 @@ class GradientPageHeader extends StatelessWidget {
     this.height = 180,
     this.showBack = true,
     this.onBack,
+    this.leading,
     this.trailing,
     this.bottom,
     super.key,
@@ -17,6 +18,7 @@ class GradientPageHeader extends StatelessWidget {
   final double height;
   final bool showBack;
   final VoidCallback? onBack;
+  final Widget? leading;
   final Widget? trailing;
   final Widget? bottom;
 
@@ -47,29 +49,32 @@ class GradientPageHeader extends StatelessWidget {
                   children: [
                     Align(
                       alignment: AlignmentDirectional.centerStart,
-                      child: showBack
-                          ? IconButton(
-                              tooltip: MaterialLocalizations.of(context)
-                                  .backButtonTooltip,
-                              onPressed:
-                                  onBack ??
-                                  () {
-                                    if (context.canPop()) {
-                                      context.pop();
-                                    } else {
-                                      context.go('/dashboard');
-                                    }
-                                  },
-                              icon: Icon(
-                                Directionality.of(context) == TextDirection.rtl
-                                    ? Icons.arrow_forward_rounded
-                                    : Icons.arrow_back_rounded,
-                                textDirection: TextDirection.ltr,
-                                color: Colors.white,
-                                size: 22,
-                              ),
-                            )
-                          : const SizedBox(width: 48),
+                      child:
+                          leading ??
+                          (showBack
+                              ? IconButton(
+                                  tooltip: MaterialLocalizations.of(context)
+                                      .backButtonTooltip,
+                                  onPressed:
+                                      onBack ??
+                                      () {
+                                        if (context.canPop()) {
+                                          context.pop();
+                                        } else {
+                                          context.go('/dashboard');
+                                        }
+                                      },
+                                  icon: Icon(
+                                    Directionality.of(context) ==
+                                            TextDirection.rtl
+                                        ? Icons.arrow_forward_rounded
+                                        : Icons.arrow_back_rounded,
+                                    textDirection: TextDirection.ltr,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                )
+                              : const SizedBox(width: 48)),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 52),

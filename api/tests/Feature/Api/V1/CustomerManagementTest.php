@@ -141,6 +141,53 @@ class CustomerManagementTest extends TestCase
             ->assertJsonPath('data.version', 3);
     }
 
+    public function test_archived_customer_can_be_permanently_deleted_as_an_idempotent_sync_tombstone(): void
+    {
+        Storage::fake('public');
+        [$user, $business] = $this->businessContext();
+        $token = $this->login($user);
+        $clientUuid = (string) Str::uuid();
+        $this->createCustomer($token, $business, $clientUuid);
+
+        $this->withToken($token)
+            ->deleteJson("/api/v1/businesses/{$business->id}/customers/{$clientUuid}", [
+                'operation_uuid' => (string) Str::uuid(),
+                'base_version' => 1,
+            ])
+            ->assertOk();
+
+        $operationUuid = (string) Str::uuid();
+        $payload = [
+            'operation_uuid' => $operationUuid,
+            'base_version' => 2,
+        ];
+
+        $this->withToken($token)
+            ->deleteJson("/api/v1/businesses/{$business->id}/customers/{$clientUuid}/permanent", $payload)
+            ->assertOk()
+            ->assertJsonPath('data.status', 'deleted')
+            ->assertJsonPath('data.version', 3)
+            ->assertJsonPath('data.name', 'Deleted customer')
+            ->assertJsonPath('data.phone_e164', null)
+            ->assertJsonPath('meta.replayed', false);
+
+        $this->withToken($token)
+            ->deleteJson("/api/v1/businesses/{$business->id}/customers/{$clientUuid}/permanent", $payload)
+            ->assertOk()
+            ->assertJsonPath('data.status', 'deleted')
+            ->assertJsonPath('meta.replayed', true);
+
+        $this->withToken($token)
+            ->getJson("/api/v1/businesses/{$business->id}/customers?status=all")
+            ->assertOk()
+            ->assertJsonPath('meta.total', 1)
+            ->assertJsonPath('data.0.status', 'deleted');
+
+        $this->withToken($token)
+            ->getJson("/api/v1/businesses/{$business->id}/customers/{$clientUuid}")
+            ->assertNotFound();
+    }
+
     public function test_subscription_customer_limit_and_expiry_are_enforced(): void
     {
         [$user, $business, $subscription] = $this->businessContext(customerLimit: 1);

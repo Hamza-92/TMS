@@ -60,6 +60,12 @@ class CustomerMutationService
             } else {
                 $this->ensureVersion($customer, (int) $data['base_version']);
 
+                if ($customer->status === CustomerStatus::Deleted) {
+                    throw ValidationException::withMessages([
+                        'customer' => ['This customer has been permanently deleted.'],
+                    ]);
+                }
+
                 if ($customer->status === CustomerStatus::Archived) {
                     throw ValidationException::withMessages([
                         'customer' => ['Restore this customer before editing it.'],
@@ -102,6 +108,56 @@ class CustomerMutationService
         return $this->changeStatus($business, $user, $subscription, $clientUuid, $data, CustomerStatus::Active);
     }
 
+    /** @param array<string, mixed> $data
+     * @return array{customer: Customer, replayed: bool, photo_path: ?string}
+     */
+    public function deletePermanently(
+        Business $business,
+        User $user,
+        string $clientUuid,
+        array $data,
+    ): array {
+        return DB::transaction(function () use ($business, $user, $clientUuid, $data): array {
+            $hash = $this->requestHash('delete', $clientUuid, $data);
+            $replayed = $this->replayed($business, $data['operation_uuid'], $hash, $clientUuid);
+
+            if ($replayed) {
+                return ['customer' => $replayed, 'replayed' => true, 'photo_path' => null];
+            }
+
+            $customer = Customer::query()
+                ->where('business_id', $business->id)
+                ->where('client_uuid', $clientUuid)
+                ->lockForUpdate()
+                ->firstOrFail();
+            $this->ensureVersion($customer, (int) $data['base_version']);
+
+            if ($customer->status !== CustomerStatus::Archived) {
+                throw ValidationException::withMessages([
+                    'customer' => ['Archive this customer before deleting it permanently.'],
+                ]);
+            }
+
+            $photoPath = $customer->photo_path;
+            $customer->measurementProfiles()->delete();
+            $customer->forceFill([
+                'name' => 'Deleted customer',
+                'phone_e164' => null,
+                'alternate_phone_e164' => null,
+                'address' => null,
+                'notes' => null,
+                'photo_path' => null,
+                'status' => CustomerStatus::Deleted,
+                'version' => $customer->version + 1,
+                'updated_by_user_id' => $user->id,
+            ])->save();
+
+            $this->recordOperation($business, $user, $customer, $data['operation_uuid'], 'delete', $hash);
+
+            return ['customer' => $customer, 'replayed' => false, 'photo_path' => $photoPath];
+        });
+    }
+
     /** @param array<string, mixed> $data */
     private function changeStatus(
         Business $business,
@@ -126,6 +182,12 @@ class CustomerMutationService
                 ->lockForUpdate()
                 ->firstOrFail();
             $this->ensureVersion($customer, (int) $data['base_version']);
+
+            if ($customer->status === CustomerStatus::Deleted) {
+                throw ValidationException::withMessages([
+                    'customer' => ['This customer has been permanently deleted.'],
+                ]);
+            }
 
             if ($customer->status === $status) {
                 throw ValidationException::withMessages([

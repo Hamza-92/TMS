@@ -20,6 +20,11 @@ abstract final class ApiEndpoints {
   static String restoreCustomer(String businessId, String clientUuid) =>
       '${customer(businessId, clientUuid)}/restore';
 
+  static String deleteCustomerPermanently(
+    String businessId,
+    String clientUuid,
+  ) => '${customer(businessId, clientUuid)}/permanent';
+
   static String customerPhoto(String businessId, String clientUuid) =>
       '${customer(businessId, clientUuid)}/photo';
 }
