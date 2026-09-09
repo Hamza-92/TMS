@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'name',
     'preferred_unit',
     'notes',
+    'custom_fields',
     'status',
     'version',
     'latest_revision_number',
@@ -77,6 +78,7 @@ class CustomerMeasurementProfile extends Model
             'status' => MeasurementStatus::class,
             'version' => 'integer',
             'latest_revision_number' => 'integer',
+            'custom_fields' => 'array',
             'archived_at' => 'datetime',
         ];
     }

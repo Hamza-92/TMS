@@ -68,6 +68,8 @@ class LocalMeasurementTemplates extends Table {
   IntColumn get serverVersion => integer().withDefault(const Constant(0))();
   IntColumn get definitionVersion => integer().withDefault(const Constant(1))();
   TextColumn get fieldsJson => text()();
+  TextColumn get syncState => text().withDefault(const Constant('synced'))();
+  TextColumn get syncError => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
   DateTimeColumn get archivedAt => dateTime().nullable()();
@@ -86,6 +88,7 @@ class LocalMeasurementProfiles extends Table {
   TextColumn get name => text()();
   TextColumn get preferredUnit => text().withDefault(const Constant('inch'))();
   TextColumn get notes => text().nullable()();
+  TextColumn get customFieldsJson => text().withDefault(const Constant('[]'))();
   TextColumn get status => text().withDefault(const Constant('active'))();
   IntColumn get serverVersion => integer().withDefault(const Constant(0))();
   IntColumn get latestRevisionNumber =>
@@ -109,6 +112,7 @@ class LocalMeasurementRevisions extends Table {
   IntColumn get revisionNumber => integer().withDefault(const Constant(0))();
   IntColumn get templateDefinitionVersion => integer()();
   TextColumn get valuesJson => text()();
+  TextColumn get customFieldsJson => text().withDefault(const Constant('[]'))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get measuredAt => dateTime()();
   TextColumn get syncState => text().withDefault(const Constant('pending'))();
@@ -136,6 +140,20 @@ class MeasurementSyncOperations extends Table {
   Set<Column> get primaryKey => {operationUuid};
 }
 
+class MeasurementTemplateSyncOperations extends Table {
+  TextColumn get operationUuid => text()();
+  TextColumn get businessId => text()();
+  TextColumn get templateClientUuid => text()();
+  IntColumn get baseVersion => integer()();
+  TextColumn get payloadJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+  IntColumn get attemptCount => integer().withDefault(const Constant(0))();
+  TextColumn get lastError => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {operationUuid};
+}
+
 @DriftDatabase(
   tables: [
     AppMetadata,
@@ -145,6 +163,7 @@ class MeasurementSyncOperations extends Table {
     LocalMeasurementProfiles,
     LocalMeasurementRevisions,
     MeasurementSyncOperations,
+    MeasurementTemplateSyncOperations,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -152,7 +171,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'tailor_app'));
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -171,6 +190,25 @@ class AppDatabase extends _$AppDatabase {
         await migrator.createTable(localMeasurementProfiles);
         await migrator.createTable(localMeasurementRevisions);
         await migrator.createTable(measurementSyncOperations);
+        await migrator.createTable(measurementTemplateSyncOperations);
+      } else if (from < 5) {
+        await migrator.addColumn(
+          localMeasurementTemplates,
+          localMeasurementTemplates.syncState,
+        );
+        await migrator.addColumn(
+          localMeasurementTemplates,
+          localMeasurementTemplates.syncError,
+        );
+        await migrator.addColumn(
+          localMeasurementProfiles,
+          localMeasurementProfiles.customFieldsJson,
+        );
+        await migrator.addColumn(
+          localMeasurementRevisions,
+          localMeasurementRevisions.customFieldsJson,
+        );
+        await migrator.createTable(measurementTemplateSyncOperations);
       }
     },
     beforeOpen: (details) async {

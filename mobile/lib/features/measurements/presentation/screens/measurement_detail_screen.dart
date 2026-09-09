@@ -103,6 +103,9 @@ class _MeasurementDetailScreenState
                       child: _MeasurementDetailBody(
                         profile: profile,
                         template: template,
+                        onAddRevision: () => context.push(
+                          '/customers/${widget.customerClientUuid}/measurements/${widget.profileClientUuid}/new-revision',
+                        ),
                         revisions:
                             revisionsAsync.valueOrNull ??
                             const <MeasurementRevisionRecord>[],
@@ -134,11 +137,13 @@ class _MeasurementDetailBody extends StatelessWidget {
     required this.profile,
     required this.template,
     required this.revisions,
+    required this.onAddRevision,
   });
 
   final MeasurementProfileRecord profile;
   final MeasurementTemplateRecord? template;
   final List<MeasurementRevisionRecord> revisions;
+  final VoidCallback onAddRevision;
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +155,14 @@ class _MeasurementDetailBody extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 38),
       children: [
         _ProfileSummary(profile: profile, template: template),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: AppSizes.controlHeight,
+          child: FilledButton(
+            onPressed: onAddRevision,
+            child: Text(context.l10n.addMeasurementRevision),
+          ),
+        ),
         const SizedBox(height: 24),
         _SectionTitle(context.l10n.latestMeasurements),
         const SizedBox(height: 12),
@@ -280,6 +293,7 @@ class _LatestValues extends StatelessWidget {
       for (final field
           in template?.fields ?? const <MeasurementFieldDefinition>[])
         field.clientUuid: field,
+      for (final field in revision.customFields) field.clientUuid: field,
     };
     final locale = Localizations.localeOf(context);
     return _DetailCard(

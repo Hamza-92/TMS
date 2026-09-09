@@ -1562,6 +1562,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required fields are marked with *'**
   String get measurementRequiredHint;
+
+  /// No description provided for @addMeasurementRevision.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new measurements'**
+  String get addMeasurementRevision;
+
+  /// No description provided for @measurementRevisionSavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The new measurements have been saved successfully.'**
+  String get measurementRevisionSavedMessage;
+
+  /// No description provided for @measurementSectionUpperGarment.
+  ///
+  /// In en, this message translates to:
+  /// **'Upper garment'**
+  String get measurementSectionUpperGarment;
+
+  /// No description provided for @measurementSectionUpperBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Upper body'**
+  String get measurementSectionUpperBody;
+
+  /// No description provided for @measurementSectionSleeves.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleeves'**
+  String get measurementSectionSleeves;
+
+  /// No description provided for @measurementSectionLowerGarment.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower garment'**
+  String get measurementSectionLowerGarment;
+
+  /// No description provided for @measurementSectionGarment.
+  ///
+  /// In en, this message translates to:
+  /// **'Garment'**
+  String get measurementSectionGarment;
+
+  /// No description provided for @measurementSectionCollar.
+  ///
+  /// In en, this message translates to:
+  /// **'Collar'**
+  String get measurementSectionCollar;
+
+  /// No description provided for @measurementSectionLengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Lengths'**
+  String get measurementSectionLengths;
+
+  /// No description provided for @measurementSectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Body'**
+  String get measurementSectionBody;
+
+  /// No description provided for @measurementSectionLeg.
+  ///
+  /// In en, this message translates to:
+  /// **'Leg'**
+  String get measurementSectionLeg;
+
+  /// No description provided for @measurementSectionCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom measurements'**
+  String get measurementSectionCustom;
+
+  /// No description provided for @manageMeasurementTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage measurement templates'**
+  String get manageMeasurementTemplates;
+
+  /// No description provided for @measurementTemplatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement templates'**
+  String get measurementTemplatesTitle;
+
+  /// No description provided for @measurementTemplatesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create reusable garment measurement sets'**
+  String get measurementTemplatesSubtitle;
+
+  /// No description provided for @newMeasurementTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'New template'**
+  String get newMeasurementTemplate;
+
+  /// No description provided for @builtInTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in'**
+  String get builtInTemplate;
+
+  /// No description provided for @customTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get customTemplate;
+
+  /// No description provided for @copyAndCustomize.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy and customize'**
+  String get copyAndCustomize;
+
+  /// No description provided for @editTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit template'**
+  String get editTemplate;
+
+  /// No description provided for @templateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name'**
+  String get templateName;
+
+  /// No description provided for @templateNameUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name in Urdu'**
+  String get templateNameUrdu;
+
+  /// No description provided for @templateNameRomanUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name in Roman Urdu'**
+  String get templateNameRomanUrdu;
+
+  /// No description provided for @templateFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement fields'**
+  String get templateFields;
+
+  /// No description provided for @addMeasurementField.
+  ///
+  /// In en, this message translates to:
+  /// **'Add field'**
+  String get addMeasurementField;
+
+  /// No description provided for @editMeasurementField.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit field'**
+  String get editMeasurementField;
+
+  /// No description provided for @fieldNameEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Field name in English'**
+  String get fieldNameEnglish;
+
+  /// No description provided for @fieldNameUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Field name in Urdu'**
+  String get fieldNameUrdu;
+
+  /// No description provided for @fieldNameRomanUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Field name in Roman Urdu'**
+  String get fieldNameRomanUrdu;
+
+  /// No description provided for @fieldSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Section'**
+  String get fieldSection;
+
+  /// No description provided for @fieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Value type'**
+  String get fieldType;
+
+  /// No description provided for @numericValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Number'**
+  String get numericValue;
+
+  /// No description provided for @textValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get textValue;
+
+  /// No description provided for @usesMeasurementUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Use inch/cm'**
+  String get usesMeasurementUnit;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required field'**
+  String get requiredField;
+
+  /// No description provided for @saveField.
+  ///
+  /// In en, this message translates to:
+  /// **'Save field'**
+  String get saveField;
+
+  /// No description provided for @removeField.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove field'**
+  String get removeField;
+
+  /// No description provided for @saveTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Save template'**
+  String get saveTemplate;
+
+  /// No description provided for @templateSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Template saved'**
+  String get templateSavedTitle;
+
+  /// No description provided for @templateSavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The measurement template is ready to use.'**
+  String get templateSavedMessage;
+
+  /// No description provided for @templateSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The template could not be saved. Review the fields and try again.'**
+  String get templateSaveFailed;
+
+  /// No description provided for @templateNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a template name.'**
+  String get templateNameRequired;
+
+  /// No description provided for @fieldNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the field name.'**
+  String get fieldNameRequired;
+
+  /// No description provided for @atLeastOneFieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one measurement field.'**
+  String get atLeastOneFieldRequired;
+
+  /// No description provided for @addCustomerMeasurementField.
+  ///
+  /// In en, this message translates to:
+  /// **'Add custom field'**
+  String get addCustomerMeasurementField;
+
+  /// No description provided for @customerMeasurementFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer-only fields'**
+  String get customerMeasurementFields;
+
+  /// No description provided for @customerFieldHint.
+  ///
+  /// In en, this message translates to:
+  /// **'These fields apply only to this measurement profile.'**
+  String get customerFieldHint;
 }
 
 class _AppLocalizationsDelegate

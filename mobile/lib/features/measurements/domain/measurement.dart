@@ -28,6 +28,8 @@ class MeasurementFieldDefinition {
     this.minimumValueMm,
     this.maximumValueMm,
     this.helpText,
+    this.helpTextUr,
+    this.helpTextRomanUr,
   });
 
   factory MeasurementFieldDefinition.fromJson(Map<String, dynamic> json) =>
@@ -45,6 +47,8 @@ class MeasurementFieldDefinition {
         maximumValueMm: _asDouble(json['maximum_value_mm']),
         sortOrder: json['sort_order'] as int? ?? 0,
         helpText: json['help_text'] as String?,
+        helpTextUr: json['help_text_ur'] as String?,
+        helpTextRomanUr: json['help_text_roman_ur'] as String?,
       );
 
   final String clientUuid;
@@ -60,6 +64,8 @@ class MeasurementFieldDefinition {
   final double? maximumValueMm;
   final int sortOrder;
   final String? helpText;
+  final String? helpTextUr;
+  final String? helpTextRomanUr;
 
   String localizedLabel(String languageCode, String? scriptCode) {
     if (languageCode == 'ur' && scriptCode != 'Latn') {
@@ -85,7 +91,43 @@ class MeasurementFieldDefinition {
     'maximum_value_mm': maximumValueMm,
     'sort_order': sortOrder,
     'help_text': helpText,
+    'help_text_ur': helpTextUr,
+    'help_text_roman_ur': helpTextRomanUr,
   };
+
+  MeasurementFieldDefinition copyWith({
+    String? clientUuid,
+    String? key,
+    String? label,
+    String? labelUr,
+    String? labelRomanUr,
+    String? section,
+    String? valueType,
+    String? unitType,
+    bool? isRequired,
+    double? minimumValueMm,
+    double? maximumValueMm,
+    int? sortOrder,
+    String? helpText,
+    String? helpTextUr,
+    String? helpTextRomanUr,
+  }) => MeasurementFieldDefinition(
+    clientUuid: clientUuid ?? this.clientUuid,
+    key: key ?? this.key,
+    label: label ?? this.label,
+    labelUr: labelUr ?? this.labelUr,
+    labelRomanUr: labelRomanUr ?? this.labelRomanUr,
+    section: section ?? this.section,
+    valueType: valueType ?? this.valueType,
+    unitType: unitType ?? this.unitType,
+    isRequired: isRequired ?? this.isRequired,
+    minimumValueMm: minimumValueMm ?? this.minimumValueMm,
+    maximumValueMm: maximumValueMm ?? this.maximumValueMm,
+    sortOrder: sortOrder ?? this.sortOrder,
+    helpText: helpText ?? this.helpText,
+    helpTextUr: helpTextUr ?? this.helpTextUr,
+    helpTextRomanUr: helpTextRomanUr ?? this.helpTextRomanUr,
+  );
 }
 
 class MeasurementTemplateRecord {
@@ -102,6 +144,7 @@ class MeasurementTemplateRecord {
     required this.fields,
     required this.createdAt,
     required this.updatedAt,
+    required this.syncState,
     this.serverId,
     this.systemCode,
     this.sourceTemplateUuid,
@@ -109,6 +152,7 @@ class MeasurementTemplateRecord {
     this.nameRomanUr,
     this.description,
     this.archivedAt,
+    this.syncError,
   });
 
   factory MeasurementTemplateRecord.fromLocal(LocalMeasurementTemplate row) =>
@@ -134,6 +178,8 @@ class MeasurementTemplateRecord {
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
         archivedAt: row.archivedAt,
+        syncState: MeasurementSyncState.fromStorage(row.syncState),
+        syncError: row.syncError,
       );
 
   factory MeasurementTemplateRecord.fromRemote(
@@ -165,6 +211,7 @@ class MeasurementTemplateRecord {
     createdAt: DateTime.parse(json['created_at'] as String),
     updatedAt: DateTime.parse(json['updated_at'] as String),
     archivedAt: _optionalDate(json['archived_at']),
+    syncState: MeasurementSyncState.synced,
   );
 
   final String businessScope;
@@ -186,6 +233,8 @@ class MeasurementTemplateRecord {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? archivedAt;
+  final MeasurementSyncState syncState;
+  final String? syncError;
 
   String localizedName(String languageCode, String? scriptCode) {
     if (languageCode == 'ur' && scriptCode != 'Latn') {
@@ -196,6 +245,42 @@ class MeasurementTemplateRecord {
     }
     return name;
   }
+
+  bool get isBusinessTemplate => source == 'business';
+  bool get hasConflict => syncState == MeasurementSyncState.conflict;
+}
+
+class MeasurementTemplateDraft {
+  const MeasurementTemplateDraft({
+    required this.name,
+    required this.category,
+    required this.defaultUnit,
+    required this.fields,
+    this.nameUr,
+    this.nameRomanUr,
+    this.description,
+    this.sourceTemplateUuid,
+  });
+
+  final String name;
+  final String? nameUr;
+  final String? nameRomanUr;
+  final String category;
+  final String defaultUnit;
+  final String? description;
+  final String? sourceTemplateUuid;
+  final List<MeasurementFieldDefinition> fields;
+
+  Map<String, dynamic> toJson() => {
+    'source_template_uuid': sourceTemplateUuid,
+    'name': name,
+    'name_ur': nameUr,
+    'name_roman_ur': nameRomanUr,
+    'category': category,
+    'default_unit': defaultUnit,
+    'description': description,
+    'fields': fields.map((field) => field.toJson()).toList(growable: false),
+  };
 }
 
 class MeasurementValueDraft {
@@ -223,6 +308,7 @@ class MeasurementProfileDraft {
     required this.name,
     required this.preferredUnit,
     this.notes,
+    this.customFields = const [],
   });
 
   final String templateClientUuid;
@@ -230,6 +316,7 @@ class MeasurementProfileDraft {
   final String name;
   final String preferredUnit;
   final String? notes;
+  final List<MeasurementFieldDefinition> customFields;
 
   Map<String, dynamic> toJson() => {
     'template_client_uuid': templateClientUuid,
@@ -237,6 +324,9 @@ class MeasurementProfileDraft {
     'name': name,
     'preferred_unit': preferredUnit,
     'notes': notes,
+    'custom_fields': customFields
+        .map((field) => field.toJson())
+        .toList(growable: false),
   };
 }
 
@@ -260,6 +350,7 @@ class MeasurementProfileRecord {
     this.syncError,
     this.serverUpdatedAt,
     this.archivedAt,
+    this.customFields = const [],
   });
 
   factory MeasurementProfileRecord.fromLocal(LocalMeasurementProfile row) =>
@@ -282,6 +373,9 @@ class MeasurementProfileRecord {
         updatedAt: row.updatedAt,
         serverUpdatedAt: row.serverUpdatedAt,
         archivedAt: row.archivedAt,
+        customFields: _decodeList(row.customFieldsJson)
+            .map(MeasurementFieldDefinition.fromJson)
+            .toList(growable: false),
       );
 
   factory MeasurementProfileRecord.fromRemote(Map<String, dynamic> json) {
@@ -305,6 +399,13 @@ class MeasurementProfileRecord {
       updatedAt: updatedAt,
       serverUpdatedAt: updatedAt,
       archivedAt: _optionalDate(json['archived_at']),
+      customFields: (json['custom_fields'] as List? ?? const [])
+          .map(
+            (item) => MeasurementFieldDefinition.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
+          .toList(growable: false),
     );
   }
 
@@ -326,6 +427,7 @@ class MeasurementProfileRecord {
   final DateTime updatedAt;
   final DateTime? serverUpdatedAt;
   final DateTime? archivedAt;
+  final List<MeasurementFieldDefinition> customFields;
 
   bool get isArchived => status == 'archived';
   bool get hasConflict => syncState == MeasurementSyncState.conflict;
@@ -345,6 +447,7 @@ class MeasurementRevisionRecord {
     this.serverId,
     this.notes,
     this.syncError,
+    this.customFields = const [],
   });
 
   factory MeasurementRevisionRecord.fromLocal(LocalMeasurementRevision row) =>
@@ -360,6 +463,9 @@ class MeasurementRevisionRecord {
         measuredAt: row.measuredAt,
         syncState: MeasurementSyncState.fromStorage(row.syncState),
         syncError: row.syncError,
+        customFields: _decodeList(row.customFieldsJson)
+            .map(MeasurementFieldDefinition.fromJson)
+            .toList(growable: false),
         createdAt: row.createdAt,
       );
 
@@ -381,6 +487,13 @@ class MeasurementRevisionRecord {
     measuredAt: DateTime.parse(json['measured_at'] as String),
     syncState: MeasurementSyncState.synced,
     createdAt: DateTime.parse(json['created_at'] as String),
+    customFields: (json['custom_fields'] as List? ?? const [])
+        .map(
+          (item) => MeasurementFieldDefinition.fromJson(
+            Map<String, dynamic>.from(item as Map),
+          ),
+        )
+        .toList(growable: false),
   );
 
   final String businessId;
@@ -395,6 +508,7 @@ class MeasurementRevisionRecord {
   final MeasurementSyncState syncState;
   final String? syncError;
   final DateTime createdAt;
+  final List<MeasurementFieldDefinition> customFields;
 }
 
 List<Map<String, dynamic>> _decodeList(String value) =>

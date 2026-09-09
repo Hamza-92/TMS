@@ -230,6 +230,71 @@ class MeasurementManagementTest extends TestCase
         $this->assertDatabaseCount('customer_measurement_revisions', 0);
     }
 
+    public function test_profile_custom_fields_are_validated_and_snapshotted_in_revisions(): void
+    {
+        [$user, $business] = $this->businessContext();
+        $token = $this->login($user);
+        $customer = $this->createCustomer($token, $business);
+        [$template, $templateFieldUuid] = $this->createTemplate($token, $business);
+        $profileUuid = (string) Str::uuid();
+        $customFieldUuid = (string) Str::uuid();
+        $customField = [
+            'client_uuid' => $customFieldUuid,
+            'field_key' => 'customer_special_note',
+            'label' => 'Special fitting note',
+            'label_ur' => 'خصوصی سلائی نوٹ',
+            'label_roman_ur' => 'Khaas silai note',
+            'section' => 'custom',
+            'value_type' => 'text',
+            'unit_type' => 'none',
+            'is_required' => true,
+            'minimum_value_mm' => null,
+            'maximum_value_mm' => null,
+            'sort_order' => 100,
+        ];
+
+        $this->withToken($token)->putJson($this->profileUrl($business, $customer, $profileUuid), [
+            'operation_uuid' => (string) Str::uuid(),
+            'base_version' => 0,
+            'template_client_uuid' => $template->client_uuid,
+            'template_definition_version' => 1,
+            'name' => 'Customer-specific coat',
+            'preferred_unit' => 'inch',
+            'custom_fields' => [$customField],
+        ])->assertCreated()
+            ->assertJsonPath('data.custom_fields.0.client_uuid', $customFieldUuid);
+
+        $revisionPayload = [
+            'operation_uuid' => (string) Str::uuid(),
+            'base_version' => 1,
+            'revision_client_uuid' => (string) Str::uuid(),
+            'measured_at' => now()->toIso8601String(),
+            'values' => [[
+                'field_uuid' => $templateFieldUuid,
+                'value' => 40,
+                'unit' => 'inch',
+            ]],
+        ];
+        $this->withToken($token)
+            ->postJson($this->profileUrl($business, $customer, $profileUuid).'/revisions', $revisionPayload)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['values']);
+
+        $this->withToken($token)
+            ->postJson($this->profileUrl($business, $customer, $profileUuid).'/revisions', [
+                ...$revisionPayload,
+                'operation_uuid' => (string) Str::uuid(),
+                'revision_client_uuid' => (string) Str::uuid(),
+                'values' => [
+                    $revisionPayload['values'][0],
+                    ['field_uuid' => $customFieldUuid, 'value' => 'Keep the left shoulder loose'],
+                ],
+            ])
+            ->assertCreated()
+            ->assertJsonPath('data.revision.custom_fields.0.label', 'Special fitting note')
+            ->assertJsonPath('data.revision.values.1.field_uuid', $customFieldUuid);
+    }
+
     public function test_profiles_are_customer_and_business_scoped_and_can_be_archived_and_restored(): void
     {
         [$user, $business] = $this->businessContext();

@@ -96,4 +96,145 @@ void main() {
     expect(profiles, hasLength(1));
     expect(profiles.single.name, 'First profile');
   });
+
+  test('a new measurement creates immutable revision history', () async {
+    const businessId = '01HBUSINESS00000000000000';
+    const customerUuid = '00000000-0000-4000-8000-000000000101';
+    const fieldUuid = '00000000-0000-4000-8000-000000000301';
+    final profile = await repository.saveProfile(
+      businessId: businessId,
+      customerClientUuid: customerUuid,
+      draft: const MeasurementProfileDraft(
+        templateClientUuid: 'template-one',
+        templateDefinitionVersion: 1,
+        name: 'Regular fitting',
+        preferredUnit: 'inch',
+      ),
+    );
+    await repository.addRevision(
+      profile: profile,
+      values: const [
+        MeasurementValueDraft(fieldUuid: fieldUuid, value: 40, unit: 'inch'),
+      ],
+      measuredAt: DateTime(2026, 9, 1),
+    );
+    final updatedProfile = (await repository
+        .watchProfile(businessId, profile.clientUuid)
+        .first)!;
+
+    await repository.addRevision(
+      profile: updatedProfile,
+      values: const [
+        MeasurementValueDraft(fieldUuid: fieldUuid, value: 41, unit: 'inch'),
+      ],
+      measuredAt: DateTime(2026, 9, 9),
+    );
+
+    final revisions = await repository
+        .watchRevisions(businessId, profile.clientUuid)
+        .first;
+    expect(revisions, hasLength(2));
+    expect(revisions[0].revisionNumber, 2);
+    expect(revisions[0].values.single['value'], 41);
+    expect(revisions[1].revisionNumber, 1);
+    expect(revisions[1].values.single['value'], 40);
+    expect(await repository.pendingCount(businessId, customerUuid), 3);
+  });
+
+  test(
+    'business template is available offline before synchronization',
+    () async {
+      const businessId = '01HBUSINESS00000000000000';
+      const fieldUuid = '00000000-0000-4000-8000-000000000301';
+
+      final template = await repository.saveTemplate(
+        businessId: businessId,
+        draft: const MeasurementTemplateDraft(
+          name: 'Custom coat',
+          category: 'coat',
+          defaultUnit: 'inch',
+          fields: [
+            MeasurementFieldDefinition(
+              clientUuid: fieldUuid,
+              key: 'coat_length',
+              label: 'Coat length',
+              labelUr: 'کوٹ کی لمبائی',
+              labelRomanUr: 'Coat ki lambai',
+              section: 'garment',
+              valueType: 'number',
+              unitType: 'length',
+              isRequired: true,
+              sortOrder: 0,
+            ),
+          ],
+        ),
+      );
+
+      final templates = await repository.watchTemplates(businessId).first;
+      final queued = await database
+          .select(database.measurementTemplateSyncOperations)
+          .get();
+
+      expect(template.source, 'business');
+      expect(template.syncState, MeasurementSyncState.pending);
+      expect(templates.single.fields.single.labelUr, 'کوٹ کی لمبائی');
+      expect(queued, hasLength(1));
+    },
+  );
+
+  test(
+    'customer-only fields are retained in profile and revision history',
+    () async {
+      const businessId = '01HBUSINESS00000000000000';
+      const customerUuid = '00000000-0000-4000-8000-000000000101';
+      const customFieldUuid = '00000000-0000-4000-8000-000000000401';
+      const customField = MeasurementFieldDefinition(
+        clientUuid: customFieldUuid,
+        key: 'special_note',
+        label: 'Special note',
+        labelUr: 'خصوصی نوٹ',
+        labelRomanUr: 'Khaas note',
+        section: 'custom',
+        valueType: 'text',
+        unitType: 'none',
+        isRequired: false,
+        sortOrder: 100,
+      );
+
+      final profile = await repository.saveProfile(
+        businessId: businessId,
+        customerClientUuid: customerUuid,
+        draft: const MeasurementProfileDraft(
+          templateClientUuid: 'template-one',
+          templateDefinitionVersion: 1,
+          name: 'Customer fitting',
+          preferredUnit: 'inch',
+          customFields: [customField],
+        ),
+      );
+      await repository.addRevision(
+        profile: profile,
+        values: const [
+          MeasurementValueDraft(
+            fieldUuid: customFieldUuid,
+            value: 'Keep loose',
+          ),
+        ],
+        measuredAt: DateTime(2026, 9, 9),
+      );
+
+      final storedProfile = (await repository
+          .watchProfile(businessId, profile.clientUuid)
+          .first)!;
+      final revision =
+          (await repository
+                  .watchRevisions(businessId, profile.clientUuid)
+                  .first)
+              .single;
+
+      expect(storedProfile.customFields.single.labelUr, 'خصوصی نوٹ');
+      expect(revision.customFields.single.clientUuid, customFieldUuid);
+      expect(revision.values.single['value'], 'Keep loose');
+    },
+  );
 }

@@ -87,6 +87,17 @@ class _MeasurementProfileListScreenState
               GradientPageHeader(
                 title: context.l10n.measurementsTitle,
                 height: 164,
+                trailing: business.role == 'owner' || business.role == 'manager'
+                    ? IconButton(
+                        tooltip: context.l10n.manageMeasurementTemplates,
+                        onPressed: () => context.push('/measurement-templates'),
+                        icon: const Icon(
+                          Icons.tune_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      )
+                    : null,
                 onBack: () =>
                     context.go('/customers/${widget.customerClientUuid}'),
                 bottom: customerRecord != null

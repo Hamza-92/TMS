@@ -20,6 +20,7 @@ class MeasurementRevisionResource extends JsonResource
                 fn () => $this->templateVersion->version_number,
             ),
             'values' => $this->values,
+            'custom_fields' => $this->custom_fields ?? [],
             'notes' => $this->notes,
             'measured_at' => $this->measured_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),

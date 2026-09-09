@@ -2072,6 +2072,29 @@ class $LocalMeasurementTemplatesTable extends LocalMeasurementTemplates
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _syncStateMeta = const VerificationMeta(
+    'syncState',
+  );
+  @override
+  late final GeneratedColumn<String> syncState = GeneratedColumn<String>(
+    'sync_state',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('synced'),
+  );
+  static const VerificationMeta _syncErrorMeta = const VerificationMeta(
+    'syncError',
+  );
+  @override
+  late final GeneratedColumn<String> syncError = GeneratedColumn<String>(
+    'sync_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -2123,6 +2146,8 @@ class $LocalMeasurementTemplatesTable extends LocalMeasurementTemplates
     serverVersion,
     definitionVersion,
     fieldsJson,
+    syncState,
+    syncError,
     createdAt,
     updatedAt,
     archivedAt,
@@ -2268,6 +2293,18 @@ class $LocalMeasurementTemplatesTable extends LocalMeasurementTemplates
     } else if (isInserting) {
       context.missing(_fieldsJsonMeta);
     }
+    if (data.containsKey('sync_state')) {
+      context.handle(
+        _syncStateMeta,
+        syncState.isAcceptableOrUnknown(data['sync_state']!, _syncStateMeta),
+      );
+    }
+    if (data.containsKey('sync_error')) {
+      context.handle(
+        _syncErrorMeta,
+        syncError.isAcceptableOrUnknown(data['sync_error']!, _syncErrorMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -2366,6 +2403,14 @@ class $LocalMeasurementTemplatesTable extends LocalMeasurementTemplates
         DriftSqlType.string,
         data['${effectivePrefix}fields_json'],
       )!,
+      syncState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_state'],
+      )!,
+      syncError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sync_error'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -2405,6 +2450,8 @@ class LocalMeasurementTemplate extends DataClass
   final int serverVersion;
   final int definitionVersion;
   final String fieldsJson;
+  final String syncState;
+  final String? syncError;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? archivedAt;
@@ -2425,6 +2472,8 @@ class LocalMeasurementTemplate extends DataClass
     required this.serverVersion,
     required this.definitionVersion,
     required this.fieldsJson,
+    required this.syncState,
+    this.syncError,
     required this.createdAt,
     required this.updatedAt,
     this.archivedAt,
@@ -2460,6 +2509,10 @@ class LocalMeasurementTemplate extends DataClass
     map['server_version'] = Variable<int>(serverVersion);
     map['definition_version'] = Variable<int>(definitionVersion);
     map['fields_json'] = Variable<String>(fieldsJson);
+    map['sync_state'] = Variable<String>(syncState);
+    if (!nullToAbsent || syncError != null) {
+      map['sync_error'] = Variable<String>(syncError);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || archivedAt != null) {
@@ -2498,6 +2551,10 @@ class LocalMeasurementTemplate extends DataClass
       serverVersion: Value(serverVersion),
       definitionVersion: Value(definitionVersion),
       fieldsJson: Value(fieldsJson),
+      syncState: Value(syncState),
+      syncError: syncError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncError),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       archivedAt: archivedAt == null && nullToAbsent
@@ -2530,6 +2587,8 @@ class LocalMeasurementTemplate extends DataClass
       serverVersion: serializer.fromJson<int>(json['serverVersion']),
       definitionVersion: serializer.fromJson<int>(json['definitionVersion']),
       fieldsJson: serializer.fromJson<String>(json['fieldsJson']),
+      syncState: serializer.fromJson<String>(json['syncState']),
+      syncError: serializer.fromJson<String?>(json['syncError']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       archivedAt: serializer.fromJson<DateTime?>(json['archivedAt']),
@@ -2555,6 +2614,8 @@ class LocalMeasurementTemplate extends DataClass
       'serverVersion': serializer.toJson<int>(serverVersion),
       'definitionVersion': serializer.toJson<int>(definitionVersion),
       'fieldsJson': serializer.toJson<String>(fieldsJson),
+      'syncState': serializer.toJson<String>(syncState),
+      'syncError': serializer.toJson<String?>(syncError),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'archivedAt': serializer.toJson<DateTime?>(archivedAt),
@@ -2578,6 +2639,8 @@ class LocalMeasurementTemplate extends DataClass
     int? serverVersion,
     int? definitionVersion,
     String? fieldsJson,
+    String? syncState,
+    Value<String?> syncError = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> archivedAt = const Value.absent(),
@@ -2600,6 +2663,8 @@ class LocalMeasurementTemplate extends DataClass
     serverVersion: serverVersion ?? this.serverVersion,
     definitionVersion: definitionVersion ?? this.definitionVersion,
     fieldsJson: fieldsJson ?? this.fieldsJson,
+    syncState: syncState ?? this.syncState,
+    syncError: syncError.present ? syncError.value : this.syncError,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
@@ -2644,6 +2709,8 @@ class LocalMeasurementTemplate extends DataClass
       fieldsJson: data.fieldsJson.present
           ? data.fieldsJson.value
           : this.fieldsJson,
+      syncState: data.syncState.present ? data.syncState.value : this.syncState,
+      syncError: data.syncError.present ? data.syncError.value : this.syncError,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       archivedAt: data.archivedAt.present
@@ -2671,6 +2738,8 @@ class LocalMeasurementTemplate extends DataClass
           ..write('serverVersion: $serverVersion, ')
           ..write('definitionVersion: $definitionVersion, ')
           ..write('fieldsJson: $fieldsJson, ')
+          ..write('syncState: $syncState, ')
+          ..write('syncError: $syncError, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('archivedAt: $archivedAt')
@@ -2679,7 +2748,7 @@ class LocalMeasurementTemplate extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     businessScope,
     clientUuid,
     serverId,
@@ -2696,10 +2765,12 @@ class LocalMeasurementTemplate extends DataClass
     serverVersion,
     definitionVersion,
     fieldsJson,
+    syncState,
+    syncError,
     createdAt,
     updatedAt,
     archivedAt,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2720,6 +2791,8 @@ class LocalMeasurementTemplate extends DataClass
           other.serverVersion == this.serverVersion &&
           other.definitionVersion == this.definitionVersion &&
           other.fieldsJson == this.fieldsJson &&
+          other.syncState == this.syncState &&
+          other.syncError == this.syncError &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.archivedAt == this.archivedAt);
@@ -2743,6 +2816,8 @@ class LocalMeasurementTemplatesCompanion
   final Value<int> serverVersion;
   final Value<int> definitionVersion;
   final Value<String> fieldsJson;
+  final Value<String> syncState;
+  final Value<String?> syncError;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> archivedAt;
@@ -2764,6 +2839,8 @@ class LocalMeasurementTemplatesCompanion
     this.serverVersion = const Value.absent(),
     this.definitionVersion = const Value.absent(),
     this.fieldsJson = const Value.absent(),
+    this.syncState = const Value.absent(),
+    this.syncError = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.archivedAt = const Value.absent(),
@@ -2786,6 +2863,8 @@ class LocalMeasurementTemplatesCompanion
     this.serverVersion = const Value.absent(),
     this.definitionVersion = const Value.absent(),
     required String fieldsJson,
+    this.syncState = const Value.absent(),
+    this.syncError = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.archivedAt = const Value.absent(),
@@ -2815,6 +2894,8 @@ class LocalMeasurementTemplatesCompanion
     Expression<int>? serverVersion,
     Expression<int>? definitionVersion,
     Expression<String>? fieldsJson,
+    Expression<String>? syncState,
+    Expression<String>? syncError,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? archivedAt,
@@ -2838,6 +2919,8 @@ class LocalMeasurementTemplatesCompanion
       if (serverVersion != null) 'server_version': serverVersion,
       if (definitionVersion != null) 'definition_version': definitionVersion,
       if (fieldsJson != null) 'fields_json': fieldsJson,
+      if (syncState != null) 'sync_state': syncState,
+      if (syncError != null) 'sync_error': syncError,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (archivedAt != null) 'archived_at': archivedAt,
@@ -2862,6 +2945,8 @@ class LocalMeasurementTemplatesCompanion
     Value<int>? serverVersion,
     Value<int>? definitionVersion,
     Value<String>? fieldsJson,
+    Value<String>? syncState,
+    Value<String?>? syncError,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? archivedAt,
@@ -2884,6 +2969,8 @@ class LocalMeasurementTemplatesCompanion
       serverVersion: serverVersion ?? this.serverVersion,
       definitionVersion: definitionVersion ?? this.definitionVersion,
       fieldsJson: fieldsJson ?? this.fieldsJson,
+      syncState: syncState ?? this.syncState,
+      syncError: syncError ?? this.syncError,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       archivedAt: archivedAt ?? this.archivedAt,
@@ -2942,6 +3029,12 @@ class LocalMeasurementTemplatesCompanion
     if (fieldsJson.present) {
       map['fields_json'] = Variable<String>(fieldsJson.value);
     }
+    if (syncState.present) {
+      map['sync_state'] = Variable<String>(syncState.value);
+    }
+    if (syncError.present) {
+      map['sync_error'] = Variable<String>(syncError.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -2976,6 +3069,8 @@ class LocalMeasurementTemplatesCompanion
           ..write('serverVersion: $serverVersion, ')
           ..write('definitionVersion: $definitionVersion, ')
           ..write('fieldsJson: $fieldsJson, ')
+          ..write('syncState: $syncState, ')
+          ..write('syncError: $syncError, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('archivedAt: $archivedAt, ')
@@ -3086,6 +3181,18 @@ class $LocalMeasurementProfilesTable extends LocalMeasurementProfiles
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+  );
+  static const VerificationMeta _customFieldsJsonMeta = const VerificationMeta(
+    'customFieldsJson',
+  );
+  @override
+  late final GeneratedColumn<String> customFieldsJson = GeneratedColumn<String>(
+    'custom_fields_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
   );
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
@@ -3199,6 +3306,7 @@ class $LocalMeasurementProfilesTable extends LocalMeasurementProfiles
     name,
     preferredUnit,
     notes,
+    customFieldsJson,
     status,
     serverVersion,
     latestRevisionNumber,
@@ -3297,6 +3405,15 @@ class $LocalMeasurementProfilesTable extends LocalMeasurementProfiles
       context.handle(
         _notesMeta,
         notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('custom_fields_json')) {
+      context.handle(
+        _customFieldsJsonMeta,
+        customFieldsJson.isAcceptableOrUnknown(
+          data['custom_fields_json']!,
+          _customFieldsJsonMeta,
+        ),
       );
     }
     if (data.containsKey('status')) {
@@ -3414,6 +3531,10 @@ class $LocalMeasurementProfilesTable extends LocalMeasurementProfiles
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
       ),
+      customFieldsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}custom_fields_json'],
+      )!,
       status: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}status'],
@@ -3470,6 +3591,7 @@ class LocalMeasurementProfile extends DataClass
   final String name;
   final String preferredUnit;
   final String? notes;
+  final String customFieldsJson;
   final String status;
   final int serverVersion;
   final int latestRevisionNumber;
@@ -3489,6 +3611,7 @@ class LocalMeasurementProfile extends DataClass
     required this.name,
     required this.preferredUnit,
     this.notes,
+    required this.customFieldsJson,
     required this.status,
     required this.serverVersion,
     required this.latestRevisionNumber,
@@ -3517,6 +3640,7 @@ class LocalMeasurementProfile extends DataClass
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    map['custom_fields_json'] = Variable<String>(customFieldsJson);
     map['status'] = Variable<String>(status);
     map['server_version'] = Variable<int>(serverVersion);
     map['latest_revision_number'] = Variable<int>(latestRevisionNumber);
@@ -3550,6 +3674,7 @@ class LocalMeasurementProfile extends DataClass
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
+      customFieldsJson: Value(customFieldsJson),
       status: Value(status),
       serverVersion: Value(serverVersion),
       latestRevisionNumber: Value(latestRevisionNumber),
@@ -3589,6 +3714,7 @@ class LocalMeasurementProfile extends DataClass
       name: serializer.fromJson<String>(json['name']),
       preferredUnit: serializer.fromJson<String>(json['preferredUnit']),
       notes: serializer.fromJson<String?>(json['notes']),
+      customFieldsJson: serializer.fromJson<String>(json['customFieldsJson']),
       status: serializer.fromJson<String>(json['status']),
       serverVersion: serializer.fromJson<int>(json['serverVersion']),
       latestRevisionNumber: serializer.fromJson<int>(
@@ -3617,6 +3743,7 @@ class LocalMeasurementProfile extends DataClass
       'name': serializer.toJson<String>(name),
       'preferredUnit': serializer.toJson<String>(preferredUnit),
       'notes': serializer.toJson<String?>(notes),
+      'customFieldsJson': serializer.toJson<String>(customFieldsJson),
       'status': serializer.toJson<String>(status),
       'serverVersion': serializer.toJson<int>(serverVersion),
       'latestRevisionNumber': serializer.toJson<int>(latestRevisionNumber),
@@ -3639,6 +3766,7 @@ class LocalMeasurementProfile extends DataClass
     String? name,
     String? preferredUnit,
     Value<String?> notes = const Value.absent(),
+    String? customFieldsJson,
     String? status,
     int? serverVersion,
     int? latestRevisionNumber,
@@ -3659,6 +3787,7 @@ class LocalMeasurementProfile extends DataClass
     name: name ?? this.name,
     preferredUnit: preferredUnit ?? this.preferredUnit,
     notes: notes.present ? notes.value : this.notes,
+    customFieldsJson: customFieldsJson ?? this.customFieldsJson,
     status: status ?? this.status,
     serverVersion: serverVersion ?? this.serverVersion,
     latestRevisionNumber: latestRevisionNumber ?? this.latestRevisionNumber,
@@ -3696,6 +3825,9 @@ class LocalMeasurementProfile extends DataClass
           ? data.preferredUnit.value
           : this.preferredUnit,
       notes: data.notes.present ? data.notes.value : this.notes,
+      customFieldsJson: data.customFieldsJson.present
+          ? data.customFieldsJson.value
+          : this.customFieldsJson,
       status: data.status.present ? data.status.value : this.status,
       serverVersion: data.serverVersion.present
           ? data.serverVersion.value
@@ -3728,6 +3860,7 @@ class LocalMeasurementProfile extends DataClass
           ..write('name: $name, ')
           ..write('preferredUnit: $preferredUnit, ')
           ..write('notes: $notes, ')
+          ..write('customFieldsJson: $customFieldsJson, ')
           ..write('status: $status, ')
           ..write('serverVersion: $serverVersion, ')
           ..write('latestRevisionNumber: $latestRevisionNumber, ')
@@ -3752,6 +3885,7 @@ class LocalMeasurementProfile extends DataClass
     name,
     preferredUnit,
     notes,
+    customFieldsJson,
     status,
     serverVersion,
     latestRevisionNumber,
@@ -3775,6 +3909,7 @@ class LocalMeasurementProfile extends DataClass
           other.name == this.name &&
           other.preferredUnit == this.preferredUnit &&
           other.notes == this.notes &&
+          other.customFieldsJson == this.customFieldsJson &&
           other.status == this.status &&
           other.serverVersion == this.serverVersion &&
           other.latestRevisionNumber == this.latestRevisionNumber &&
@@ -3797,6 +3932,7 @@ class LocalMeasurementProfilesCompanion
   final Value<String> name;
   final Value<String> preferredUnit;
   final Value<String?> notes;
+  final Value<String> customFieldsJson;
   final Value<String> status;
   final Value<int> serverVersion;
   final Value<int> latestRevisionNumber;
@@ -3817,6 +3953,7 @@ class LocalMeasurementProfilesCompanion
     this.name = const Value.absent(),
     this.preferredUnit = const Value.absent(),
     this.notes = const Value.absent(),
+    this.customFieldsJson = const Value.absent(),
     this.status = const Value.absent(),
     this.serverVersion = const Value.absent(),
     this.latestRevisionNumber = const Value.absent(),
@@ -3838,6 +3975,7 @@ class LocalMeasurementProfilesCompanion
     required String name,
     this.preferredUnit = const Value.absent(),
     this.notes = const Value.absent(),
+    this.customFieldsJson = const Value.absent(),
     this.status = const Value.absent(),
     this.serverVersion = const Value.absent(),
     this.latestRevisionNumber = const Value.absent(),
@@ -3866,6 +4004,7 @@ class LocalMeasurementProfilesCompanion
     Expression<String>? name,
     Expression<String>? preferredUnit,
     Expression<String>? notes,
+    Expression<String>? customFieldsJson,
     Expression<String>? status,
     Expression<int>? serverVersion,
     Expression<int>? latestRevisionNumber,
@@ -3890,6 +4029,7 @@ class LocalMeasurementProfilesCompanion
       if (name != null) 'name': name,
       if (preferredUnit != null) 'preferred_unit': preferredUnit,
       if (notes != null) 'notes': notes,
+      if (customFieldsJson != null) 'custom_fields_json': customFieldsJson,
       if (status != null) 'status': status,
       if (serverVersion != null) 'server_version': serverVersion,
       if (latestRevisionNumber != null)
@@ -3914,6 +4054,7 @@ class LocalMeasurementProfilesCompanion
     Value<String>? name,
     Value<String>? preferredUnit,
     Value<String?>? notes,
+    Value<String>? customFieldsJson,
     Value<String>? status,
     Value<int>? serverVersion,
     Value<int>? latestRevisionNumber,
@@ -3936,6 +4077,7 @@ class LocalMeasurementProfilesCompanion
       name: name ?? this.name,
       preferredUnit: preferredUnit ?? this.preferredUnit,
       notes: notes ?? this.notes,
+      customFieldsJson: customFieldsJson ?? this.customFieldsJson,
       status: status ?? this.status,
       serverVersion: serverVersion ?? this.serverVersion,
       latestRevisionNumber: latestRevisionNumber ?? this.latestRevisionNumber,
@@ -3980,6 +4122,9 @@ class LocalMeasurementProfilesCompanion
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
+    }
+    if (customFieldsJson.present) {
+      map['custom_fields_json'] = Variable<String>(customFieldsJson.value);
     }
     if (status.present) {
       map['status'] = Variable<String>(status.value);
@@ -4026,6 +4171,7 @@ class LocalMeasurementProfilesCompanion
           ..write('name: $name, ')
           ..write('preferredUnit: $preferredUnit, ')
           ..write('notes: $notes, ')
+          ..write('customFieldsJson: $customFieldsJson, ')
           ..write('status: $status, ')
           ..write('serverVersion: $serverVersion, ')
           ..write('latestRevisionNumber: $latestRevisionNumber, ')
@@ -4126,6 +4272,18 @@ class $LocalMeasurementRevisionsTable extends LocalMeasurementRevisions
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _customFieldsJsonMeta = const VerificationMeta(
+    'customFieldsJson',
+  );
+  @override
+  late final GeneratedColumn<String> customFieldsJson = GeneratedColumn<String>(
+    'custom_fields_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -4189,6 +4347,7 @@ class $LocalMeasurementRevisionsTable extends LocalMeasurementRevisions
     revisionNumber,
     templateDefinitionVersion,
     valuesJson,
+    customFieldsJson,
     notes,
     measuredAt,
     syncState,
@@ -4268,6 +4427,15 @@ class $LocalMeasurementRevisionsTable extends LocalMeasurementRevisions
     } else if (isInserting) {
       context.missing(_valuesJsonMeta);
     }
+    if (data.containsKey('custom_fields_json')) {
+      context.handle(
+        _customFieldsJsonMeta,
+        customFieldsJson.isAcceptableOrUnknown(
+          data['custom_fields_json']!,
+          _customFieldsJsonMeta,
+        ),
+      );
+    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
@@ -4342,6 +4510,10 @@ class $LocalMeasurementRevisionsTable extends LocalMeasurementRevisions
         DriftSqlType.string,
         data['${effectivePrefix}values_json'],
       )!,
+      customFieldsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}custom_fields_json'],
+      )!,
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -4380,6 +4552,7 @@ class LocalMeasurementRevision extends DataClass
   final int revisionNumber;
   final int templateDefinitionVersion;
   final String valuesJson;
+  final String customFieldsJson;
   final String? notes;
   final DateTime measuredAt;
   final String syncState;
@@ -4393,6 +4566,7 @@ class LocalMeasurementRevision extends DataClass
     required this.revisionNumber,
     required this.templateDefinitionVersion,
     required this.valuesJson,
+    required this.customFieldsJson,
     this.notes,
     required this.measuredAt,
     required this.syncState,
@@ -4413,6 +4587,7 @@ class LocalMeasurementRevision extends DataClass
       templateDefinitionVersion,
     );
     map['values_json'] = Variable<String>(valuesJson);
+    map['custom_fields_json'] = Variable<String>(customFieldsJson);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -4436,6 +4611,7 @@ class LocalMeasurementRevision extends DataClass
       revisionNumber: Value(revisionNumber),
       templateDefinitionVersion: Value(templateDefinitionVersion),
       valuesJson: Value(valuesJson),
+      customFieldsJson: Value(customFieldsJson),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -4463,6 +4639,7 @@ class LocalMeasurementRevision extends DataClass
         json['templateDefinitionVersion'],
       ),
       valuesJson: serializer.fromJson<String>(json['valuesJson']),
+      customFieldsJson: serializer.fromJson<String>(json['customFieldsJson']),
       notes: serializer.fromJson<String?>(json['notes']),
       measuredAt: serializer.fromJson<DateTime>(json['measuredAt']),
       syncState: serializer.fromJson<String>(json['syncState']),
@@ -4483,6 +4660,7 @@ class LocalMeasurementRevision extends DataClass
         templateDefinitionVersion,
       ),
       'valuesJson': serializer.toJson<String>(valuesJson),
+      'customFieldsJson': serializer.toJson<String>(customFieldsJson),
       'notes': serializer.toJson<String?>(notes),
       'measuredAt': serializer.toJson<DateTime>(measuredAt),
       'syncState': serializer.toJson<String>(syncState),
@@ -4499,6 +4677,7 @@ class LocalMeasurementRevision extends DataClass
     int? revisionNumber,
     int? templateDefinitionVersion,
     String? valuesJson,
+    String? customFieldsJson,
     Value<String?> notes = const Value.absent(),
     DateTime? measuredAt,
     String? syncState,
@@ -4513,6 +4692,7 @@ class LocalMeasurementRevision extends DataClass
     templateDefinitionVersion:
         templateDefinitionVersion ?? this.templateDefinitionVersion,
     valuesJson: valuesJson ?? this.valuesJson,
+    customFieldsJson: customFieldsJson ?? this.customFieldsJson,
     notes: notes.present ? notes.value : this.notes,
     measuredAt: measuredAt ?? this.measuredAt,
     syncState: syncState ?? this.syncState,
@@ -4542,6 +4722,9 @@ class LocalMeasurementRevision extends DataClass
       valuesJson: data.valuesJson.present
           ? data.valuesJson.value
           : this.valuesJson,
+      customFieldsJson: data.customFieldsJson.present
+          ? data.customFieldsJson.value
+          : this.customFieldsJson,
       notes: data.notes.present ? data.notes.value : this.notes,
       measuredAt: data.measuredAt.present
           ? data.measuredAt.value
@@ -4562,6 +4745,7 @@ class LocalMeasurementRevision extends DataClass
           ..write('revisionNumber: $revisionNumber, ')
           ..write('templateDefinitionVersion: $templateDefinitionVersion, ')
           ..write('valuesJson: $valuesJson, ')
+          ..write('customFieldsJson: $customFieldsJson, ')
           ..write('notes: $notes, ')
           ..write('measuredAt: $measuredAt, ')
           ..write('syncState: $syncState, ')
@@ -4580,6 +4764,7 @@ class LocalMeasurementRevision extends DataClass
     revisionNumber,
     templateDefinitionVersion,
     valuesJson,
+    customFieldsJson,
     notes,
     measuredAt,
     syncState,
@@ -4597,6 +4782,7 @@ class LocalMeasurementRevision extends DataClass
           other.revisionNumber == this.revisionNumber &&
           other.templateDefinitionVersion == this.templateDefinitionVersion &&
           other.valuesJson == this.valuesJson &&
+          other.customFieldsJson == this.customFieldsJson &&
           other.notes == this.notes &&
           other.measuredAt == this.measuredAt &&
           other.syncState == this.syncState &&
@@ -4613,6 +4799,7 @@ class LocalMeasurementRevisionsCompanion
   final Value<int> revisionNumber;
   final Value<int> templateDefinitionVersion;
   final Value<String> valuesJson;
+  final Value<String> customFieldsJson;
   final Value<String?> notes;
   final Value<DateTime> measuredAt;
   final Value<String> syncState;
@@ -4627,6 +4814,7 @@ class LocalMeasurementRevisionsCompanion
     this.revisionNumber = const Value.absent(),
     this.templateDefinitionVersion = const Value.absent(),
     this.valuesJson = const Value.absent(),
+    this.customFieldsJson = const Value.absent(),
     this.notes = const Value.absent(),
     this.measuredAt = const Value.absent(),
     this.syncState = const Value.absent(),
@@ -4642,6 +4830,7 @@ class LocalMeasurementRevisionsCompanion
     this.revisionNumber = const Value.absent(),
     required int templateDefinitionVersion,
     required String valuesJson,
+    this.customFieldsJson = const Value.absent(),
     this.notes = const Value.absent(),
     required DateTime measuredAt,
     this.syncState = const Value.absent(),
@@ -4663,6 +4852,7 @@ class LocalMeasurementRevisionsCompanion
     Expression<int>? revisionNumber,
     Expression<int>? templateDefinitionVersion,
     Expression<String>? valuesJson,
+    Expression<String>? customFieldsJson,
     Expression<String>? notes,
     Expression<DateTime>? measuredAt,
     Expression<String>? syncState,
@@ -4679,6 +4869,7 @@ class LocalMeasurementRevisionsCompanion
       if (templateDefinitionVersion != null)
         'template_definition_version': templateDefinitionVersion,
       if (valuesJson != null) 'values_json': valuesJson,
+      if (customFieldsJson != null) 'custom_fields_json': customFieldsJson,
       if (notes != null) 'notes': notes,
       if (measuredAt != null) 'measured_at': measuredAt,
       if (syncState != null) 'sync_state': syncState,
@@ -4696,6 +4887,7 @@ class LocalMeasurementRevisionsCompanion
     Value<int>? revisionNumber,
     Value<int>? templateDefinitionVersion,
     Value<String>? valuesJson,
+    Value<String>? customFieldsJson,
     Value<String?>? notes,
     Value<DateTime>? measuredAt,
     Value<String>? syncState,
@@ -4712,6 +4904,7 @@ class LocalMeasurementRevisionsCompanion
       templateDefinitionVersion:
           templateDefinitionVersion ?? this.templateDefinitionVersion,
       valuesJson: valuesJson ?? this.valuesJson,
+      customFieldsJson: customFieldsJson ?? this.customFieldsJson,
       notes: notes ?? this.notes,
       measuredAt: measuredAt ?? this.measuredAt,
       syncState: syncState ?? this.syncState,
@@ -4747,6 +4940,9 @@ class LocalMeasurementRevisionsCompanion
     if (valuesJson.present) {
       map['values_json'] = Variable<String>(valuesJson.value);
     }
+    if (customFieldsJson.present) {
+      map['custom_fields_json'] = Variable<String>(customFieldsJson.value);
+    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -4778,6 +4974,7 @@ class LocalMeasurementRevisionsCompanion
           ..write('revisionNumber: $revisionNumber, ')
           ..write('templateDefinitionVersion: $templateDefinitionVersion, ')
           ..write('valuesJson: $valuesJson, ')
+          ..write('customFieldsJson: $customFieldsJson, ')
           ..write('notes: $notes, ')
           ..write('measuredAt: $measuredAt, ')
           ..write('syncState: $syncState, ')
@@ -5501,6 +5698,564 @@ class MeasurementSyncOperationsCompanion
   }
 }
 
+class $MeasurementTemplateSyncOperationsTable
+    extends MeasurementTemplateSyncOperations
+    with
+        TableInfo<
+          $MeasurementTemplateSyncOperationsTable,
+          MeasurementTemplateSyncOperation
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MeasurementTemplateSyncOperationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _operationUuidMeta = const VerificationMeta(
+    'operationUuid',
+  );
+  @override
+  late final GeneratedColumn<String> operationUuid = GeneratedColumn<String>(
+    'operation_uuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _businessIdMeta = const VerificationMeta(
+    'businessId',
+  );
+  @override
+  late final GeneratedColumn<String> businessId = GeneratedColumn<String>(
+    'business_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _templateClientUuidMeta =
+      const VerificationMeta('templateClientUuid');
+  @override
+  late final GeneratedColumn<String> templateClientUuid =
+      GeneratedColumn<String>(
+        'template_client_uuid',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _baseVersionMeta = const VerificationMeta(
+    'baseVersion',
+  );
+  @override
+  late final GeneratedColumn<int> baseVersion = GeneratedColumn<int>(
+    'base_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _attemptCountMeta = const VerificationMeta(
+    'attemptCount',
+  );
+  @override
+  late final GeneratedColumn<int> attemptCount = GeneratedColumn<int>(
+    'attempt_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    operationUuid,
+    businessId,
+    templateClientUuid,
+    baseVersion,
+    payloadJson,
+    createdAt,
+    attemptCount,
+    lastError,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'measurement_template_sync_operations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MeasurementTemplateSyncOperation> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('operation_uuid')) {
+      context.handle(
+        _operationUuidMeta,
+        operationUuid.isAcceptableOrUnknown(
+          data['operation_uuid']!,
+          _operationUuidMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationUuidMeta);
+    }
+    if (data.containsKey('business_id')) {
+      context.handle(
+        _businessIdMeta,
+        businessId.isAcceptableOrUnknown(data['business_id']!, _businessIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_businessIdMeta);
+    }
+    if (data.containsKey('template_client_uuid')) {
+      context.handle(
+        _templateClientUuidMeta,
+        templateClientUuid.isAcceptableOrUnknown(
+          data['template_client_uuid']!,
+          _templateClientUuidMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_templateClientUuidMeta);
+    }
+    if (data.containsKey('base_version')) {
+      context.handle(
+        _baseVersionMeta,
+        baseVersion.isAcceptableOrUnknown(
+          data['base_version']!,
+          _baseVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_baseVersionMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('attempt_count')) {
+      context.handle(
+        _attemptCountMeta,
+        attemptCount.isAcceptableOrUnknown(
+          data['attempt_count']!,
+          _attemptCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {operationUuid};
+  @override
+  MeasurementTemplateSyncOperation map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MeasurementTemplateSyncOperation(
+      operationUuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_uuid'],
+      )!,
+      businessId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}business_id'],
+      )!,
+      templateClientUuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}template_client_uuid'],
+      )!,
+      baseVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}base_version'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      attemptCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempt_count'],
+      )!,
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+    );
+  }
+
+  @override
+  $MeasurementTemplateSyncOperationsTable createAlias(String alias) {
+    return $MeasurementTemplateSyncOperationsTable(attachedDatabase, alias);
+  }
+}
+
+class MeasurementTemplateSyncOperation extends DataClass
+    implements Insertable<MeasurementTemplateSyncOperation> {
+  final String operationUuid;
+  final String businessId;
+  final String templateClientUuid;
+  final int baseVersion;
+  final String payloadJson;
+  final DateTime createdAt;
+  final int attemptCount;
+  final String? lastError;
+  const MeasurementTemplateSyncOperation({
+    required this.operationUuid,
+    required this.businessId,
+    required this.templateClientUuid,
+    required this.baseVersion,
+    required this.payloadJson,
+    required this.createdAt,
+    required this.attemptCount,
+    this.lastError,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['operation_uuid'] = Variable<String>(operationUuid);
+    map['business_id'] = Variable<String>(businessId);
+    map['template_client_uuid'] = Variable<String>(templateClientUuid);
+    map['base_version'] = Variable<int>(baseVersion);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['attempt_count'] = Variable<int>(attemptCount);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    return map;
+  }
+
+  MeasurementTemplateSyncOperationsCompanion toCompanion(bool nullToAbsent) {
+    return MeasurementTemplateSyncOperationsCompanion(
+      operationUuid: Value(operationUuid),
+      businessId: Value(businessId),
+      templateClientUuid: Value(templateClientUuid),
+      baseVersion: Value(baseVersion),
+      payloadJson: Value(payloadJson),
+      createdAt: Value(createdAt),
+      attemptCount: Value(attemptCount),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+    );
+  }
+
+  factory MeasurementTemplateSyncOperation.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MeasurementTemplateSyncOperation(
+      operationUuid: serializer.fromJson<String>(json['operationUuid']),
+      businessId: serializer.fromJson<String>(json['businessId']),
+      templateClientUuid: serializer.fromJson<String>(
+        json['templateClientUuid'],
+      ),
+      baseVersion: serializer.fromJson<int>(json['baseVersion']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      attemptCount: serializer.fromJson<int>(json['attemptCount']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'operationUuid': serializer.toJson<String>(operationUuid),
+      'businessId': serializer.toJson<String>(businessId),
+      'templateClientUuid': serializer.toJson<String>(templateClientUuid),
+      'baseVersion': serializer.toJson<int>(baseVersion),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'attemptCount': serializer.toJson<int>(attemptCount),
+      'lastError': serializer.toJson<String?>(lastError),
+    };
+  }
+
+  MeasurementTemplateSyncOperation copyWith({
+    String? operationUuid,
+    String? businessId,
+    String? templateClientUuid,
+    int? baseVersion,
+    String? payloadJson,
+    DateTime? createdAt,
+    int? attemptCount,
+    Value<String?> lastError = const Value.absent(),
+  }) => MeasurementTemplateSyncOperation(
+    operationUuid: operationUuid ?? this.operationUuid,
+    businessId: businessId ?? this.businessId,
+    templateClientUuid: templateClientUuid ?? this.templateClientUuid,
+    baseVersion: baseVersion ?? this.baseVersion,
+    payloadJson: payloadJson ?? this.payloadJson,
+    createdAt: createdAt ?? this.createdAt,
+    attemptCount: attemptCount ?? this.attemptCount,
+    lastError: lastError.present ? lastError.value : this.lastError,
+  );
+  MeasurementTemplateSyncOperation copyWithCompanion(
+    MeasurementTemplateSyncOperationsCompanion data,
+  ) {
+    return MeasurementTemplateSyncOperation(
+      operationUuid: data.operationUuid.present
+          ? data.operationUuid.value
+          : this.operationUuid,
+      businessId: data.businessId.present
+          ? data.businessId.value
+          : this.businessId,
+      templateClientUuid: data.templateClientUuid.present
+          ? data.templateClientUuid.value
+          : this.templateClientUuid,
+      baseVersion: data.baseVersion.present
+          ? data.baseVersion.value
+          : this.baseVersion,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      attemptCount: data.attemptCount.present
+          ? data.attemptCount.value
+          : this.attemptCount,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeasurementTemplateSyncOperation(')
+          ..write('operationUuid: $operationUuid, ')
+          ..write('businessId: $businessId, ')
+          ..write('templateClientUuid: $templateClientUuid, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('attemptCount: $attemptCount, ')
+          ..write('lastError: $lastError')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    operationUuid,
+    businessId,
+    templateClientUuid,
+    baseVersion,
+    payloadJson,
+    createdAt,
+    attemptCount,
+    lastError,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MeasurementTemplateSyncOperation &&
+          other.operationUuid == this.operationUuid &&
+          other.businessId == this.businessId &&
+          other.templateClientUuid == this.templateClientUuid &&
+          other.baseVersion == this.baseVersion &&
+          other.payloadJson == this.payloadJson &&
+          other.createdAt == this.createdAt &&
+          other.attemptCount == this.attemptCount &&
+          other.lastError == this.lastError);
+}
+
+class MeasurementTemplateSyncOperationsCompanion
+    extends UpdateCompanion<MeasurementTemplateSyncOperation> {
+  final Value<String> operationUuid;
+  final Value<String> businessId;
+  final Value<String> templateClientUuid;
+  final Value<int> baseVersion;
+  final Value<String> payloadJson;
+  final Value<DateTime> createdAt;
+  final Value<int> attemptCount;
+  final Value<String?> lastError;
+  final Value<int> rowid;
+  const MeasurementTemplateSyncOperationsCompanion({
+    this.operationUuid = const Value.absent(),
+    this.businessId = const Value.absent(),
+    this.templateClientUuid = const Value.absent(),
+    this.baseVersion = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.attemptCount = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MeasurementTemplateSyncOperationsCompanion.insert({
+    required String operationUuid,
+    required String businessId,
+    required String templateClientUuid,
+    required int baseVersion,
+    required String payloadJson,
+    required DateTime createdAt,
+    this.attemptCount = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : operationUuid = Value(operationUuid),
+       businessId = Value(businessId),
+       templateClientUuid = Value(templateClientUuid),
+       baseVersion = Value(baseVersion),
+       payloadJson = Value(payloadJson),
+       createdAt = Value(createdAt);
+  static Insertable<MeasurementTemplateSyncOperation> custom({
+    Expression<String>? operationUuid,
+    Expression<String>? businessId,
+    Expression<String>? templateClientUuid,
+    Expression<int>? baseVersion,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? createdAt,
+    Expression<int>? attemptCount,
+    Expression<String>? lastError,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (operationUuid != null) 'operation_uuid': operationUuid,
+      if (businessId != null) 'business_id': businessId,
+      if (templateClientUuid != null)
+        'template_client_uuid': templateClientUuid,
+      if (baseVersion != null) 'base_version': baseVersion,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (attemptCount != null) 'attempt_count': attemptCount,
+      if (lastError != null) 'last_error': lastError,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MeasurementTemplateSyncOperationsCompanion copyWith({
+    Value<String>? operationUuid,
+    Value<String>? businessId,
+    Value<String>? templateClientUuid,
+    Value<int>? baseVersion,
+    Value<String>? payloadJson,
+    Value<DateTime>? createdAt,
+    Value<int>? attemptCount,
+    Value<String?>? lastError,
+    Value<int>? rowid,
+  }) {
+    return MeasurementTemplateSyncOperationsCompanion(
+      operationUuid: operationUuid ?? this.operationUuid,
+      businessId: businessId ?? this.businessId,
+      templateClientUuid: templateClientUuid ?? this.templateClientUuid,
+      baseVersion: baseVersion ?? this.baseVersion,
+      payloadJson: payloadJson ?? this.payloadJson,
+      createdAt: createdAt ?? this.createdAt,
+      attemptCount: attemptCount ?? this.attemptCount,
+      lastError: lastError ?? this.lastError,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (operationUuid.present) {
+      map['operation_uuid'] = Variable<String>(operationUuid.value);
+    }
+    if (businessId.present) {
+      map['business_id'] = Variable<String>(businessId.value);
+    }
+    if (templateClientUuid.present) {
+      map['template_client_uuid'] = Variable<String>(templateClientUuid.value);
+    }
+    if (baseVersion.present) {
+      map['base_version'] = Variable<int>(baseVersion.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (attemptCount.present) {
+      map['attempt_count'] = Variable<int>(attemptCount.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeasurementTemplateSyncOperationsCompanion(')
+          ..write('operationUuid: $operationUuid, ')
+          ..write('businessId: $businessId, ')
+          ..write('templateClientUuid: $templateClientUuid, ')
+          ..write('baseVersion: $baseVersion, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('attemptCount: $attemptCount, ')
+          ..write('lastError: $lastError, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5516,6 +6271,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $LocalMeasurementRevisionsTable(this);
   late final $MeasurementSyncOperationsTable measurementSyncOperations =
       $MeasurementSyncOperationsTable(this);
+  late final $MeasurementTemplateSyncOperationsTable
+  measurementTemplateSyncOperations = $MeasurementTemplateSyncOperationsTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5528,6 +6287,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     localMeasurementProfiles,
     localMeasurementRevisions,
     measurementSyncOperations,
+    measurementTemplateSyncOperations,
   ];
 }
 
@@ -6481,6 +7241,8 @@ typedef $$LocalMeasurementTemplatesTableCreateCompanionBuilder =
       Value<int> serverVersion,
       Value<int> definitionVersion,
       required String fieldsJson,
+      Value<String> syncState,
+      Value<String?> syncError,
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<DateTime?> archivedAt,
@@ -6504,6 +7266,8 @@ typedef $$LocalMeasurementTemplatesTableUpdateCompanionBuilder =
       Value<int> serverVersion,
       Value<int> definitionVersion,
       Value<String> fieldsJson,
+      Value<String> syncState,
+      Value<String?> syncError,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> archivedAt,
@@ -6596,6 +7360,16 @@ class $$LocalMeasurementTemplatesTableFilterComposer
 
   ColumnFilters<String> get fieldsJson => $composableBuilder(
     column: $table.fieldsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncState => $composableBuilder(
+    column: $table.syncState,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get syncError => $composableBuilder(
+    column: $table.syncError,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6704,6 +7478,16 @@ class $$LocalMeasurementTemplatesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get syncState => $composableBuilder(
+    column: $table.syncState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get syncError => $composableBuilder(
+    column: $table.syncError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -6797,6 +7581,12 @@ class $$LocalMeasurementTemplatesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get syncState =>
+      $composableBuilder(column: $table.syncState, builder: (column) => column);
+
+  GeneratedColumn<String> get syncError =>
+      $composableBuilder(column: $table.syncError, builder: (column) => column);
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
@@ -6871,6 +7661,8 @@ class $$LocalMeasurementTemplatesTableTableManager
                 Value<int> serverVersion = const Value.absent(),
                 Value<int> definitionVersion = const Value.absent(),
                 Value<String> fieldsJson = const Value.absent(),
+                Value<String> syncState = const Value.absent(),
+                Value<String?> syncError = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> archivedAt = const Value.absent(),
@@ -6892,6 +7684,8 @@ class $$LocalMeasurementTemplatesTableTableManager
                 serverVersion: serverVersion,
                 definitionVersion: definitionVersion,
                 fieldsJson: fieldsJson,
+                syncState: syncState,
+                syncError: syncError,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 archivedAt: archivedAt,
@@ -6915,6 +7709,8 @@ class $$LocalMeasurementTemplatesTableTableManager
                 Value<int> serverVersion = const Value.absent(),
                 Value<int> definitionVersion = const Value.absent(),
                 required String fieldsJson,
+                Value<String> syncState = const Value.absent(),
+                Value<String?> syncError = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<DateTime?> archivedAt = const Value.absent(),
@@ -6936,6 +7732,8 @@ class $$LocalMeasurementTemplatesTableTableManager
                 serverVersion: serverVersion,
                 definitionVersion: definitionVersion,
                 fieldsJson: fieldsJson,
+                syncState: syncState,
+                syncError: syncError,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 archivedAt: archivedAt,
@@ -6981,6 +7779,7 @@ typedef $$LocalMeasurementProfilesTableCreateCompanionBuilder =
       required String name,
       Value<String> preferredUnit,
       Value<String?> notes,
+      Value<String> customFieldsJson,
       Value<String> status,
       Value<int> serverVersion,
       Value<int> latestRevisionNumber,
@@ -7003,6 +7802,7 @@ typedef $$LocalMeasurementProfilesTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String> preferredUnit,
       Value<String?> notes,
+      Value<String> customFieldsJson,
       Value<String> status,
       Value<int> serverVersion,
       Value<int> latestRevisionNumber,
@@ -7066,6 +7866,11 @@ class $$LocalMeasurementProfilesTableFilterComposer
 
   ColumnFilters<String> get notes => $composableBuilder(
     column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get customFieldsJson => $composableBuilder(
+    column: $table.customFieldsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7169,6 +7974,11 @@ class $$LocalMeasurementProfilesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get customFieldsJson => $composableBuilder(
+    column: $table.customFieldsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get status => $composableBuilder(
     column: $table.status,
     builder: (column) => ColumnOrderings(column),
@@ -7263,6 +8073,11 @@ class $$LocalMeasurementProfilesTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
+  GeneratedColumn<String> get customFieldsJson => $composableBuilder(
+    column: $table.customFieldsJson,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
 
@@ -7354,6 +8169,7 @@ class $$LocalMeasurementProfilesTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String> preferredUnit = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String> customFieldsJson = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<int> serverVersion = const Value.absent(),
                 Value<int> latestRevisionNumber = const Value.absent(),
@@ -7374,6 +8190,7 @@ class $$LocalMeasurementProfilesTableTableManager
                 name: name,
                 preferredUnit: preferredUnit,
                 notes: notes,
+                customFieldsJson: customFieldsJson,
                 status: status,
                 serverVersion: serverVersion,
                 latestRevisionNumber: latestRevisionNumber,
@@ -7396,6 +8213,7 @@ class $$LocalMeasurementProfilesTableTableManager
                 required String name,
                 Value<String> preferredUnit = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
+                Value<String> customFieldsJson = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<int> serverVersion = const Value.absent(),
                 Value<int> latestRevisionNumber = const Value.absent(),
@@ -7416,6 +8234,7 @@ class $$LocalMeasurementProfilesTableTableManager
                 name: name,
                 preferredUnit: preferredUnit,
                 notes: notes,
+                customFieldsJson: customFieldsJson,
                 status: status,
                 serverVersion: serverVersion,
                 latestRevisionNumber: latestRevisionNumber,
@@ -7465,6 +8284,7 @@ typedef $$LocalMeasurementRevisionsTableCreateCompanionBuilder =
       Value<int> revisionNumber,
       required int templateDefinitionVersion,
       required String valuesJson,
+      Value<String> customFieldsJson,
       Value<String?> notes,
       required DateTime measuredAt,
       Value<String> syncState,
@@ -7481,6 +8301,7 @@ typedef $$LocalMeasurementRevisionsTableUpdateCompanionBuilder =
       Value<int> revisionNumber,
       Value<int> templateDefinitionVersion,
       Value<String> valuesJson,
+      Value<String> customFieldsJson,
       Value<String?> notes,
       Value<DateTime> measuredAt,
       Value<String> syncState,
@@ -7530,6 +8351,11 @@ class $$LocalMeasurementRevisionsTableFilterComposer
 
   ColumnFilters<String> get valuesJson => $composableBuilder(
     column: $table.valuesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get customFieldsJson => $composableBuilder(
+    column: $table.customFieldsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7603,6 +8429,11 @@ class $$LocalMeasurementRevisionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get customFieldsJson => $composableBuilder(
+    column: $table.customFieldsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -7668,6 +8499,11 @@ class $$LocalMeasurementRevisionsTableAnnotationComposer
 
   GeneratedColumn<String> get valuesJson => $composableBuilder(
     column: $table.valuesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get customFieldsJson => $composableBuilder(
+    column: $table.customFieldsJson,
     builder: (column) => column,
   );
 
@@ -7742,6 +8578,7 @@ class $$LocalMeasurementRevisionsTableTableManager
                 Value<int> revisionNumber = const Value.absent(),
                 Value<int> templateDefinitionVersion = const Value.absent(),
                 Value<String> valuesJson = const Value.absent(),
+                Value<String> customFieldsJson = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> measuredAt = const Value.absent(),
                 Value<String> syncState = const Value.absent(),
@@ -7756,6 +8593,7 @@ class $$LocalMeasurementRevisionsTableTableManager
                 revisionNumber: revisionNumber,
                 templateDefinitionVersion: templateDefinitionVersion,
                 valuesJson: valuesJson,
+                customFieldsJson: customFieldsJson,
                 notes: notes,
                 measuredAt: measuredAt,
                 syncState: syncState,
@@ -7772,6 +8610,7 @@ class $$LocalMeasurementRevisionsTableTableManager
                 Value<int> revisionNumber = const Value.absent(),
                 required int templateDefinitionVersion,
                 required String valuesJson,
+                Value<String> customFieldsJson = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 required DateTime measuredAt,
                 Value<String> syncState = const Value.absent(),
@@ -7786,6 +8625,7 @@ class $$LocalMeasurementRevisionsTableTableManager
                 revisionNumber: revisionNumber,
                 templateDefinitionVersion: templateDefinitionVersion,
                 valuesJson: valuesJson,
+                customFieldsJson: customFieldsJson,
                 notes: notes,
                 measuredAt: measuredAt,
                 syncState: syncState,
@@ -8171,6 +9011,294 @@ typedef $$MeasurementSyncOperationsTableProcessedTableManager =
       MeasurementSyncOperation,
       PrefetchHooks Function()
     >;
+typedef $$MeasurementTemplateSyncOperationsTableCreateCompanionBuilder =
+    MeasurementTemplateSyncOperationsCompanion Function({
+      required String operationUuid,
+      required String businessId,
+      required String templateClientUuid,
+      required int baseVersion,
+      required String payloadJson,
+      required DateTime createdAt,
+      Value<int> attemptCount,
+      Value<String?> lastError,
+      Value<int> rowid,
+    });
+typedef $$MeasurementTemplateSyncOperationsTableUpdateCompanionBuilder =
+    MeasurementTemplateSyncOperationsCompanion Function({
+      Value<String> operationUuid,
+      Value<String> businessId,
+      Value<String> templateClientUuid,
+      Value<int> baseVersion,
+      Value<String> payloadJson,
+      Value<DateTime> createdAt,
+      Value<int> attemptCount,
+      Value<String?> lastError,
+      Value<int> rowid,
+    });
+
+class $$MeasurementTemplateSyncOperationsTableFilterComposer
+    extends Composer<_$AppDatabase, $MeasurementTemplateSyncOperationsTable> {
+  $$MeasurementTemplateSyncOperationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get operationUuid => $composableBuilder(
+    column: $table.operationUuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get templateClientUuid => $composableBuilder(
+    column: $table.templateClientUuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get attemptCount => $composableBuilder(
+    column: $table.attemptCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$MeasurementTemplateSyncOperationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $MeasurementTemplateSyncOperationsTable> {
+  $$MeasurementTemplateSyncOperationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get operationUuid => $composableBuilder(
+    column: $table.operationUuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get templateClientUuid => $composableBuilder(
+    column: $table.templateClientUuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get attemptCount => $composableBuilder(
+    column: $table.attemptCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$MeasurementTemplateSyncOperationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MeasurementTemplateSyncOperationsTable> {
+  $$MeasurementTemplateSyncOperationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get operationUuid => $composableBuilder(
+    column: $table.operationUuid,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get templateClientUuid => $composableBuilder(
+    column: $table.templateClientUuid,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get baseVersion => $composableBuilder(
+    column: $table.baseVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get attemptCount => $composableBuilder(
+    column: $table.attemptCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+}
+
+class $$MeasurementTemplateSyncOperationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MeasurementTemplateSyncOperationsTable,
+          MeasurementTemplateSyncOperation,
+          $$MeasurementTemplateSyncOperationsTableFilterComposer,
+          $$MeasurementTemplateSyncOperationsTableOrderingComposer,
+          $$MeasurementTemplateSyncOperationsTableAnnotationComposer,
+          $$MeasurementTemplateSyncOperationsTableCreateCompanionBuilder,
+          $$MeasurementTemplateSyncOperationsTableUpdateCompanionBuilder,
+          (
+            MeasurementTemplateSyncOperation,
+            BaseReferences<
+              _$AppDatabase,
+              $MeasurementTemplateSyncOperationsTable,
+              MeasurementTemplateSyncOperation
+            >,
+          ),
+          MeasurementTemplateSyncOperation,
+          PrefetchHooks Function()
+        > {
+  $$MeasurementTemplateSyncOperationsTableTableManager(
+    _$AppDatabase db,
+    $MeasurementTemplateSyncOperationsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MeasurementTemplateSyncOperationsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$MeasurementTemplateSyncOperationsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$MeasurementTemplateSyncOperationsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> operationUuid = const Value.absent(),
+                Value<String> businessId = const Value.absent(),
+                Value<String> templateClientUuid = const Value.absent(),
+                Value<int> baseVersion = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> attemptCount = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MeasurementTemplateSyncOperationsCompanion(
+                operationUuid: operationUuid,
+                businessId: businessId,
+                templateClientUuid: templateClientUuid,
+                baseVersion: baseVersion,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                attemptCount: attemptCount,
+                lastError: lastError,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String operationUuid,
+                required String businessId,
+                required String templateClientUuid,
+                required int baseVersion,
+                required String payloadJson,
+                required DateTime createdAt,
+                Value<int> attemptCount = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MeasurementTemplateSyncOperationsCompanion.insert(
+                operationUuid: operationUuid,
+                businessId: businessId,
+                templateClientUuid: templateClientUuid,
+                baseVersion: baseVersion,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                attemptCount: attemptCount,
+                lastError: lastError,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MeasurementTemplateSyncOperationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MeasurementTemplateSyncOperationsTable,
+      MeasurementTemplateSyncOperation,
+      $$MeasurementTemplateSyncOperationsTableFilterComposer,
+      $$MeasurementTemplateSyncOperationsTableOrderingComposer,
+      $$MeasurementTemplateSyncOperationsTableAnnotationComposer,
+      $$MeasurementTemplateSyncOperationsTableCreateCompanionBuilder,
+      $$MeasurementTemplateSyncOperationsTableUpdateCompanionBuilder,
+      (
+        MeasurementTemplateSyncOperation,
+        BaseReferences<
+          _$AppDatabase,
+          $MeasurementTemplateSyncOperationsTable,
+          MeasurementTemplateSyncOperation
+        >,
+      ),
+      MeasurementTemplateSyncOperation,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8203,5 +9331,11 @@ class $AppDatabaseManager {
       $$MeasurementSyncOperationsTableTableManager(
         _db,
         _db.measurementSyncOperations,
+      );
+  $$MeasurementTemplateSyncOperationsTableTableManager
+  get measurementTemplateSyncOperations =>
+      $$MeasurementTemplateSyncOperationsTableTableManager(
+        _db,
+        _db.measurementTemplateSyncOperations,
       );
 }

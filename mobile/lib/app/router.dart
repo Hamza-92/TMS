@@ -16,6 +16,8 @@ import 'package:tailor_app/features/customers/presentation/screens/customer_list
 import 'package:tailor_app/features/measurements/presentation/screens/measurement_detail_screen.dart';
 import 'package:tailor_app/features/measurements/presentation/screens/measurement_form_screen.dart';
 import 'package:tailor_app/features/measurements/presentation/screens/measurement_profile_list_screen.dart';
+import 'package:tailor_app/features/measurements/presentation/screens/measurement_template_builder_screen.dart';
+import 'package:tailor_app/features/measurements/presentation/screens/measurement_template_list_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   routes: [
@@ -93,9 +95,32 @@ final GoRouter appRouter = GoRouter(
       ),
     ),
     GoRoute(
+      path: '/measurement-templates',
+      builder: (context, state) => const MeasurementTemplateListScreen(),
+    ),
+    GoRoute(
+      path: '/measurement-templates/new',
+      builder: (context, state) => MeasurementTemplateBuilderScreen(
+        sourceTemplateUuid: state.uri.queryParameters['source'],
+      ),
+    ),
+    GoRoute(
+      path: '/measurement-templates/:templateUuid/edit',
+      builder: (context, state) => MeasurementTemplateBuilderScreen(
+        templateClientUuid: state.pathParameters['templateUuid'],
+      ),
+    ),
+    GoRoute(
       path: '/customers/:clientUuid/measurements/new',
       builder: (context, state) => MeasurementFormScreen(
         customerClientUuid: state.pathParameters['clientUuid']!,
+      ),
+    ),
+    GoRoute(
+      path: '/customers/:clientUuid/measurements/:profileUuid/new-revision',
+      builder: (context, state) => MeasurementFormScreen(
+        customerClientUuid: state.pathParameters['clientUuid']!,
+        profileClientUuid: state.pathParameters['profileUuid']!,
       ),
     ),
     GoRoute(

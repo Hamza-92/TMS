@@ -817,4 +817,150 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get measurementRequiredHint => 'Required fields are marked with *';
+
+  @override
+  String get addMeasurementRevision => 'Add new measurements';
+
+  @override
+  String get measurementRevisionSavedMessage =>
+      'The new measurements have been saved successfully.';
+
+  @override
+  String get measurementSectionUpperGarment => 'Upper garment';
+
+  @override
+  String get measurementSectionUpperBody => 'Upper body';
+
+  @override
+  String get measurementSectionSleeves => 'Sleeves';
+
+  @override
+  String get measurementSectionLowerGarment => 'Lower garment';
+
+  @override
+  String get measurementSectionGarment => 'Garment';
+
+  @override
+  String get measurementSectionCollar => 'Collar';
+
+  @override
+  String get measurementSectionLengths => 'Lengths';
+
+  @override
+  String get measurementSectionBody => 'Body';
+
+  @override
+  String get measurementSectionLeg => 'Leg';
+
+  @override
+  String get measurementSectionCustom => 'Custom measurements';
+
+  @override
+  String get manageMeasurementTemplates => 'Manage measurement templates';
+
+  @override
+  String get measurementTemplatesTitle => 'Measurement templates';
+
+  @override
+  String get measurementTemplatesSubtitle =>
+      'Create reusable garment measurement sets';
+
+  @override
+  String get newMeasurementTemplate => 'New template';
+
+  @override
+  String get builtInTemplate => 'Built-in';
+
+  @override
+  String get customTemplate => 'Custom';
+
+  @override
+  String get copyAndCustomize => 'Copy and customize';
+
+  @override
+  String get editTemplate => 'Edit template';
+
+  @override
+  String get templateName => 'Template name';
+
+  @override
+  String get templateNameUrdu => 'Template name in Urdu';
+
+  @override
+  String get templateNameRomanUrdu => 'Template name in Roman Urdu';
+
+  @override
+  String get templateFields => 'Measurement fields';
+
+  @override
+  String get addMeasurementField => 'Add field';
+
+  @override
+  String get editMeasurementField => 'Edit field';
+
+  @override
+  String get fieldNameEnglish => 'Field name in English';
+
+  @override
+  String get fieldNameUrdu => 'Field name in Urdu';
+
+  @override
+  String get fieldNameRomanUrdu => 'Field name in Roman Urdu';
+
+  @override
+  String get fieldSection => 'Section';
+
+  @override
+  String get fieldType => 'Value type';
+
+  @override
+  String get numericValue => 'Number';
+
+  @override
+  String get textValue => 'Text';
+
+  @override
+  String get usesMeasurementUnit => 'Use inch/cm';
+
+  @override
+  String get requiredField => 'Required field';
+
+  @override
+  String get saveField => 'Save field';
+
+  @override
+  String get removeField => 'Remove field';
+
+  @override
+  String get saveTemplate => 'Save template';
+
+  @override
+  String get templateSavedTitle => 'Template saved';
+
+  @override
+  String get templateSavedMessage =>
+      'The measurement template is ready to use.';
+
+  @override
+  String get templateSaveFailed =>
+      'The template could not be saved. Review the fields and try again.';
+
+  @override
+  String get templateNameRequired => 'Enter a template name.';
+
+  @override
+  String get fieldNameRequired => 'Enter the field name.';
+
+  @override
+  String get atLeastOneFieldRequired => 'Add at least one measurement field.';
+
+  @override
+  String get addCustomerMeasurementField => 'Add custom field';
+
+  @override
+  String get customerMeasurementFields => 'Customer-only fields';
+
+  @override
+  String get customerFieldHint =>
+      'These fields apply only to this measurement profile.';
 }

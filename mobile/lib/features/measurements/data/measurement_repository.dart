@@ -115,6 +115,99 @@ class MeasurementRepository {
     return row == null ? null : MeasurementTemplateRecord.fromLocal(row);
   }
 
+  Future<MeasurementTemplateRecord> saveTemplate({
+    required String businessId,
+    required MeasurementTemplateDraft draft,
+    MeasurementTemplateRecord? existing,
+  }) async {
+    final now = DateTime.now();
+    final clientUuid = existing?.clientUuid ?? _createUuid();
+    final fields = [
+      for (var index = 0; index < draft.fields.length; index++)
+        draft.fields[index].copyWith(sortOrder: index),
+    ];
+    final normalizedDraft = MeasurementTemplateDraft(
+      name: draft.name,
+      nameUr: draft.nameUr,
+      nameRomanUr: draft.nameRomanUr,
+      category: draft.category,
+      defaultUnit: draft.defaultUnit,
+      description: draft.description,
+      sourceTemplateUuid: draft.sourceTemplateUuid,
+      fields: fields,
+    );
+
+    await _database.transaction(() async {
+      await (_database.delete(_database.measurementTemplateSyncOperations)
+            ..where(
+              (row) =>
+                  row.businessId.equals(businessId) &
+                  row.templateClientUuid.equals(clientUuid),
+            ))
+          .go();
+      await _database
+          .into(_database.measurementTemplateSyncOperations)
+          .insert(
+            MeasurementTemplateSyncOperationsCompanion.insert(
+              operationUuid: _createUuid(),
+              businessId: businessId,
+              templateClientUuid: clientUuid,
+              baseVersion: existing?.serverVersion ?? 0,
+              payloadJson: jsonEncode(normalizedDraft.toJson()),
+              createdAt: now,
+            ),
+          );
+      await _database
+          .into(_database.localMeasurementTemplates)
+          .insertOnConflictUpdate(
+            LocalMeasurementTemplatesCompanion.insert(
+              businessScope: businessId,
+              clientUuid: clientUuid,
+              serverId: Value(existing?.serverId),
+              source: 'business',
+              sourceTemplateUuid: Value(normalizedDraft.sourceTemplateUuid),
+              name: normalizedDraft.name,
+              nameUr: Value(normalizedDraft.nameUr),
+              nameRomanUr: Value(normalizedDraft.nameRomanUr),
+              category: normalizedDraft.category,
+              defaultUnit: Value(normalizedDraft.defaultUnit),
+              description: Value(normalizedDraft.description),
+              status: Value(existing?.status ?? 'active'),
+              serverVersion: Value(existing?.serverVersion ?? 0),
+              definitionVersion: Value(
+                existing == null ? 1 : existing.definitionVersion + 1,
+              ),
+              fieldsJson: jsonEncode(
+                fields.map((field) => field.toJson()).toList(growable: false),
+              ),
+              syncState: const Value('pending'),
+              syncError: const Value(null),
+              createdAt: existing?.createdAt ?? now,
+              updatedAt: now,
+              archivedAt: Value(existing?.archivedAt),
+            ),
+          );
+    });
+
+    return (await template(businessId, clientUuid))!;
+  }
+
+  Future<bool> synchronizeTemplates(String businessId) async {
+    final operations =
+        await (_database.select(_database.measurementTemplateSyncOperations)
+              ..where((row) => row.businessId.equals(businessId))
+              ..orderBy([(row) => OrderingTerm.asc(row.createdAt)]))
+            .get();
+    for (final operation in operations) {
+      try {
+        await _pushTemplateOperation(operation);
+      } on DioException {
+        return false;
+      }
+    }
+    return (await _pullTemplates(businessId)).online;
+  }
+
   Future<MeasurementProfileRecord> saveProfile({
     required String businessId,
     required String customerClientUuid,
@@ -159,6 +252,13 @@ class MeasurementRepository {
               name: draft.name,
               preferredUnit: Value(draft.preferredUnit),
               notes: Value(draft.notes),
+              customFieldsJson: Value(
+                jsonEncode(
+                  draft.customFields
+                      .map((field) => field.toJson())
+                      .toList(growable: false),
+                ),
+              ),
               status: Value(existing?.status ?? 'active'),
               serverVersion: Value(existing?.serverVersion ?? 0),
               latestRevisionNumber: Value(existing?.latestRevisionNumber ?? 0),
@@ -217,6 +317,13 @@ class MeasurementRepository {
               revisionNumber: Value(nextRevision),
               templateDefinitionVersion: profile.templateDefinitionVersion,
               valuesJson: jsonEncode(payload['values']),
+              customFieldsJson: Value(
+                jsonEncode(
+                  profile.customFields
+                      .map((field) => field.toJson())
+                      .toList(growable: false),
+                ),
+              ),
               notes: Value(notes),
               measuredAt: measuredAt,
               syncState: const Value('pending'),
@@ -259,9 +366,7 @@ class MeasurementRepository {
     var online = true;
 
     try {
-      final templates = await _pullTemplates(businessId);
-      pulled += templates.count;
-      online = templates.online;
+      online = await synchronizeTemplates(businessId);
       if (!online) {
         return MeasurementSyncReport(
           pushed: 0,
@@ -430,6 +535,66 @@ class MeasurementRepository {
     await _applyRevisionResult(operation, profile, revision);
   }
 
+  Future<void> _pushTemplateOperation(
+    MeasurementTemplateSyncOperation operation,
+  ) async {
+    final payload = Map<String, dynamic>.from(
+      jsonDecode(operation.payloadJson) as Map,
+    );
+    try {
+      final response = await _client.put<Map<String, dynamic>>(
+        ApiEndpoints.measurementTemplate(
+          operation.businessId,
+          operation.templateClientUuid,
+        ),
+        data: {
+          ...payload,
+          'operation_uuid': operation.operationUuid,
+          'base_version': operation.baseVersion,
+        },
+      );
+      final remote = MeasurementTemplateRecord.fromRemote(
+        operation.businessId,
+        Map<String, dynamic>.from(response.data!['data'] as Map),
+      );
+      await _database.transaction(() async {
+        await (_database.delete(_database.measurementTemplateSyncOperations)
+              ..where(
+                (row) => row.operationUuid.equals(operation.operationUuid),
+              ))
+            .go();
+        await _writeRemoteTemplate(remote);
+      });
+    } on DioException catch (error) {
+      final message = NetworkException.fromDio(error).message;
+      final conflict = error.response?.statusCode == 409;
+      await _database.transaction(() async {
+        await (_database.update(_database.measurementTemplateSyncOperations)
+              ..where(
+                (row) => row.operationUuid.equals(operation.operationUuid),
+              ))
+            .write(
+              MeasurementTemplateSyncOperationsCompanion(
+                attemptCount: Value(operation.attemptCount + 1),
+                lastError: Value(message),
+              ),
+            );
+        await (_database.update(_database.localMeasurementTemplates)..where(
+              (row) =>
+                  row.businessScope.equals(operation.businessId) &
+                  row.clientUuid.equals(operation.templateClientUuid),
+            ))
+            .write(
+              LocalMeasurementTemplatesCompanion(
+                syncState: Value(conflict ? 'conflict' : 'pending'),
+                syncError: Value(message),
+              ),
+            );
+      });
+      rethrow;
+    }
+  }
+
   Future<void> _applyProfileResult(
     MeasurementSyncOperation operation,
     MeasurementProfileRecord remote,
@@ -539,7 +704,7 @@ class MeasurementRepository {
             )
             .toList(growable: false);
         for (final record in records) {
-          await _writeRemoteTemplate(record);
+          await _storeRemoteTemplateIfClean(record);
         }
         count += records.length;
         final meta = Map<String, dynamic>.from(body['meta'] as Map);
@@ -603,6 +768,17 @@ class MeasurementRepository {
     }
   }
 
+  Future<void> _storeRemoteTemplateIfClean(
+    MeasurementTemplateRecord remote,
+  ) async {
+    final local = await template(remote.businessScope, remote.clientUuid);
+    if (local == null ||
+        (local.syncState == MeasurementSyncState.synced &&
+            remote.serverVersion >= local.serverVersion)) {
+      await _writeRemoteTemplate(remote);
+    }
+  }
+
   Future<void> _storeRemoteRevisionIfClean(
     MeasurementRevisionRecord remote,
   ) async {
@@ -635,6 +811,8 @@ class MeasurementRepository {
               fieldsJson: jsonEncode(
                 remote.fields.map((field) => field.toJson()).toList(),
               ),
+              syncState: const Value('synced'),
+              syncError: const Value(null),
               createdAt: remote.createdAt,
               updatedAt: remote.updatedAt,
               archivedAt: Value(remote.archivedAt),
@@ -654,6 +832,13 @@ class MeasurementRepository {
           name: remote.name,
           preferredUnit: Value(remote.preferredUnit),
           notes: Value(remote.notes),
+          customFieldsJson: Value(
+            jsonEncode(
+              remote.customFields
+                  .map((field) => field.toJson())
+                  .toList(growable: false),
+            ),
+          ),
           status: Value(remote.status),
           serverVersion: Value(remote.serverVersion),
           latestRevisionNumber: Value(remote.latestRevisionNumber),
@@ -678,6 +863,13 @@ class MeasurementRepository {
               revisionNumber: Value(remote.revisionNumber),
               templateDefinitionVersion: remote.templateDefinitionVersion,
               valuesJson: jsonEncode(remote.values),
+              customFieldsJson: Value(
+                jsonEncode(
+                  remote.customFields
+                      .map((field) => field.toJson())
+                      .toList(growable: false),
+                ),
+              ),
               notes: Value(remote.notes),
               measuredAt: remote.measuredAt,
               syncState: const Value('synced'),

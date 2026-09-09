@@ -242,6 +242,10 @@ class MeasurementMutationService
                 'name' => $data['name'],
                 'preferred_unit' => $data['preferred_unit'],
                 'notes' => $data['notes'] ?? null,
+                'custom_fields' => $this->validatedProfileFields(
+                    $definition,
+                    $data['custom_fields'] ?? ($profile->custom_fields ?? []),
+                ),
             ]);
             $profile->updated_by_user_id = $user->id;
             $profile->save();
@@ -305,6 +309,7 @@ class MeasurementMutationService
                 'revision_number' => $profile->latest_revision_number + 1,
                 'measurement_template_version_id' => $definition->id,
                 'values' => $values,
+                'custom_fields' => $profile->custom_fields ?? [],
                 'notes' => $data['notes'] ?? null,
                 'measured_at' => $data['measured_at'],
                 'created_by_user_id' => $user->id,
@@ -419,19 +424,29 @@ class MeasurementMutationService
         CustomerMeasurementProfile $profile,
         array $submitted,
     ): array {
-        $fields = $definition->fields->keyBy('client_uuid');
+        $fields = $definition->fields
+            ->map(fn (MeasurementTemplateField $field): array => [
+                'client_uuid' => $field->client_uuid,
+                'label' => $field->label,
+                'value_type' => $field->value_type,
+                'unit_type' => $field->unit_type,
+                'is_required' => $field->is_required,
+                'minimum_value_mm' => $field->minimum_value_mm,
+                'maximum_value_mm' => $field->maximum_value_mm,
+            ])
+            ->concat($profile->custom_fields ?? [])
+            ->keyBy('client_uuid');
         $submittedByUuid = collect($submitted)->keyBy('field_uuid');
         $errors = [];
 
         foreach ($fields as $field) {
-            if ($field->is_required && ! $submittedByUuid->has($field->client_uuid)) {
-                $errors['values'][] = "Enter {$field->label}.";
+            if ($field['is_required'] && ! $submittedByUuid->has($field['client_uuid'])) {
+                $errors['values'][] = "Enter {$field['label']}.";
             }
         }
 
         $normalized = [];
         foreach ($submitted as $index => $item) {
-            /** @var MeasurementTemplateField|null $field */
             $field = $fields->get($item['field_uuid']);
             if (! $field) {
                 $errors["values.{$index}.field_uuid"][] = 'This field does not belong to the selected template version.';
@@ -439,20 +454,20 @@ class MeasurementMutationService
                 continue;
             }
 
-            if ($field->value_type === 'text') {
+            if ($field['value_type'] === 'text') {
                 $value = trim((string) $item['value']);
                 if ($value === '') {
-                    $errors["values.{$index}.value"][] = "Enter {$field->label}.";
+                    $errors["values.{$index}.value"][] = "Enter {$field['label']}.";
 
                     continue;
                 }
                 if (mb_strlen($value) > 500) {
-                    $errors["values.{$index}.value"][] = "{$field->label} must not exceed 500 characters.";
+                    $errors["values.{$index}.value"][] = "{$field['label']} must not exceed 500 characters.";
 
                     continue;
                 }
                 $normalized[] = [
-                    'field_uuid' => $field->client_uuid,
+                    'field_uuid' => $field['client_uuid'],
                     'value' => $value,
                     'unit' => null,
                     'value_mm' => null,
@@ -462,32 +477,32 @@ class MeasurementMutationService
             }
 
             if (! is_numeric($item['value'])) {
-                $errors["values.{$index}.value"][] = "Enter a valid number for {$field->label}.";
+                $errors["values.{$index}.value"][] = "Enter a valid number for {$field['label']}.";
 
                 continue;
             }
             $value = (float) $item['value'];
             if ($value <= 0 || $value > 10000) {
-                $errors["values.{$index}.value"][] = "Enter a valid value for {$field->label}.";
+                $errors["values.{$index}.value"][] = "Enter a valid value for {$field['label']}.";
 
                 continue;
             }
-            $unit = $field->unit_type === 'length'
+            $unit = $field['unit_type'] === 'length'
                 ? ($item['unit'] ?? $profile->preferred_unit->value)
                 : null;
-            $valueMm = $field->unit_type === 'length'
+            $valueMm = $field['unit_type'] === 'length'
                 ? round($unit === 'inch' ? $value * 25.4 : $value * 10, 2)
                 : $value;
 
-            if ($field->minimum_value_mm !== null && $valueMm < (float) $field->minimum_value_mm) {
-                $errors["values.{$index}.value"][] = "{$field->label} is below the allowed minimum.";
+            if (($field['minimum_value_mm'] ?? null) !== null && $valueMm < (float) $field['minimum_value_mm']) {
+                $errors["values.{$index}.value"][] = "{$field['label']} is below the allowed minimum.";
             }
-            if ($field->maximum_value_mm !== null && $valueMm > (float) $field->maximum_value_mm) {
-                $errors["values.{$index}.value"][] = "{$field->label} exceeds the allowed maximum.";
+            if (($field['maximum_value_mm'] ?? null) !== null && $valueMm > (float) $field['maximum_value_mm']) {
+                $errors["values.{$index}.value"][] = "{$field['label']} exceeds the allowed maximum.";
             }
 
             $normalized[] = [
-                'field_uuid' => $field->client_uuid,
+                'field_uuid' => $field['client_uuid'],
                 'value' => number_format($value, 3, '.', ''),
                 'unit' => $unit,
                 'value_mm' => number_format($valueMm, 2, '.', ''),
@@ -499,6 +514,33 @@ class MeasurementMutationService
         }
 
         return $normalized;
+    }
+
+    /** @param array<int, array<string, mixed>> $customFields
+     * @return array<int, array<string, mixed>>
+     */
+    private function validatedProfileFields(
+        MeasurementTemplateVersion $definition,
+        array $customFields,
+    ): array {
+        $templateUuids = $definition->fields()->pluck('client_uuid')->all();
+        $templateKeys = $definition->fields()->pluck('field_key')->all();
+        $errors = [];
+
+        foreach ($customFields as $index => $field) {
+            if (in_array($field['client_uuid'], $templateUuids, true)) {
+                $errors["custom_fields.{$index}.client_uuid"][] = 'This identifier is already used by the selected template.';
+            }
+            if (in_array($field['field_key'], $templateKeys, true)) {
+                $errors["custom_fields.{$index}.field_key"][] = 'This field already exists in the selected template.';
+            }
+        }
+
+        if ($errors) {
+            throw ValidationException::withMessages($errors);
+        }
+
+        return array_values($customFields);
     }
 
     private function ensureVersion(Model $record, int $baseVersion, string $entityType): void

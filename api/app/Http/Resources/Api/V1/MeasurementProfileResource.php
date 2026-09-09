@@ -29,6 +29,7 @@ class MeasurementProfileResource extends JsonResource
             'name' => $this->name,
             'preferred_unit' => $this->preferred_unit->value,
             'notes' => $this->notes,
+            'custom_fields' => $this->custom_fields ?? [],
             'status' => $this->status->value,
             'version' => $this->version,
             'latest_revision_number' => $this->latest_revision_number,

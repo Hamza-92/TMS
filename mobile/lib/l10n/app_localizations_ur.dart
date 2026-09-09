@@ -809,6 +809,152 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get measurementRequiredHint => 'ضروری خانوں پر * کا نشان ہے';
+
+  @override
+  String get addMeasurementRevision => 'نئی پیمائش شامل کریں';
+
+  @override
+  String get measurementRevisionSavedMessage =>
+      'نئی پیمائش کامیابی سے محفوظ ہوگئی۔';
+
+  @override
+  String get measurementSectionUpperGarment => 'اوپری لباس';
+
+  @override
+  String get measurementSectionUpperBody => 'جسم کا اوپری حصہ';
+
+  @override
+  String get measurementSectionSleeves => 'آستینیں';
+
+  @override
+  String get measurementSectionLowerGarment => 'زیریں لباس';
+
+  @override
+  String get measurementSectionGarment => 'لباس';
+
+  @override
+  String get measurementSectionCollar => 'گلا';
+
+  @override
+  String get measurementSectionLengths => 'لمبائیاں';
+
+  @override
+  String get measurementSectionBody => 'جسم';
+
+  @override
+  String get measurementSectionLeg => 'ٹانگ';
+
+  @override
+  String get measurementSectionCustom => 'حسبِ ضرورت پیمائشیں';
+
+  @override
+  String get manageMeasurementTemplates => 'پیمائش کے سانچوں کا انتظام';
+
+  @override
+  String get measurementTemplatesTitle => 'پیمائش کے سانچے';
+
+  @override
+  String get measurementTemplatesSubtitle =>
+      'دوبارہ استعمال ہونے والے لباس کے پیمائشی مجموعے بنائیں';
+
+  @override
+  String get newMeasurementTemplate => 'نیا سانچہ';
+
+  @override
+  String get builtInTemplate => 'پہلے سے موجود';
+
+  @override
+  String get customTemplate => 'حسبِ ضرورت';
+
+  @override
+  String get copyAndCustomize => 'نقل بنا کر تبدیل کریں';
+
+  @override
+  String get editTemplate => 'سانچہ تبدیل کریں';
+
+  @override
+  String get templateName => 'سانچے کا نام';
+
+  @override
+  String get templateNameUrdu => 'اردو میں سانچے کا نام';
+
+  @override
+  String get templateNameRomanUrdu => 'رومن اردو میں سانچے کا نام';
+
+  @override
+  String get templateFields => 'پیمائش کے خانے';
+
+  @override
+  String get addMeasurementField => 'خانہ شامل کریں';
+
+  @override
+  String get editMeasurementField => 'خانہ تبدیل کریں';
+
+  @override
+  String get fieldNameEnglish => 'انگریزی میں خانے کا نام';
+
+  @override
+  String get fieldNameUrdu => 'اردو میں خانے کا نام';
+
+  @override
+  String get fieldNameRomanUrdu => 'رومن اردو میں خانے کا نام';
+
+  @override
+  String get fieldSection => 'حصہ';
+
+  @override
+  String get fieldType => 'قدر کی قسم';
+
+  @override
+  String get numericValue => 'عدد';
+
+  @override
+  String get textValue => 'متن';
+
+  @override
+  String get usesMeasurementUnit => 'انچ/سینٹی میٹر استعمال کریں';
+
+  @override
+  String get requiredField => 'لازمی خانہ';
+
+  @override
+  String get saveField => 'خانہ محفوظ کریں';
+
+  @override
+  String get removeField => 'خانہ ہٹائیں';
+
+  @override
+  String get saveTemplate => 'سانچہ محفوظ کریں';
+
+  @override
+  String get templateSavedTitle => 'سانچہ محفوظ ہوگیا';
+
+  @override
+  String get templateSavedMessage => 'پیمائش کا سانچہ استعمال کے لیے تیار ہے۔';
+
+  @override
+  String get templateSaveFailed =>
+      'سانچہ محفوظ نہیں ہوسکا۔ خانے جانچ کر دوبارہ کوشش کریں۔';
+
+  @override
+  String get templateNameRequired => 'سانچے کا نام درج کریں۔';
+
+  @override
+  String get fieldNameRequired => 'خانے کا نام درج کریں۔';
+
+  @override
+  String get atLeastOneFieldRequired =>
+      'کم از کم ایک پیمائش کا خانہ شامل کریں۔';
+
+  @override
+  String get addCustomerMeasurementField => 'حسبِ ضرورت خانہ شامل کریں';
+
+  @override
+  String get customerMeasurementFields => 'صرف اس گاہک کے خانے';
+
+  @override
+  String get customerFieldHint =>
+      'یہ خانے صرف اسی پیمائشی پروفائل پر لاگو ہوں گے۔';
 }
 
 /// The translations for Urdu, using the Latin script (`ur_Latn`).
@@ -1626,4 +1772,152 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
 
   @override
   String get measurementRequiredHint => 'Zaroori fields par * laga hua hai';
+
+  @override
+  String get addMeasurementRevision => 'Nayi measurements shamil karein';
+
+  @override
+  String get measurementRevisionSavedMessage =>
+      'Nayi measurements kamyabi se save ho gayin.';
+
+  @override
+  String get measurementSectionUpperGarment => 'Upar ka libas';
+
+  @override
+  String get measurementSectionUpperBody => 'Jism ka upar wala hissa';
+
+  @override
+  String get measurementSectionSleeves => 'Aasteenain';
+
+  @override
+  String get measurementSectionLowerGarment => 'Neechay ka libas';
+
+  @override
+  String get measurementSectionGarment => 'Libas';
+
+  @override
+  String get measurementSectionCollar => 'Gala';
+
+  @override
+  String get measurementSectionLengths => 'Lambaiyan';
+
+  @override
+  String get measurementSectionBody => 'Jism';
+
+  @override
+  String get measurementSectionLeg => 'Taang';
+
+  @override
+  String get measurementSectionCustom => 'Custom measurements';
+
+  @override
+  String get manageMeasurementTemplates =>
+      'Measurement templates manage karein';
+
+  @override
+  String get measurementTemplatesTitle => 'Measurement templates';
+
+  @override
+  String get measurementTemplatesSubtitle =>
+      'Dobara istemal honay walay libas measurement sets banayein';
+
+  @override
+  String get newMeasurementTemplate => 'Naya template';
+
+  @override
+  String get builtInTemplate => 'Built-in';
+
+  @override
+  String get customTemplate => 'Custom';
+
+  @override
+  String get copyAndCustomize => 'Copy aur customize karein';
+
+  @override
+  String get editTemplate => 'Template edit karein';
+
+  @override
+  String get templateName => 'Template ka naam';
+
+  @override
+  String get templateNameUrdu => 'Urdu mein template ka naam';
+
+  @override
+  String get templateNameRomanUrdu => 'Roman Urdu mein template ka naam';
+
+  @override
+  String get templateFields => 'Measurement fields';
+
+  @override
+  String get addMeasurementField => 'Field shamil karein';
+
+  @override
+  String get editMeasurementField => 'Field edit karein';
+
+  @override
+  String get fieldNameEnglish => 'English mein field ka naam';
+
+  @override
+  String get fieldNameUrdu => 'Urdu mein field ka naam';
+
+  @override
+  String get fieldNameRomanUrdu => 'Roman Urdu mein field ka naam';
+
+  @override
+  String get fieldSection => 'Section';
+
+  @override
+  String get fieldType => 'Value ki qisam';
+
+  @override
+  String get numericValue => 'Number';
+
+  @override
+  String get textValue => 'Text';
+
+  @override
+  String get usesMeasurementUnit => 'Inch/cm istemal karein';
+
+  @override
+  String get requiredField => 'Lazmi field';
+
+  @override
+  String get saveField => 'Field save karein';
+
+  @override
+  String get removeField => 'Field hata dein';
+
+  @override
+  String get saveTemplate => 'Template save karein';
+
+  @override
+  String get templateSavedTitle => 'Template save ho gaya';
+
+  @override
+  String get templateSavedMessage =>
+      'Measurement template istemal ke liye tayyar hai.';
+
+  @override
+  String get templateSaveFailed =>
+      'Template save nahin ho saka. Fields check karke dobara koshish karein.';
+
+  @override
+  String get templateNameRequired => 'Template ka naam darj karein.';
+
+  @override
+  String get fieldNameRequired => 'Field ka naam darj karein.';
+
+  @override
+  String get atLeastOneFieldRequired =>
+      'Kam az kam aik measurement field shamil karein.';
+
+  @override
+  String get addCustomerMeasurementField => 'Custom field shamil karein';
+
+  @override
+  String get customerMeasurementFields => 'Sirf is gahak ke fields';
+
+  @override
+  String get customerFieldHint =>
+      'Yeh fields sirf isi measurement profile par lagu hon ge.';
 }

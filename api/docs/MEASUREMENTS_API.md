@@ -79,6 +79,11 @@ definition and the template's current `version` as `base_version`.
 The profile list accepts `status=active|archived|all`, `updated_since`, `page`,
 and `per_page`.
 
+Profiles may include up to 30 `custom_fields` using the same field definition
+shape as templates. These fields apply only to that customer measurement
+profile. Each revision snapshots the active custom-field definitions so older
+measurement history keeps its original labels and validation context.
+
 ### Create a profile
 
 ```json

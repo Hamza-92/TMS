@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'revision_number',
     'measurement_template_version_id',
     'values',
+    'custom_fields',
     'notes',
     'measured_at',
     'created_by_user_id',
@@ -42,6 +43,7 @@ class CustomerMeasurementRevision extends Model
         return [
             'revision_number' => 'integer',
             'values' => 'array',
+            'custom_fields' => 'array',
             'measured_at' => 'datetime',
         ];
     }

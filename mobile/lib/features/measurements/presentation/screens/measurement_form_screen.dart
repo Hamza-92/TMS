@@ -10,15 +10,24 @@ import 'package:tailor_app/features/auth/application/auth_controller.dart';
 import 'package:tailor_app/features/measurements/application/measurement_providers.dart';
 import 'package:tailor_app/features/measurements/data/measurement_repository.dart';
 import 'package:tailor_app/features/measurements/domain/measurement.dart';
+import 'package:tailor_app/features/measurements/presentation/measurement_localization.dart';
+import 'package:tailor_app/features/measurements/presentation/widgets/measurement_field_editor_sheet.dart';
 import 'package:tailor_app/shared/extensions/localization_extension.dart';
 import 'package:tailor_app/shared/widgets/app_status_sheet.dart';
 import 'package:tailor_app/shared/widgets/gradient_page_header.dart';
 import 'package:tailor_app/shared/widgets/pastel_page_background.dart';
 
 class MeasurementFormScreen extends ConsumerStatefulWidget {
-  const MeasurementFormScreen({required this.customerClientUuid, super.key});
+  const MeasurementFormScreen({
+    required this.customerClientUuid,
+    this.profileClientUuid,
+    super.key,
+  });
 
   final String customerClientUuid;
+  final String? profileClientUuid;
+
+  bool get isNewRevision => profileClientUuid != null;
 
   @override
   ConsumerState<MeasurementFormScreen> createState() =>
@@ -30,11 +39,14 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
   final _nameController = TextEditingController();
   final _notesController = TextEditingController();
   final Map<String, TextEditingController> _valueControllers = {};
+  final List<MeasurementFieldDefinition> _customFields = [];
   String? _templateUuid;
   String _preferredUnit = 'inch';
   DateTime _measuredAt = DateTime.now();
   bool _saving = false;
   String? _syncStartedForBusiness;
+  bool _revisionInitializationScheduled = false;
+  bool _revisionInitialized = false;
 
   @override
   void dispose() {
@@ -60,11 +72,7 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
       _syncStartedForBusiness = business.id;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          unawaited(
-            ref
-                .read(measurementRepositoryProvider)
-                .synchronizeCustomer(business.id, widget.customerClientUuid),
-          );
+          unawaited(_synchronize(business.id));
         }
       });
     }
@@ -72,9 +80,38 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     final templatesAsync = ref.watch(measurementTemplatesProvider(business.id));
     final templates =
         templatesAsync.valueOrNull ?? const <MeasurementTemplateRecord>[];
+    final profileKey = widget.profileClientUuid == null
+        ? null
+        : MeasurementProfileKey(business.id, widget.profileClientUuid!);
+    final profileAsync = profileKey == null
+        ? null
+        : ref.watch(measurementProfileProvider(profileKey));
+    final revisionsAsync = profileKey == null
+        ? null
+        : ref.watch(measurementRevisionsProvider(profileKey));
+    final existingProfile = profileAsync?.valueOrNull;
+    final revisions =
+        revisionsAsync?.valueOrNull ?? const <MeasurementRevisionRecord>[];
+    final selectedTemplateUuid = widget.isNewRevision
+        ? existingProfile?.templateClientUuid
+        : _templateUuid;
     final selectedTemplate = templates
-        .where((template) => template.clientUuid == _templateUuid)
+        .where((template) => template.clientUuid == selectedTemplateUuid)
         .firstOrNull;
+    final effectiveFields = selectedTemplate == null
+        ? const <MeasurementFieldDefinition>[]
+        : [...selectedTemplate.fields, ..._customFields];
+
+    if (widget.isNewRevision &&
+        existingProfile != null &&
+        selectedTemplate != null &&
+        (existingProfile.latestRevisionNumber == 0 || revisions.isNotEmpty)) {
+      _scheduleRevisionInitialization(
+        existingProfile,
+        selectedTemplate,
+        revisions.firstOrNull,
+      );
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
@@ -88,7 +125,9 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
           child: Column(
             children: [
               GradientPageHeader(
-                title: context.l10n.addMeasurements,
+                title: widget.isNewRevision
+                    ? context.l10n.addMeasurementRevision
+                    : context.l10n.addMeasurements,
                 height: 112,
                 onBack: () => context.pop(),
               ),
@@ -104,130 +143,197 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
                           widget.customerClientUuid,
                         ),
                   ),
-                  data: (_) => Form(
-                    key: _formKey,
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.onDrag,
-                      padding: const EdgeInsets.fromLTRB(20, 22, 20, 36),
-                      children: [
-                        _SectionHeading(
-                          title: context.l10n.measurementTemplate,
-                          caption: context.l10n.measurementRequiredHint,
-                        ),
-                        const SizedBox(height: 12),
-                        DropdownButtonFormField<String>(
-                          initialValue: _templateUuid,
-                          isExpanded: true,
-                          decoration: _requiredDecoration(
-                            context,
-                            context.l10n.measurementTemplate,
-                          ),
-                          hint: Text(context.l10n.selectMeasurementTemplate),
-                          items: templates
-                              .map(
-                                (template) => DropdownMenuItem(
-                                  value: template.clientUuid,
-                                  child: Text(
-                                    _templateName(context, template),
-                                    overflow: TextOverflow.ellipsis,
+                  data: (_) => widget.isNewRevision && !_revisionInitialized
+                      ? profileAsync?.when(
+                              data: (profile) => profile == null
+                                  ? _FormUnavailable(
+                                      message: context
+                                          .l10n
+                                          .measurementProfileNotFound,
+                                    )
+                                  : const Center(
+                                      child:
+                                          CircularProgressIndicator.adaptive(),
+                                    ),
+                              error: (_, _) => _FormUnavailable(
+                                message: context.l10n.measurementLoadFailed,
+                              ),
+                              loading: () => const Center(
+                                child: CircularProgressIndicator.adaptive(),
+                              ),
+                            ) ??
+                            const Center(
+                              child: CircularProgressIndicator.adaptive(),
+                            )
+                      : Form(
+                          key: _formKey,
+                          child: ListView(
+                            physics: const BouncingScrollPhysics(),
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                            padding: const EdgeInsets.fromLTRB(20, 22, 20, 36),
+                            children: [
+                              if (!widget.isNewRevision) ...[
+                                _SectionHeading(
+                                  title: context.l10n.measurementTemplate,
+                                  caption: context.l10n.measurementRequiredHint,
+                                ),
+                                const SizedBox(height: 12),
+                                DropdownButtonFormField<String>(
+                                  initialValue: _templateUuid,
+                                  isExpanded: true,
+                                  decoration: _requiredDecoration(
+                                    context,
+                                    context.l10n.measurementTemplate,
+                                  ),
+                                  hint: Text(
+                                    context.l10n.selectMeasurementTemplate,
+                                  ),
+                                  items: templates
+                                      .map(
+                                        (template) => DropdownMenuItem(
+                                          value: template.clientUuid,
+                                          child: Text(
+                                            _templateName(context, template),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      )
+                                      .toList(growable: false),
+                                  onChanged: (value) => _selectTemplate(
+                                    context,
+                                    templates,
+                                    value,
+                                  ),
+                                  validator: (value) => value == null
+                                      ? context.l10n.measurementTemplateRequired
+                                      : null,
+                                ),
+                                const SizedBox(height: 14),
+                                TextFormField(
+                                  controller: _nameController,
+                                  textInputAction: TextInputAction.next,
+                                  decoration:
+                                      _requiredDecoration(
+                                        context,
+                                        context.l10n.measurementProfileName,
+                                      ).copyWith(
+                                        hintText: context
+                                            .l10n
+                                            .measurementProfileNameHint,
+                                      ),
+                                  validator: (value) =>
+                                      value == null || value.trim().isEmpty
+                                      ? context
+                                            .l10n
+                                            .measurementProfileNameRequired
+                                      : null,
+                                ),
+                                const SizedBox(height: 14),
+                              ] else if (existingProfile != null &&
+                                  selectedTemplate != null) ...[
+                                _RevisionProfileSummary(
+                                  profile: existingProfile,
+                                  templateName: _templateName(
+                                    context,
+                                    selectedTemplate,
                                   ),
                                 ),
-                              )
-                              .toList(growable: false),
-                          onChanged: (value) =>
-                              _selectTemplate(context, templates, value),
-                          validator: (value) => value == null
-                              ? context.l10n.measurementTemplateRequired
-                              : null,
-                        ),
-                        const SizedBox(height: 14),
-                        TextFormField(
-                          controller: _nameController,
-                          textInputAction: TextInputAction.next,
-                          decoration:
-                              _requiredDecoration(
-                                context,
-                                context.l10n.measurementProfileName,
-                              ).copyWith(
-                                hintText:
-                                    context.l10n.measurementProfileNameHint,
+                                const SizedBox(height: 18),
+                              ],
+                              _UnitSelector(
+                                value: _preferredUnit,
+                                onChanged: (value) => setState(() {
+                                  _preferredUnit = value;
+                                }),
                               ),
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? context.l10n.measurementProfileNameRequired
-                              : null,
-                        ),
-                        const SizedBox(height: 14),
-                        _UnitSelector(
-                          value: _preferredUnit,
-                          onChanged: (value) => setState(() {
-                            _preferredUnit = value;
-                          }),
-                        ),
-                        const SizedBox(height: 14),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(AppRadii.control),
-                          onTap: _pickDate,
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: context.l10n.measuredOn,
-                              suffixIcon: const Icon(
-                                Icons.calendar_today_outlined,
-                                size: 18,
-                              ),
-                            ),
-                            child: Text(
-                              DateFormat.yMMMd(
-                                Localizations.localeOf(context).toLanguageTag(),
-                              ).format(_measuredAt),
-                            ),
-                          ),
-                        ),
-                        if (selectedTemplate != null) ...[
-                          const SizedBox(height: 26),
-                          _SectionHeading(
-                            title: context.l10n.measurementValues,
-                          ),
-                          const SizedBox(height: 12),
-                          ..._buildMeasurementFields(context, selectedTemplate),
-                        ],
-                        const SizedBox(height: 24),
-                        _SectionHeading(title: context.l10n.measurementNotes),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _notesController,
-                          minLines: 3,
-                          maxLines: 5,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.measurementNotes,
-                            hintText: context.l10n.measurementNotesHint,
-                            alignLabelWithHint: true,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          height: AppSizes.controlHeight,
-                          child: FilledButton(
-                            onPressed: _saving || selectedTemplate == null
-                                ? null
-                                : () => _save(business.id, selectedTemplate),
-                            child: _saving
-                                ? const SizedBox.square(
-                                    dimension: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
+                              const SizedBox(height: 14),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadii.control,
+                                ),
+                                onTap: _pickDate,
+                                child: InputDecorator(
+                                  decoration: InputDecoration(
+                                    labelText: context.l10n.measuredOn,
+                                    suffixIcon: const Icon(
+                                      Icons.calendar_today_outlined,
+                                      size: 18,
                                     ),
-                                  )
-                                : Text(context.l10n.saveMeasurements),
+                                  ),
+                                  child: Text(
+                                    DateFormat.yMMMd(
+                                      Localizations.localeOf(context)
+                                          .toLanguageTag(),
+                                    ).format(_measuredAt),
+                                  ),
+                                ),
+                              ),
+                              if (selectedTemplate != null) ...[
+                                const SizedBox(height: 26),
+                                _CustomerFieldsEditor(
+                                  fields: _customFields,
+                                  onAdd: () =>
+                                      _addCustomField(selectedTemplate.fields),
+                                  onEdit: (index) => _editCustomField(
+                                    index,
+                                    selectedTemplate.fields,
+                                  ),
+                                  onRemove: _removeCustomField,
+                                ),
+                                const SizedBox(height: 24),
+                                _SectionHeading(
+                                  title: context.l10n.measurementValues,
+                                  caption: context.l10n.measurementRequiredHint,
+                                ),
+                                const SizedBox(height: 12),
+                                ..._buildMeasurementFields(
+                                  context,
+                                  effectiveFields,
+                                ),
+                              ],
+                              const SizedBox(height: 24),
+                              _SectionHeading(
+                                title: context.l10n.measurementNotes,
+                              ),
+                              const SizedBox(height: 12),
+                              TextFormField(
+                                controller: _notesController,
+                                minLines: 3,
+                                maxLines: 5,
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                decoration: InputDecoration(
+                                  labelText: context.l10n.measurementNotes,
+                                  hintText: context.l10n.measurementNotesHint,
+                                  alignLabelWithHint: true,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              SizedBox(
+                                height: AppSizes.controlHeight,
+                                child: FilledButton(
+                                  onPressed: _saving || selectedTemplate == null
+                                      ? null
+                                      : () => _save(
+                                          business.id,
+                                          selectedTemplate,
+                                          existingProfile,
+                                        ),
+                                  child: _saving
+                                      ? const SizedBox.square(
+                                          dimension: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Text(context.l10n.saveMeasurements),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
                 ),
               ),
             ],
@@ -248,7 +354,10 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
       _templateUuid = value;
       _preferredUnit = template.defaultUnit;
       _nameController.text = _templateName(context, template);
-      final validIds = template.fields.map((field) => field.clientUuid).toSet();
+      final validIds = {
+        ...template.fields.map((field) => field.clientUuid),
+        ..._customFields.map((field) => field.clientUuid),
+      };
       final staleIds = _valueControllers.keys
           .where((fieldUuid) => !validIds.contains(fieldUuid))
           .toList(growable: false);
@@ -258,11 +367,59 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     });
   }
 
+  void _scheduleRevisionInitialization(
+    MeasurementProfileRecord profile,
+    MeasurementTemplateRecord template,
+    MeasurementRevisionRecord? latest,
+  ) {
+    if (_revisionInitialized || _revisionInitializationScheduled) return;
+    _revisionInitializationScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final values = {
+        for (final value in latest?.values ?? const <Map<String, dynamic>>[])
+          value['field_uuid']?.toString(): value,
+      }..remove(null);
+      var unit = profile.preferredUnit;
+      _customFields
+        ..clear()
+        ..addAll(profile.customFields);
+      for (final field in [...template.fields, ...profile.customFields]) {
+        final value = values[field.clientUuid];
+        final enteredUnit = value?['unit']?.toString();
+        if (enteredUnit == 'inch' || enteredUnit == 'cm') unit = enteredUnit!;
+        _valueControllers
+            .putIfAbsent(field.clientUuid, TextEditingController.new)
+            .text = _editableValue(
+          value?['value'],
+        );
+      }
+      setState(() {
+        _templateUuid = profile.templateClientUuid;
+        _preferredUnit = unit;
+        _revisionInitialized = true;
+      });
+    });
+  }
+
+  Future<void> _synchronize(String businessId) async {
+    final repository = ref.read(measurementRepositoryProvider);
+    await repository.synchronizeCustomer(businessId, widget.customerClientUuid);
+    final profileClientUuid = widget.profileClientUuid;
+    if (profileClientUuid != null) {
+      await repository.refreshHistory(
+        businessId: businessId,
+        customerClientUuid: widget.customerClientUuid,
+        profileClientUuid: profileClientUuid,
+      );
+    }
+  }
+
   List<Widget> _buildMeasurementFields(
     BuildContext context,
-    MeasurementTemplateRecord template,
+    List<MeasurementFieldDefinition> sourceFields,
   ) {
-    final fields = [...template.fields]
+    final fields = [...sourceFields]
       ..sort((a, b) {
         final section = a.section.compareTo(b.section);
         return section == 0 ? a.sortOrder.compareTo(b.sortOrder) : section;
@@ -273,7 +430,11 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
       if (currentSection != field.section) {
         if (currentSection != null) widgets.add(const SizedBox(height: 18));
         currentSection = field.section;
-        widgets.add(_FieldGroupLabel(label: _displaySection(field.section)));
+        widgets.add(
+          _FieldGroupLabel(
+            label: localizedMeasurementSection(context, field.section),
+          ),
+        );
         widgets.add(const SizedBox(height: 10));
       }
       final controller = _valueControllers.putIfAbsent(
@@ -348,9 +509,59 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
     }
   }
 
+  Future<void> _addCustomField(
+    List<MeasurementFieldDefinition> templateFields,
+  ) async {
+    final field = await showMeasurementFieldEditorSheet(
+      context,
+      excludedKeys: {
+        ...templateFields.map((item) => item.key),
+        ..._customFields.map((item) => item.key),
+      },
+    );
+    if (field != null && mounted) {
+      setState(() => _customFields.add(field));
+    }
+  }
+
+  Future<void> _editCustomField(
+    int index,
+    List<MeasurementFieldDefinition> templateFields,
+  ) async {
+    final field = await showMeasurementFieldEditorSheet(
+      context,
+      existing: _customFields[index],
+      excludedKeys: {
+        ...templateFields.map((item) => item.key),
+        ..._customFields
+            .where((item) => item.clientUuid != _customFields[index].clientUuid)
+            .map((item) => item.key),
+      },
+    );
+    if (field != null && mounted) {
+      setState(() => _customFields[index] = field);
+    }
+  }
+
+  Future<void> _removeCustomField(int index) async {
+    final remove = await showAppConfirmationSheet(
+      context,
+      type: AppStatusType.warning,
+      title: context.l10n.removeField,
+      message: _fieldLabel(context, _customFields[index]),
+      confirmLabel: context.l10n.removeField,
+      cancelLabel: context.l10n.cancelLabel,
+    );
+    if (!remove || !mounted) return;
+    final field = _customFields.removeAt(index);
+    _valueControllers.remove(field.clientUuid)?.dispose();
+    setState(() {});
+  }
+
   Future<void> _save(
     String businessId,
     MeasurementTemplateRecord template,
+    MeasurementProfileRecord? existingProfile,
   ) async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (!(_formKey.currentState?.validate() ?? false)) return;
@@ -360,15 +571,17 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
       final profile = await repository.saveProfile(
         businessId: businessId,
         customerClientUuid: widget.customerClientUuid,
+        existing: existingProfile,
         draft: MeasurementProfileDraft(
           templateClientUuid: template.clientUuid,
           templateDefinitionVersion: template.definitionVersion,
-          name: _nameController.text.trim(),
+          name: existingProfile?.name ?? _nameController.text.trim(),
           preferredUnit: _preferredUnit,
-          notes: _emptyToNull(_notesController.text),
+          notes: existingProfile?.notes ?? _emptyToNull(_notesController.text),
+          customFields: _customFields,
         ),
       );
-      final values = template.fields
+      final values = [...template.fields, ..._customFields]
           .where((field) {
             final raw = _valueControllers[field.clientUuid]?.text.trim();
             return raw != null && raw.isNotEmpty;
@@ -396,7 +609,9 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
         context,
         type: AppStatusType.success,
         title: context.l10n.measurementSavedTitle,
-        message: context.l10n.measurementSavedMessage,
+        message: existingProfile == null
+            ? context.l10n.measurementSavedMessage
+            : context.l10n.measurementRevisionSavedMessage,
         actionLabel: context.l10n.doneLabel,
       );
       if (mounted) {
@@ -447,6 +662,86 @@ class _MeasurementFormScreenState extends ConsumerState<MeasurementFormScreen> {
   }
 }
 
+class _CustomerFieldsEditor extends StatelessWidget {
+  const _CustomerFieldsEditor({
+    required this.fields,
+    required this.onAdd,
+    required this.onEdit,
+    required this.onRemove,
+  });
+
+  final List<MeasurementFieldDefinition> fields;
+  final VoidCallback onAdd;
+  final ValueChanged<int> onEdit;
+  final ValueChanged<int> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                context.l10n.customerMeasurementFields,
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(fontSize: 16),
+              ),
+            ),
+            TextButton.icon(
+              onPressed: onAdd,
+              icon: const Icon(Icons.add_rounded, size: 19),
+              label: Text(context.l10n.addCustomerMeasurementField),
+            ),
+          ],
+        ),
+        Text(
+          context.l10n.customerFieldHint,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 11),
+        ),
+        if (fields.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          for (var index = 0; index < fields.length; index++) ...[
+            Container(
+              padding: const EdgeInsetsDirectional.fromSTEB(12, 8, 4, 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppRadii.control),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      fields[index].localizedLabel(
+                        locale.languageCode,
+                        locale.scriptCode,
+                      ),
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => onEdit(index),
+                    icon: const Icon(Icons.edit_outlined, size: 19),
+                  ),
+                  IconButton(
+                    onPressed: () => onRemove(index),
+                    color: AppColors.danger,
+                    icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                  ),
+                ],
+              ),
+            ),
+            if (index != fields.length - 1) const SizedBox(height: 8),
+          ],
+        ],
+      ],
+    );
+  }
+}
+
 class _SectionHeading extends StatelessWidget {
   const _SectionHeading({required this.title, this.caption});
 
@@ -477,6 +772,63 @@ class _SectionHeading extends StatelessWidget {
       ],
     );
   }
+}
+
+class _RevisionProfileSummary extends StatelessWidget {
+  const _RevisionProfileSummary({
+    required this.profile,
+    required this.templateName,
+  });
+
+  final MeasurementProfileRecord profile;
+  final String templateName;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(AppRadii.card),
+      border: Border.all(color: AppColors.border),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.primary.withValues(alpha: 0.045),
+          blurRadius: 14,
+          offset: const Offset(0, 5),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          profile.name,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 16),
+        ),
+        const SizedBox(height: 4),
+        Text(templateName, style: Theme.of(context).textTheme.bodyMedium),
+      ],
+    ),
+  );
+}
+
+class _FormUnavailable extends StatelessWidget {
+  const _FormUnavailable({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(28),
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+    ),
+  );
 }
 
 class _FieldGroupLabel extends StatelessWidget {
@@ -598,13 +950,15 @@ class _TemplateLoadError extends StatelessWidget {
   );
 }
 
-String _displaySection(String section) => section
-    .split('_')
-    .where((part) => part.isNotEmpty)
-    .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
-    .join(' ');
-
 String? _emptyToNull(String value) {
   final trimmed = value.trim();
   return trimmed.isEmpty ? null : trimmed;
+}
+
+String _editableValue(Object? value) {
+  if (value == null) return '';
+  if (value is num) {
+    return value % 1 == 0 ? value.toStringAsFixed(0) : value.toString();
+  }
+  return value.toString();
 }
