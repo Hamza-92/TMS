@@ -27,4 +27,35 @@ abstract final class ApiEndpoints {
 
   static String customerPhoto(String businessId, String clientUuid) =>
       '${customer(businessId, clientUuid)}/photo';
+
+  static String measurementTemplates(String businessId) =>
+      '/api/v1/businesses/$businessId/measurement-templates';
+
+  static String measurementTemplate(String businessId, String clientUuid) =>
+      '${measurementTemplates(businessId)}/$clientUuid';
+
+  static String measurementTemplateVersion(
+    String businessId,
+    String clientUuid,
+    int version,
+  ) => '${measurementTemplate(businessId, clientUuid)}/versions/$version';
+
+  static String measurementProfiles(
+    String businessId,
+    String customerClientUuid,
+  ) => '${customer(businessId, customerClientUuid)}/measurement-profiles';
+
+  static String measurementProfile(
+    String businessId,
+    String customerClientUuid,
+    String profileClientUuid,
+  ) =>
+      '${measurementProfiles(businessId, customerClientUuid)}/$profileClientUuid';
+
+  static String measurementRevisions(
+    String businessId,
+    String customerClientUuid,
+    String profileClientUuid,
+  ) =>
+      '${measurementProfile(businessId, customerClientUuid, profileClientUuid)}/revisions';
 }

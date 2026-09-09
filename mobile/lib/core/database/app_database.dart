@@ -51,13 +51,108 @@ class CustomerSyncOperations extends Table {
   Set<Column> get primaryKey => {operationUuid};
 }
 
-@DriftDatabase(tables: [AppMetadata, LocalCustomers, CustomerSyncOperations])
+class LocalMeasurementTemplates extends Table {
+  TextColumn get businessScope => text()();
+  TextColumn get clientUuid => text()();
+  TextColumn get serverId => text().nullable()();
+  TextColumn get systemCode => text().nullable()();
+  TextColumn get source => text()();
+  TextColumn get sourceTemplateUuid => text().nullable()();
+  TextColumn get name => text()();
+  TextColumn get nameUr => text().nullable()();
+  TextColumn get nameRomanUr => text().nullable()();
+  TextColumn get category => text()();
+  TextColumn get defaultUnit => text().withDefault(const Constant('inch'))();
+  TextColumn get description => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('active'))();
+  IntColumn get serverVersion => integer().withDefault(const Constant(0))();
+  IntColumn get definitionVersion => integer().withDefault(const Constant(1))();
+  TextColumn get fieldsJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get archivedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {businessScope, clientUuid};
+}
+
+class LocalMeasurementProfiles extends Table {
+  TextColumn get businessId => text()();
+  TextColumn get customerClientUuid => text()();
+  TextColumn get clientUuid => text()();
+  TextColumn get serverId => text().nullable()();
+  TextColumn get templateClientUuid => text()();
+  IntColumn get templateDefinitionVersion => integer()();
+  TextColumn get name => text()();
+  TextColumn get preferredUnit => text().withDefault(const Constant('inch'))();
+  TextColumn get notes => text().nullable()();
+  TextColumn get status => text().withDefault(const Constant('active'))();
+  IntColumn get serverVersion => integer().withDefault(const Constant(0))();
+  IntColumn get latestRevisionNumber =>
+      integer().withDefault(const Constant(0))();
+  TextColumn get syncState => text().withDefault(const Constant('pending'))();
+  TextColumn get syncError => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get serverUpdatedAt => dateTime().nullable()();
+  DateTimeColumn get archivedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {businessId, clientUuid};
+}
+
+class LocalMeasurementRevisions extends Table {
+  TextColumn get businessId => text()();
+  TextColumn get profileClientUuid => text()();
+  TextColumn get clientUuid => text()();
+  TextColumn get serverId => text().nullable()();
+  IntColumn get revisionNumber => integer().withDefault(const Constant(0))();
+  IntColumn get templateDefinitionVersion => integer()();
+  TextColumn get valuesJson => text()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get measuredAt => dateTime()();
+  TextColumn get syncState => text().withDefault(const Constant('pending'))();
+  TextColumn get syncError => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {businessId, clientUuid};
+}
+
+class MeasurementSyncOperations extends Table {
+  TextColumn get operationUuid => text()();
+  TextColumn get businessId => text()();
+  TextColumn get customerClientUuid => text()();
+  TextColumn get profileClientUuid => text()();
+  TextColumn get revisionClientUuid => text().nullable()();
+  TextColumn get action => text()();
+  IntColumn get baseVersion => integer()();
+  TextColumn get payloadJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+  IntColumn get attemptCount => integer().withDefault(const Constant(0))();
+  TextColumn get lastError => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {operationUuid};
+}
+
+@DriftDatabase(
+  tables: [
+    AppMetadata,
+    LocalCustomers,
+    CustomerSyncOperations,
+    LocalMeasurementTemplates,
+    LocalMeasurementProfiles,
+    LocalMeasurementRevisions,
+    MeasurementSyncOperations,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
     : super(executor ?? driftDatabase(name: 'tailor_app'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -70,6 +165,12 @@ class AppDatabase extends _$AppDatabase {
       if (from >= 2 && from < 3) {
         await migrator.addColumn(localCustomers, localCustomers.photoLocalPath);
         await migrator.addColumn(localCustomers, localCustomers.photoUrl);
+      }
+      if (from < 4) {
+        await migrator.createTable(localMeasurementTemplates);
+        await migrator.createTable(localMeasurementProfiles);
+        await migrator.createTable(localMeasurementRevisions);
+        await migrator.createTable(measurementSyncOperations);
       }
     },
     beforeOpen: (details) async {

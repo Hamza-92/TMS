@@ -1370,6 +1370,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} customers permanently deleted.'**
   String customersDeletedPermanently(int count);
+
+  /// No description provided for @measurementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurements'**
+  String get measurementsTitle;
+
+  /// No description provided for @measurementProfilesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved fitting profiles for this customer'**
+  String get measurementProfilesSubtitle;
+
+  /// No description provided for @addMeasurements.
+  ///
+  /// In en, this message translates to:
+  /// **'Add measurements'**
+  String get addMeasurements;
+
+  /// No description provided for @noMeasurementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No measurements yet'**
+  String get noMeasurementsTitle;
+
+  /// No description provided for @noMeasurementsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add this customer\'s first fitting profile to get started.'**
+  String get noMeasurementsMessage;
+
+  /// No description provided for @measurementTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Garment type'**
+  String get measurementTemplate;
+
+  /// No description provided for @selectMeasurementTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a garment type'**
+  String get selectMeasurementTemplate;
+
+  /// No description provided for @measurementProfileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile name'**
+  String get measurementProfileName;
+
+  /// No description provided for @measurementProfileNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular fitting'**
+  String get measurementProfileNameHint;
+
+  /// No description provided for @preferredUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement unit'**
+  String get preferredUnit;
+
+  /// No description provided for @inches.
+  ///
+  /// In en, this message translates to:
+  /// **'Inches'**
+  String get inches;
+
+  /// No description provided for @centimetres.
+  ///
+  /// In en, this message translates to:
+  /// **'Centimetres'**
+  String get centimetres;
+
+  /// No description provided for @measurementValues.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement details'**
+  String get measurementValues;
+
+  /// No description provided for @measurementNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement notes'**
+  String get measurementNotes;
+
+  /// No description provided for @measurementNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitting preferences or special instructions'**
+  String get measurementNotesHint;
+
+  /// No description provided for @saveMeasurements.
+  ///
+  /// In en, this message translates to:
+  /// **'Save measurements'**
+  String get saveMeasurements;
+
+  /// No description provided for @measurementSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurements saved'**
+  String get measurementSavedTitle;
+
+  /// No description provided for @measurementSavedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The fitting profile has been saved successfully.'**
+  String get measurementSavedMessage;
+
+  /// No description provided for @measurementSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The measurements could not be saved. Review the values and try again.'**
+  String get measurementSaveFailed;
+
+  /// No description provided for @measurementTemplateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a garment type.'**
+  String get measurementTemplateRequired;
+
+  /// No description provided for @measurementProfileNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a profile name.'**
+  String get measurementProfileNameRequired;
+
+  /// No description provided for @measurementValueRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter this measurement.'**
+  String get measurementValueRequired;
+
+  /// No description provided for @measurementValueInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid measurement.'**
+  String get measurementValueInvalid;
+
+  /// No description provided for @latestMeasurements.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest measurements'**
+  String get latestMeasurements;
+
+  /// No description provided for @measurementHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement history'**
+  String get measurementHistory;
+
+  /// No description provided for @measurementRevision.
+  ///
+  /// In en, this message translates to:
+  /// **'Revision {number}'**
+  String measurementRevision(int number);
+
+  /// No description provided for @measuredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Measured on'**
+  String get measuredOn;
+
+  /// No description provided for @measurementFieldsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} measurements'**
+  String measurementFieldsCount(int count);
+
+  /// No description provided for @measurementLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurements could not be loaded.'**
+  String get measurementLoadFailed;
+
+  /// No description provided for @measurementTemplateLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Garment types could not be loaded. Please try again.'**
+  String get measurementTemplateLoadFailed;
+
+  /// No description provided for @measurementProfileNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This measurement profile is no longer available.'**
+  String get measurementProfileNotFound;
+
+  /// No description provided for @measurementRequiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Required fields are marked with *'**
+  String get measurementRequiredHint;
 }
 
 class _AppLocalizationsDelegate

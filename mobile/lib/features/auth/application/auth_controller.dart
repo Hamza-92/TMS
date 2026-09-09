@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tailor_app/core/localization/app_locale.dart';
 import 'package:tailor_app/core/storage/secure_storage_service.dart';
 import 'package:tailor_app/features/auth/data/auth_models.dart';
 import 'package:tailor_app/features/auth/data/auth_repository.dart';
@@ -30,7 +29,6 @@ class AuthController extends AsyncNotifier<AuthState> {
 
     try {
       final session = await ref.read(authRepositoryProvider).currentSession();
-      await _adoptAccountLocale(session);
       return SignedIn(session: session);
     } catch (_) {
       // Keep a valid local session usable while offline. A failed token refresh
@@ -39,7 +37,6 @@ class AuthController extends AsyncNotifier<AuthState> {
       if (retainedToken?.isNotEmpty != true) return const SignedOut();
 
       final cached = await ref.read(authRepositoryProvider).cachedSession();
-      if (cached != null) await _adoptAccountLocale(cached);
       return SignedIn(session: cached);
     }
   }
@@ -54,7 +51,6 @@ class AuthController extends AsyncNotifier<AuthState> {
       final result = await ref
           .read(authRepositoryProvider)
           .login(phoneE164: phoneE164, password: password);
-      await _adoptAccountLocale(result.session);
       state = AsyncData(SignedIn(session: result.session));
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
@@ -72,7 +68,6 @@ class AuthController extends AsyncNotifier<AuthState> {
       final result = await ref
           .read(authRepositoryProvider)
           .register(draft: draft, otp: otp);
-      await _adoptAccountLocale(result.session);
       state = AsyncData(SignedIn(session: result.session));
     } catch (error, stackTrace) {
       state = AsyncError(error, stackTrace);
@@ -101,7 +96,6 @@ class AuthController extends AsyncNotifier<AuthState> {
 
     try {
       final session = await ref.read(authRepositoryProvider).currentSession();
-      await _adoptAccountLocale(session);
       state = AsyncData(SignedIn(session: session));
     } catch (error, stackTrace) {
       state = previous == null
@@ -109,11 +103,6 @@ class AuthController extends AsyncNotifier<AuthState> {
           : AsyncData(previous);
       rethrow;
     }
-  }
-
-  Future<void> _adoptAccountLocale(AuthSessionSnapshot session) async {
-    final locale = AppLocale.fromApiCode(session.user.preferredLocale);
-    if (locale != null) await ref.read(localeProvider.notifier).select(locale);
   }
 }
 

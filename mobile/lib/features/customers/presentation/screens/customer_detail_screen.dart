@@ -55,6 +55,9 @@ class CustomerDetailScreen extends ConsumerWidget {
                     customer: record,
                     onBack: () => _goBack(context),
                     onMore: () => _openActions(context, ref, record),
+                    onMeasurements: () => context.push(
+                      '/customers/${record.clientUuid}/measurements',
+                    ),
                     onUnavailable: () => _showUnavailable(context),
                   ),
             loading: () =>
@@ -234,12 +237,14 @@ class _CustomerDetailView extends StatelessWidget {
     required this.customer,
     required this.onBack,
     required this.onMore,
+    required this.onMeasurements,
     required this.onUnavailable,
   });
 
   final CustomerRecord customer;
   final VoidCallback onBack;
   final VoidCallback onMore;
+  final VoidCallback onMeasurements;
   final VoidCallback onUnavailable;
 
   @override
@@ -269,7 +274,7 @@ class _CustomerDetailView extends StatelessWidget {
                         child: _QuickAction(
                           assetName: 'assets/icons/measurements.svg',
                           label: context.l10n.dashboardMeasurements,
-                          onTap: onUnavailable,
+                          onTap: onMeasurements,
                         ),
                       ),
                       const SizedBox(width: 10),

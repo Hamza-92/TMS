@@ -710,4 +710,111 @@ class AppLocalizationsEn extends AppLocalizations {
   String customersDeletedPermanently(int count) {
     return '$count customers permanently deleted.';
   }
+
+  @override
+  String get measurementsTitle => 'Measurements';
+
+  @override
+  String get measurementProfilesSubtitle =>
+      'Saved fitting profiles for this customer';
+
+  @override
+  String get addMeasurements => 'Add measurements';
+
+  @override
+  String get noMeasurementsTitle => 'No measurements yet';
+
+  @override
+  String get noMeasurementsMessage =>
+      'Add this customer\'s first fitting profile to get started.';
+
+  @override
+  String get measurementTemplate => 'Garment type';
+
+  @override
+  String get selectMeasurementTemplate => 'Select a garment type';
+
+  @override
+  String get measurementProfileName => 'Profile name';
+
+  @override
+  String get measurementProfileNameHint => 'Regular fitting';
+
+  @override
+  String get preferredUnit => 'Measurement unit';
+
+  @override
+  String get inches => 'Inches';
+
+  @override
+  String get centimetres => 'Centimetres';
+
+  @override
+  String get measurementValues => 'Measurement details';
+
+  @override
+  String get measurementNotes => 'Measurement notes';
+
+  @override
+  String get measurementNotesHint =>
+      'Fitting preferences or special instructions';
+
+  @override
+  String get saveMeasurements => 'Save measurements';
+
+  @override
+  String get measurementSavedTitle => 'Measurements saved';
+
+  @override
+  String get measurementSavedMessage =>
+      'The fitting profile has been saved successfully.';
+
+  @override
+  String get measurementSaveFailed =>
+      'The measurements could not be saved. Review the values and try again.';
+
+  @override
+  String get measurementTemplateRequired => 'Select a garment type.';
+
+  @override
+  String get measurementProfileNameRequired => 'Enter a profile name.';
+
+  @override
+  String get measurementValueRequired => 'Enter this measurement.';
+
+  @override
+  String get measurementValueInvalid => 'Enter a valid measurement.';
+
+  @override
+  String get latestMeasurements => 'Latest measurements';
+
+  @override
+  String get measurementHistory => 'Measurement history';
+
+  @override
+  String measurementRevision(int number) {
+    return 'Revision $number';
+  }
+
+  @override
+  String get measuredOn => 'Measured on';
+
+  @override
+  String measurementFieldsCount(int count) {
+    return '$count measurements';
+  }
+
+  @override
+  String get measurementLoadFailed => 'Measurements could not be loaded.';
+
+  @override
+  String get measurementTemplateLoadFailed =>
+      'Garment types could not be loaded. Please try again.';
+
+  @override
+  String get measurementProfileNotFound =>
+      'This measurement profile is no longer available.';
+
+  @override
+  String get measurementRequiredHint => 'Required fields are marked with *';
 }

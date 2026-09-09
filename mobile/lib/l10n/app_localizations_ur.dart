@@ -705,6 +705,110 @@ class AppLocalizationsUr extends AppLocalizations {
   String customersDeletedPermanently(int count) {
     return '$count گاہک ہمیشہ کے لیے حذف ہوگئے۔';
   }
+
+  @override
+  String get measurementsTitle => 'پیمائشیں';
+
+  @override
+  String get measurementProfilesSubtitle => 'اس گاہک کے محفوظ فٹنگ پروفائل';
+
+  @override
+  String get addMeasurements => 'پیمائش شامل کریں';
+
+  @override
+  String get noMeasurementsTitle => 'ابھی کوئی پیمائش نہیں';
+
+  @override
+  String get noMeasurementsMessage =>
+      'شروع کرنے کے لیے گاہک کا پہلا فٹنگ پروفائل شامل کریں۔';
+
+  @override
+  String get measurementTemplate => 'لباس کی قسم';
+
+  @override
+  String get selectMeasurementTemplate => 'لباس کی قسم منتخب کریں';
+
+  @override
+  String get measurementProfileName => 'پروفائل کا نام';
+
+  @override
+  String get measurementProfileNameHint => 'عام فٹنگ';
+
+  @override
+  String get preferredUnit => 'پیمائش کی اکائی';
+
+  @override
+  String get inches => 'انچ';
+
+  @override
+  String get centimetres => 'سینٹی میٹر';
+
+  @override
+  String get measurementValues => 'پیمائش کی تفصیل';
+
+  @override
+  String get measurementNotes => 'پیمائش کے نوٹس';
+
+  @override
+  String get measurementNotesHint => 'فٹنگ کی پسند یا خاص ہدایات';
+
+  @override
+  String get saveMeasurements => 'پیمائش محفوظ کریں';
+
+  @override
+  String get measurementSavedTitle => 'پیمائش محفوظ ہوگئی';
+
+  @override
+  String get measurementSavedMessage => 'فٹنگ پروفائل کامیابی سے محفوظ ہوگیا۔';
+
+  @override
+  String get measurementSaveFailed =>
+      'پیمائش محفوظ نہیں ہوسکی۔ قدریں دیکھ کر دوبارہ کوشش کریں۔';
+
+  @override
+  String get measurementTemplateRequired => 'لباس کی قسم منتخب کریں۔';
+
+  @override
+  String get measurementProfileNameRequired => 'پروفائل کا نام لکھیں۔';
+
+  @override
+  String get measurementValueRequired => 'یہ پیمائش لکھیں۔';
+
+  @override
+  String get measurementValueInvalid => 'درست پیمائش لکھیں۔';
+
+  @override
+  String get latestMeasurements => 'تازہ ترین پیمائش';
+
+  @override
+  String get measurementHistory => 'پیمائش کی تاریخ';
+
+  @override
+  String measurementRevision(int number) {
+    return 'ترمیم $number';
+  }
+
+  @override
+  String get measuredOn => 'پیمائش کی تاریخ';
+
+  @override
+  String measurementFieldsCount(int count) {
+    return '$count پیمائشیں';
+  }
+
+  @override
+  String get measurementLoadFailed => 'پیمائشیں لوڈ نہیں ہوسکیں۔';
+
+  @override
+  String get measurementTemplateLoadFailed =>
+      'لباس کی اقسام لوڈ نہیں ہوسکیں۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get measurementProfileNotFound =>
+      'یہ پیمائش پروفائل اب دستیاب نہیں ہے۔';
+
+  @override
+  String get measurementRequiredHint => 'ضروری خانوں پر * کا نشان ہے';
 }
 
 /// The translations for Urdu, using the Latin script (`ur_Latn`).
@@ -1417,4 +1521,109 @@ class AppLocalizationsUrLatn extends AppLocalizationsUr {
   String customersDeletedPermanently(int count) {
     return '$count customers hamesha ke liye delete ho gaye.';
   }
+
+  @override
+  String get measurementsTitle => 'Measurements';
+
+  @override
+  String get measurementProfilesSubtitle => 'Is customer ke fitting profiles';
+
+  @override
+  String get addMeasurements => 'Measurements shamil karein';
+
+  @override
+  String get noMeasurementsTitle => 'Abhi measurements nahin hain';
+
+  @override
+  String get noMeasurementsMessage =>
+      'Shuru karne ke liye customer ka pehla fitting profile shamil karein.';
+
+  @override
+  String get measurementTemplate => 'Libas ki qisam';
+
+  @override
+  String get selectMeasurementTemplate => 'Libas ki qisam select karein';
+
+  @override
+  String get measurementProfileName => 'Profile ka naam';
+
+  @override
+  String get measurementProfileNameHint => 'Regular fitting';
+
+  @override
+  String get preferredUnit => 'Measurement unit';
+
+  @override
+  String get inches => 'Inches';
+
+  @override
+  String get centimetres => 'Centimetres';
+
+  @override
+  String get measurementValues => 'Measurement details';
+
+  @override
+  String get measurementNotes => 'Measurement notes';
+
+  @override
+  String get measurementNotesHint => 'Fitting pasand ya khaas hidayaat';
+
+  @override
+  String get saveMeasurements => 'Measurements save karein';
+
+  @override
+  String get measurementSavedTitle => 'Measurements save ho gayin';
+
+  @override
+  String get measurementSavedMessage =>
+      'Fitting profile kamyabi se save ho gaya.';
+
+  @override
+  String get measurementSaveFailed =>
+      'Measurements save nahin ho sakin. Values dekh kar dobara koshish karein.';
+
+  @override
+  String get measurementTemplateRequired => 'Libas ki qisam select karein.';
+
+  @override
+  String get measurementProfileNameRequired => 'Profile ka naam likhein.';
+
+  @override
+  String get measurementValueRequired => 'Yeh measurement likhein.';
+
+  @override
+  String get measurementValueInvalid => 'Durust measurement likhein.';
+
+  @override
+  String get latestMeasurements => 'Latest measurements';
+
+  @override
+  String get measurementHistory => 'Measurement history';
+
+  @override
+  String measurementRevision(int number) {
+    return 'Revision $number';
+  }
+
+  @override
+  String get measuredOn => 'Measurement ki tareekh';
+
+  @override
+  String measurementFieldsCount(int count) {
+    return '$count measurements';
+  }
+
+  @override
+  String get measurementLoadFailed => 'Measurements load nahin ho sakin.';
+
+  @override
+  String get measurementTemplateLoadFailed =>
+      'Libas ki qisamain load nahin ho sakin. Dobara koshish karein.';
+
+  @override
+  String get measurementProfileNotFound =>
+      'Yeh measurement profile ab available nahin hai.';
+
+  @override
+  String get measurementRequiredHint => 'Zaroori fields par * laga hua hai';
 }
